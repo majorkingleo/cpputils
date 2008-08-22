@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
+ * Initial import
+ *
  * Revision 1.1  2008/02/25 10:41:38  wamas
  * MOBERZA TS-115979 Menü Transporteinheiten Erstellen hinzugefuegt,
  * sowie wood und andere C++ Dateien.
@@ -37,6 +40,13 @@
 
 #ifndef TOOLS_format_h
 #define TOOLS_format_h
+
+/* old Owil define */
+#ifdef AIX
+#ifdef Where
+# undef Where
+#endif
+#endif
 
 #include <string>
 #include <iomanip>
