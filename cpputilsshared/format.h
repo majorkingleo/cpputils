@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2008/08/22 11:09:37  wamas
+ * AIX Port
+ *
  * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
  * Initial import
  *
@@ -88,20 +91,20 @@ namespace Format
   {    
   public:
     
-    typedef enum Adjust
+    enum Adjust
       {
 	LEFT,
 	RIGHT
       };
     
-    typedef enum Base
+    enum Base
       {
 	OCT,
 	DEC,
 	HEX
       };
     
-    typedef enum Floating
+    enum Floating
       {
 	FIXED,
 	SCIENTIFIC
@@ -548,15 +551,19 @@ template <class A, class B, class C, class D, class E, class F, class G, class H
 	      pos++;
 	      
 	      if( pos < len )
-		if( hh == true )
-		  {
-		    if( format[pos] == 'h' )
-		      pos++;
-		  }
-		else if( ll = true )
-		  if( format[pos] == 'l' )
-		    pos++;
-	    }
+			{
+			  if( hh == true )
+				{
+				  if( format[pos] == 'h' )
+					pos++;
+				}
+			  else if( ll == true )
+				{
+				  if( format[pos] == 'l' )
+					pos++;
+				}
+			} // if
+	    } // found
 	}
 
       // conversion specifier

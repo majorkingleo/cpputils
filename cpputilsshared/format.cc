@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
+ * Initial import
+ *
  * Revision 1.2  2008/04/15 08:52:19  wamas
  * Anpassungen in der Vorzone und neue Menüs
  * user: karl, moberza
@@ -21,6 +24,7 @@
  */
 
 #include "format.h"
+#include <cstdlib>
 
 #ifndef NFORMAT
 
