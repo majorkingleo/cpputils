@@ -6,6 +6,9 @@
 
 /*
  * $Log$
+ * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
+ * Initial import
+ *
  * Revision 1.2  2008/06/24 14:31:59  wamas
  * Fixed leading zeros.
  *
@@ -108,7 +111,7 @@ std::string text_right_format( std::string s, unsigned int max_size, unsigned in
 {
   std::string space;
   
-  for( unsigned int i = 0; i < spaces; ++i )
+  for( unsigned int index = 0; index < spaces; ++index )
     space += ' ';
   
   unsigned int i;
