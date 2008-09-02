@@ -8,6 +8,9 @@
 
 /*
  * $Log$
+ * Revision 1.3  2008/09/02 12:16:52  wamas
+ * Umbau auf cpputils
+ *
  * Revision 1.2  2008/09/02 09:55:13  wamas
  * Removed WIN32 warnings
  * user: mmattl
@@ -19,7 +22,7 @@
  * Fixed leading zeros.
  *
  * Revision 1.1  2008/02/25 10:41:38  wamas
- * MOBERZA TS-115979 Menü Transporteinheiten Erstellen hinzugefuegt,
+ * MOBERZA TS-115979 Menï¿½ Transporteinheiten Erstellen hinzugefuegt,
  * sowie wood und andere C++ Dateien.
  *
  * Revision 1.1  2007/02/19 07:14:04  wamas
@@ -79,7 +82,7 @@ bool is_int( const std::string &s )
 }
 
 /*
-  Re: Trim Funktion für Strings
+  Re: Trim Funktion fï¿½r Strings
   Von: Hubert Schmid <h.schmid-usenet@gmx.de>
   Datum:  Sonntag, 10. Oktober 2004 14:13:35
   Gruppen:  de.comp.lang.iso-c++
@@ -507,6 +510,63 @@ std::vector<std::string> split_safe( const std::string &s, const std::string &se
       pos1++;
     }
 
+  return sl;
+}
+
+std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep , int max )
+{
+  str = strip( str, sep );
+  
+  std::string::size_type start = 0, last = 0;
+  int count = 0;
+  
+  std::vector<std::string> sl;
+  
+  while( true )
+    {
+      if( max > 0 )
+		count++;
+	  
+      if( count >= max && max > 0 )
+		{
+		  sl.push_back( str.substr( last ) );
+		  break;
+		}
+	  
+      start = str.find_first_of( sep, last );
+	  
+      if( start == std::string::npos )
+		{
+		  sl.push_back( str.substr( last ) );
+		  break;
+		}
+	  
+      sl.push_back( str.substr( last, start - last ) );
+	  
+	  for( std::string::size_type pos = start + 1;
+		   pos < str.size(); pos++ )
+		{
+		  bool found = false;
+
+		  for( std::string::size_type i = 0; i < sep.size(); i++ )
+			{
+			  if( str[pos] == sep[i] )
+				{
+				  found = true;
+				  break;				  
+				}
+			}
+
+		  if( found == false )
+			{
+			  last = pos;
+			  break;
+			}
+		}
+
+	  //      last = start + 1;
+    }
+  
   return sl;
 }
 

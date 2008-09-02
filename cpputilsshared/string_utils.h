@@ -1,11 +1,14 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.1.1.1  2008/08/14 14:11:32  moberza
++*  Initial import
++*
 +*  Revision 1.2  2008/06/24 14:31:59  wamas
 +*  Fixed leading zeros.
 +*
 +*  Revision 1.1  2008/02/25 10:41:38  wamas
-+*  MOBERZA TS-115979 Menü Transporteinheiten Erstellen hinzugefuegt,
++*  MOBERZA TS-115979 Menï¿½ Transporteinheiten Erstellen hinzugefuegt,
 +*  sowie wood und andere C++ Dateien.
 +*
 +*  Revision 1.1  2007/02/19 07:14:04  wamas
@@ -51,6 +54,7 @@ std::string strip_leading( const std::string& str, const std::string& what = " \
 bool is_int( const std::string &s );
 std::vector<std::string> split_simple( std::string str, std::string seperator = " \t\n", int max = -1 );
 std::vector<std::string> split_string( std::string str, std::string seperator, int max = -1 );
+std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep = " \t\n", int max = -1 );
 
 inline bool is_bool( const bool &b ) { return true; }
 template<class T> bool is_bool( const T &t ) { return false; }
