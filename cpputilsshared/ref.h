@@ -1,34 +1,65 @@
 /*
-+*  VERSID:    "%Z% @(#)$Header$";
-+*  $Log$
-+*  Revision 1.1  2008/02/25 10:41:38  wamas
-+*  MOBERZA TS-115979 Menü Transporteinheiten Erstellen hinzugefuegt,
-+*  sowie wood und andere C++ Dateien.
-+*
-+*  Revision 1.1  2007/02/19 07:14:04  wamas
-+*  sis: Eingecheckt
-+*
-+*  Revision 1.1.2.1  2006/05/11 08:27:36  wamas
-+*  Toolsbox Umstellung
-+*
-+*  Revision 1.1.2.2  2005/07/27 16:29:59  wamas
-+*  MOBERZA add Versid and logging stuff
-+*
-+*
-*/
+ * $Log$
+ * Revision 1.4  2008/06/20 07:19:18  wamas
+ * Memory Leaks Suchen
+ *
+ * Revision 1.3  2007/03/28 07:30:12  wamas
+ * Bugfixes um Abstuerze beim Multithreading zu verhindern
+ *
+ * Revision 1.2  2006/11/23 16:46:27  wamas
+ * MOBERZA -Wshadow dazugeschalten und ausgebessert
+ *
+ * Revision 1.1.1.1  2006/03/17 19:49:15  wamas
+ * own tools reponsitority
+ *
+ * Revision 1.2  2006/03/09 00:48:27  wamas
+ * Added CVS Log Info
+ *
+ */
+
 #ifndef TOOLS_ref_h
 #define TOOLS_ref_h
 
 #include <exception>
 
+#ifdef NOWAMAS
+#include "tools_config.h"
+#endif
+
 namespace Tools {
 
-class BaseException : std::exception
+#ifdef TOOLS_USE_GLOBAL_COUNT
+
+class GlobalCount
+{
+  int count;
+
+ public:
+ GlobalCount() : count(0) {}
+
+  void add() { count++; }
+  void del() { count--; }
+  int get() const { return count; }
+};
+
+extern GlobalCount GLOBALCOUNT;
+
+#define GLOBAL_COUNT_ADD GLOBALCOUNT.add()
+#define GLOBAL_COUNT_DEL GLOBALCOUNT.del()
+
+#else
+
+#define GLOBAL_COUNT_ADD
+#define GLOBAL_COUNT_DEL
+
+#endif
+
+class BaseException : public std::exception
 {
   const char *err;
 
  public:
-  BaseException( const char* err ) : err( err ) {}
+  BaseException( const char* e ) : err( e ) {}
 
   virtual const char* what() const throw() { return err; }
 
@@ -65,13 +96,14 @@ template <class V> class Ref
     pointer obj;  ///< pointer to the object
     bool del;     ///< if this value is true, the object will be deleted, count <= 0
     
-    Rep( int c, pointer o, bool del = true ) : count(c), obj( o ), del( del ) {}
+    Rep( int c, pointer o, bool d = true ) : count(c), obj( o ), del( d ) {}
     
     ~Rep() 
     { 
       if( del) 
 	{
 	  delete obj; 
+	  obj = 0;
 	}
     }
   };
@@ -87,19 +119,21 @@ template <class V> class Ref
      \param del  if the value is true (thats the default) the object will
      be deleted if the reference counter gets lower or equal zero
   */
-  explicit Ref( pointer v, bool del ) : rep( new Rep(1, v, del) ) {}
-  Ref( pointer v ) : rep( new Rep( 1, v, true ) ) {}
+  explicit Ref( pointer v, bool del ) : rep( new Rep(1, v, del) ) { GLOBAL_COUNT_ADD; }
+  Ref( pointer v ) : rep( new Rep( 1, v, true ) ) { GLOBAL_COUNT_ADD; }
   
-  explicit Ref( reference v, bool del ) : rep( new Rep( 1, &v, del ) ) {}
-  explicit Ref( reference v ) : rep( new Rep( 1, &v, false ) ) {}
+  explicit Ref( reference v, bool del ) : rep( new Rep( 1, &v, del ) ) { GLOBAL_COUNT_ADD; }
+  explicit Ref( reference v ) : rep( new Rep( 1, &v, false ) ) { GLOBAL_COUNT_ADD; }
   
-  explicit Ref( const_reference v, bool del ) : rep( new Rep( 1, &v, del ) ) {}
-  explicit Ref( const_reference v ) : rep( new Rep( 1, &v, false ) ) {}
+  explicit Ref( const_reference v, bool del ) : rep( new Rep( 1, &v, del ) ) { GLOBAL_COUNT_ADD; }
+  explicit Ref( const_reference v ) : rep( new Rep( 1, &v, false ) ) { GLOBAL_COUNT_ADD; }
   
-  Ref( const Ref &r ) : rep( r.rep )
+  Ref( const Ref<V> &r ) : rep( r.rep )
     {
-      if( rep )
-	rep->count++;
+      if( rep ) {
+		GLOBAL_COUNT_ADD;
+		rep->count++;
+	  }
     }    
   
   ~Ref() { unlink(); }
@@ -148,8 +182,10 @@ template <class V> class Ref
       unlink();
       rep = r.rep;
       
-      if( rep )
-	rep->count++;
+      if( rep ) {
+		GLOBAL_COUNT_ADD;
+		rep->count++;
+	  }
 
       return *this;
     }
@@ -234,13 +270,17 @@ template <class V> class Ref
   void unlink()
     {
       if( rep )
-	{
-	  if( --rep->count <= 0 )
-	    {
-	      delete rep;
-	      rep = 0;
-	    }
-	}
+		{		  
+		  GLOBAL_COUNT_DEL;
+
+		  rep->count--;
+
+		  if( rep->count <= 0 )
+			{
+			  delete rep;
+			  rep = 0;
+			}
+		}
     }
 };
 

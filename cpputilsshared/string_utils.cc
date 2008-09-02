@@ -1,11 +1,17 @@
+#ifndef NOWAMAS
 #include <versid.h>
 #if !defined(__lint) && !defined(__LINT__) && !defined(lint)
 /**********************************************************************
 +*/ VERSIDC( string_utils, "%Z% @(#)$Header$" );
 #endif
+#endif
 
 /*
  * $Log$
+ * Revision 1.2  2008/09/02 09:55:13  wamas
+ * Removed WIN32 warnings
+ * user: mmattl
+ *
  * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
  * Initial import
  *
@@ -261,7 +267,18 @@ std::string substitude( std::string str, std::string what, std::string with )
       if( pos == std::string::npos )
         break;
 
-      str.replace( pos, what.size(), with );
+      if( with.empty() )
+	{
+	  std::string s = str.substr( 0, pos + what.size() );
+	  s = str.substr( pos + what.size() );
+	  str = s;
+	  continue;
+	}
+      else
+	{
+	  str.replace( pos, what.size(), with );
+	}
+
       pos += (what.size() > with.size() ? what.size() : with.size() );
     }
   return str;
@@ -329,7 +346,7 @@ std::string bin_decode( const std::string &s )
 std::string group_thousand( const std::string &s, unsigned digit, const std::string &sep )
 {
     if( s.empty() )
-	  return s;
+	return std::string();
 
     std::string ret;       
 
@@ -363,8 +380,8 @@ struct Pair
   std::string::size_type start;
   std::string::size_type end;
 
-  Pair( std::string::size_type start,   std::string::size_type end )
-    : start( start ) , end( end )
+  Pair( std::string::size_type start_,   std::string::size_type end_ )
+    : start( start_ ) , end( end_ )
   {}
 };
 
