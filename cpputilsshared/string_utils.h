@@ -1,6 +1,9 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.2  2008/09/02 16:34:16  wamas
++*  Merged with clp
++*
 +*  Revision 1.1.1.1  2008/08/14 14:11:32  moberza
 +*  Initial import
 +*
@@ -131,7 +134,13 @@ template<class T>std::string x2s( T what )
 
 std::string x2s( const bool b );
 
+
 std::string text_right_format( std::string text, unsigned int max_size, unsigned int spaces );
+
+inline std::string auto_linebreak( std::string text, unsigned int max_size = 90 )
+{
+  return text_right_format( text, max_size, 0 );
+}
 
 std::string substitude( std::string str, std::string what, std::string with );
 
