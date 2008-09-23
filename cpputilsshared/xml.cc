@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1  2008/09/23 13:01:39  wamas
+ * moved xml.h and c and iterator to cpputils
+ *
  * Revision 1.6  2007/02/09 17:25:35  wamas
  * GCC 2.95 port
  *
