@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1  2009/01/16 13:12:55  wamas
+ * Added Backtrace Helping Module
+ *
  * Revision 1.3  2007/02/09 19:37:32  wamas
  * bugfix
  *
@@ -93,7 +96,7 @@ public:
 	    }
 	}
 
-    std::string bt()
+    std::string bt( std::string prefix = " Backtrace: " )
 	{
 #if __GNUC__ > 2
 	    std::stringstream out;
@@ -101,9 +104,12 @@ public:
 		std::strstream out;
 #endif
 	    bt( out );
-	    return out.str();
-	}
 
+		if( !out.str().empty() )
+		  return prefix + out.str();	   
+		else
+		  return std::string();
+	}
 
     void add_info( int ticket, const std::string &info )
 	{
@@ -152,7 +158,8 @@ public:
 #else
 #define BT
 #endif
-#endif
 
 }
+
+#endif
 
