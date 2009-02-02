@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1  2009/01/27 12:37:37  wamas
+ * Weiter nützliche Klassen.
+ *
  * Revision 1.3  2008/08/06 12:24:55  wamas
  * new g++ fixes
  *
@@ -23,7 +26,7 @@
 
   extended for xstow 
 */
-
+#ifndef WIN32
 #ifndef TOOLS_cppdir_h
 #define TOOLS_cppdir_h
 
@@ -31,8 +34,9 @@
 #include <list>
 
 extern "C" {
-
+#ifndef WIN32
 #include <dirent.h>
+#endif /* WIN32 */
 #include <sys/types.h>
 
 }
@@ -217,3 +221,4 @@ namespace CppDir
 } // namespace Tools
 
 #endif
+#endif /* WIN32 */

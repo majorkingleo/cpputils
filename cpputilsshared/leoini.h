@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1  2009/01/27 12:37:38  wamas
+ * Weiter nützliche Klassen.
+ *
  * Revision 1.3  2007/03/26 21:29:35  wamas
  * thread support
  *
@@ -105,6 +108,7 @@ namespace Leo
     typedef std::list<Line> line_list;
     typedef line_list::iterator line_list_it;
     
+  public:
     struct MemElement : Element ///< class Representing an Element within the memory
     {
       Line line;   ///< the Line
@@ -125,6 +129,7 @@ namespace Leo
       
       Element get_element(); ///< returns en Element
     };
+  private:
     
     MemElement::mem_element_list elements; ///< list of MemElements
     line_list comments; ///< comment list

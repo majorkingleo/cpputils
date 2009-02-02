@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1  2009/01/27 12:37:37  wamas
+ * Weiter nützliche Klassen.
+ *
  * Revision 1.5  2008/08/06 12:24:55  wamas
  * new g++ fixes
  *
@@ -19,7 +22,7 @@
  * Added CVS Log Info
  *
  */
-
+#ifndef WIN32
 #include "cppdir.h"
 
 #undef OUT
@@ -717,3 +720,4 @@ bool CppDir::is_in_dir( const std::string &path, const std::string &dir )
 
   return false;
 }
+#endif /* WIN32 */

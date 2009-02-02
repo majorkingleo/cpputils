@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2009/01/26 12:31:46  wamas
+ * Tour Fertigbuchen für SAP Tests.
+ *
  * Revision 1.1  2009/01/16 13:12:55  wamas
  * Added Backtrace Helping Module
  *
@@ -23,12 +26,7 @@
 #include <list>
 #include <string>
 
-#if __GNUC__ > 2
 #include <ostream>
-#else
-#include <strstream>
-#include <iostream>
-#endif
 
 #include "format.h"
 
@@ -98,11 +96,7 @@ public:
 
     std::string bt( std::string prefix = " Backtrace: " )
 	{
-#if __GNUC__ > 2
 	    std::stringstream out;
-#else
-		std::strstream out;
-#endif
 	    bt( out );
 
 		if( !out.str().empty() )
