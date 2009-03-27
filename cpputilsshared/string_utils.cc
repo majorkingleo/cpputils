@@ -8,6 +8,9 @@
 
 /*
  * $Log$
+ * Revision 1.4  2008/09/02 16:34:16  wamas
+ * Merged with clp
+ *
  * Revision 1.3  2008/09/02 12:16:52  wamas
  * Umbau auf cpputils
  *
@@ -272,8 +275,8 @@ std::string substitude( std::string str, std::string what, std::string with )
 
       if( with.empty() )
 	{
-	  std::string s = str.substr( 0, pos + what.size() );
-	  s = str.substr( pos + what.size() );
+	  std::string s = str.substr( 0, pos );
+	  s += str.substr( pos + what.size() );
 	  str = s;
 	  continue;
 	}
