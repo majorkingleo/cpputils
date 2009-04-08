@@ -1,34 +1,4 @@
 /*
- * $Log$
- * Revision 1.2  2008/08/22 11:09:37  wamas
- * AIX Port
- *
- * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
- * Initial import
- *
- * Revision 1.1  2008/02/25 10:41:38  wamas
- * MOBERZA TS-115979 Menü Transporteinheiten Erstellen hinzugefuegt,
- * sowie wood und andere C++ Dateien.
- *
- * Revision 1.4  2008/02/20 09:30:20  wamas
- * rewrote format for porting code to gccs -fstrict-aliasing
- * and make it on M$ compiler work
- *
- * Revision 1.3  2007/03/14 21:47:08  wamas
- * nicer cast
- *
- * Revision 1.2  2006/11/23 16:46:26  wamas
- * MOBERZA -Wshadow dazugeschalten und ausgebessert
- *
- * Revision 1.1.1.1  2006/03/17 19:49:16  wamas
- * own tools reponsitority
- *
- * Revision 1.2  2006/03/09 00:48:27  wamas
- * Added CVS Log Info
- *
- */
-
-/*
   Format a C++ library for typesafe string formating in printf style
       (C) 2001 - 2003 by Martin Oberzalek <kingleo@gmx.at>  
 
@@ -143,7 +113,7 @@ namespace Format
 
   typedef BaseException Error;
 
-  template <class A, class B, class C, class D, class E, class F, class G, class H>
+  template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14>
   class Format
   {
   private:
@@ -157,21 +127,29 @@ namespace Format
 
     std::string format;
     
-    A a;
-    B b;
-    C c;
-    D d;
-    E e;
-    F f;
-	G g;
-	H h;
-    
+	Arg0 var0;
+Arg1 var1;
+Arg2 var2;
+Arg3 var3;
+Arg4 var4;
+Arg5 var5;
+Arg6 var6;
+Arg7 var7;
+Arg8 var8;
+Arg9 var9;
+Arg10 var10;
+Arg11 var11;
+Arg12 var12;
+Arg13 var13;
+Arg14 var14;
+;
+
     unsigned int num_of_args;
     
     std::string s;
     
   public:
-    Format( const std::string &format, A a, B b, C c, D d, E e, F f, G g, H h, unsigned int num_of_args );
+    Format( const std::string &format, Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8, Arg9 var9, Arg10 var10, Arg11 var11, Arg12 var12, Arg13 var13, Arg14 var14, unsigned int num_of_args );
     
     std::string get_string() const { return s; }
     
@@ -237,11 +215,11 @@ inline std::ostream& operator<<( std::ostream& out, Format::CFormat cf )
 
 namespace Format { /* M$ Comiler can't handle it otherwiese */
 
-template <class A, class B, class C, class D, class E, class F, class G, class H>
-  Format<A,B,C,D,E,F,G,H>::Format( std::string const &format_, A a_, B b_, C c_, D d_, E e_, F f_, G g_, H h_, unsigned int num_of_args_ )
-  : format( format_ ), a(a_), b(b_), c(c_), d(d_), e(e_), f(f_), g(g_), h(h_), num_of_args( num_of_args_ )
+template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14>
+  Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14>::Format( std::string const &format_, Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8, Arg9 var9, Arg10 var10, Arg11 var11, Arg12 var12, Arg13 var13, Arg14 var14, unsigned int num_of_args_ )
+  : format( format_ ), var0(var0), var1(var1), var2(var2), var3(var3), var4(var4), var5(var5), var6(var6), var7(var7), var8(var8), var9(var9), var10(var10), var11(var11), var12(var12), var13(var13), var14(var14), num_of_args( num_of_args_ )
 {
-  if( num_of_args > 8 )
+  if( num_of_args > 15 )
     throw Error( "Number of args out of range" );
 
   gen_arg_list();
@@ -249,8 +227,8 @@ template <class A, class B, class C, class D, class E, class F, class G, class H
   parse();
 }
 
-template <class A, class B, class C, class D, class E, class F, class G, class H>
-  int Format<A,B,C,D,E,F,G,H>::get_int_arg( unsigned int num )
+template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14>
+  int Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14>::get_int_arg( unsigned int num )
 {
   if( static_cast<unsigned int>(num) > num_of_args - 1 )
     throw Error( "The arg you wan't to use is out of range" );
@@ -262,14 +240,22 @@ template <class A, class B, class C, class D, class E, class F, class G, class H
     {
       switch( num )
 	{
-	case 0: return get_int(a);
-	case 1: return get_int(b);
-	case 2: return get_int(c);
-	case 3: return get_int(d);
-	case 4: return get_int(e);
-	case 5: return get_int(f);
-	case 6: return get_int(g);
-	case 7: return get_int(h);
+	  case 0: return get_int(var0);
+case 1: return get_int(var1);
+case 2: return get_int(var2);
+case 3: return get_int(var3);
+case 4: return get_int(var4);
+case 5: return get_int(var5);
+case 6: return get_int(var6);
+case 7: return get_int(var7);
+case 8: return get_int(var8);
+case 9: return get_int(var9);
+case 10: return get_int(var10);
+case 11: return get_int(var11);
+case 12: return get_int(var12);
+case 13: return get_int(var13);
+case 14: return get_int(var14);
+
 	}
     }
   else
@@ -278,78 +264,109 @@ template <class A, class B, class C, class D, class E, class F, class G, class H
   return 0; // should never be reached
 }
 
-template <class A, class B, class C, class D, class E, class F, class G, class H>
-  void Format<A,B,C,D,E,F,G,H>::gen_arg_list()
+template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14>
+  void Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14>::gen_arg_list()
 {
   for( unsigned int i = 0; i < num_of_args; i++ )
     { 
       switch( i )
-	{
-	case 0: 
-	  args[i].is_int = is_int( a ); 
-	  args[i].is_string = is_string( a ); 
-	  break;
-	case 1: 
-	  args[i].is_int = is_int( b ); 
-	  args[i].is_string = is_string( b ); 
-	  break;
+		{
+		  case 0:
+args[i].is_int = is_int( var0);
+args[i].is_string = is_string( var0);
+break;
+case 1:
+args[i].is_int = is_int( var1);
+args[i].is_string = is_string( var1);
+break;
+case 2:
+args[i].is_int = is_int( var2);
+args[i].is_string = is_string( var2);
+break;
+case 3:
+args[i].is_int = is_int( var3);
+args[i].is_string = is_string( var3);
+break;
+case 4:
+args[i].is_int = is_int( var4);
+args[i].is_string = is_string( var4);
+break;
+case 5:
+args[i].is_int = is_int( var5);
+args[i].is_string = is_string( var5);
+break;
+case 6:
+args[i].is_int = is_int( var6);
+args[i].is_string = is_string( var6);
+break;
+case 7:
+args[i].is_int = is_int( var7);
+args[i].is_string = is_string( var7);
+break;
+case 8:
+args[i].is_int = is_int( var8);
+args[i].is_string = is_string( var8);
+break;
+case 9:
+args[i].is_int = is_int( var9);
+args[i].is_string = is_string( var9);
+break;
+case 10:
+args[i].is_int = is_int( var10);
+args[i].is_string = is_string( var10);
+break;
+case 11:
+args[i].is_int = is_int( var11);
+args[i].is_string = is_string( var11);
+break;
+case 12:
+args[i].is_int = is_int( var12);
+args[i].is_string = is_string( var12);
+break;
+case 13:
+args[i].is_int = is_int( var13);
+args[i].is_string = is_string( var13);
+break;
+case 14:
+args[i].is_int = is_int( var14);
+args[i].is_string = is_string( var14);
+break;
 
-	case 2: 
-	  args[i].is_int = is_int( c ); 
-	  args[i].is_string = is_string( c ); 
-	  break;
-
-	case 3: 
-	  args[i].is_int = is_int( d ); 
-	  args[i].is_string = is_string( d ); 
-	  break;
-
-	case 4: 
-	  args[i].is_int = is_int( e ); 
-	  args[i].is_string = is_string( e ); 
-	  break;
-
-	case 5: 
-	  args[i].is_int = is_int( f ); 
-	  args[i].is_string = is_string( f ); 
-	  break;
-
-	case 6: 
-	  args[i].is_int = is_int( g ); 
-	  args[i].is_string = is_string( g ); 
-	  break;
-
-	case 7: 
-	  args[i].is_int = is_int( h ); 
-	  args[i].is_string = is_string( h ); 
-	  break;
+		}
 	}
-    }
 }
 
-template <class A, class B, class C, class D, class E, class F, class G, class H>
-  std::string Format<A,B,C,D,E,F,G,H>::use_arg( unsigned int i, const CFormat &cf )
+template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14>
+  std::string Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14>::use_arg( unsigned int i, const CFormat &cf )
 {
   if( i > num_of_args || i < 0 )
     throw Error( "out of arg range" );
 
   switch( i )
     {
-    case 0: return x2s( a, cf );
-    case 1: return x2s( b, cf );
-    case 2: return x2s( c, cf );
-    case 3: return x2s( d, cf );
-    case 4: return x2s( e, cf );
-    case 5: return x2s( f, cf );
-    case 6: return x2s( g, cf );
-    case 7: return x2s( h, cf );
+	  case 0: return x2s( var0,cf);
+case 1: return x2s( var1,cf);
+case 2: return x2s( var2,cf);
+case 3: return x2s( var3,cf);
+case 4: return x2s( var4,cf);
+case 5: return x2s( var5,cf);
+case 6: return x2s( var6,cf);
+case 7: return x2s( var7,cf);
+case 8: return x2s( var8,cf);
+case 9: return x2s( var9,cf);
+case 10: return x2s( var10,cf);
+case 11: return x2s( var11,cf);
+case 12: return x2s( var12,cf);
+case 13: return x2s( var13,cf);
+case 14: return x2s( var14,cf);
+
     }
 
   return "";
 }
 
-template <class A, class B, class C, class D, class E, class F, class G, class H>
-  void Format<A,B,C,D,E,F,G,H>::parse()
+template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14>
+  void Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14>::parse()
 {
   if( format.empty() )
     return;
@@ -691,53 +708,91 @@ template <class A, class B, class C, class D, class E, class F, class G, class H
 
 } // namespace Format
 
+  /* machst das
 template <class A, class B, class C, class D, class E, class F, class G, class H>
   inline std::string format( std::string fs, A a, B b, C c, D d, E e, F f, G g, H h )
 {
   return Format::Format<A,B,C,D,E,F,G,H>( fs, a, b, c, d, e, f, g, h, 8).get_string();
 }
+  */
 
-template <class A, class B, class C, class D, class E, class F, class G>
-  inline std::string format( std::string fs, A a, B b, C c, D d, E e, F f, G g)
-{
-  return Format::Format<A,B,C,D,E,F,G,char>( fs, a, b, c, d, e, f, g, 0, 7).get_string();
+template<class Arg0>
+inline std::string format( const std::string & fs,Arg0 var0) {
+  return Format::Format<Arg0,char,char,char,char,char,char,char,char,char,char,char,char,char,char>( fs, var0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1).get_string();
 }
 
-template <class A, class B, class C, class D, class E, class F>
-  inline std::string format( std::string fs, A a, B b, C c, D d, E e, F f)
-{
-  return Format::Format<A,B,C,D,E,F,char,char>( fs, a, b, c, d, e, f, 0, 0, 6).get_string();
+template<class Arg0, class Arg1>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1) {
+  return Format::Format<Arg0, Arg1,char,char,char,char,char,char,char,char,char,char,char,char,char>( fs, var0, var1,0,0,0,0,0,0,0,0,0,0,0,0,0, 2).get_string();
 }
 
-template <class A, class B, class C, class D, class E>
-inline std::string format( std::string fs, A a, B b, C c, D d, E e )
-{
-  return Format::Format<A,B,C,D,E,char,char,char>( fs, a, b, c, d, e, 0, 0, 0, 5).get_string();
+template<class Arg0, class Arg1, class Arg2>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2) {
+  return Format::Format<Arg0, Arg1, Arg2,char,char,char,char,char,char,char,char,char,char,char,char>( fs, var0, var1, var2,0,0,0,0,0,0,0,0,0,0,0,0, 3).get_string();
 }
 
-template <class A, class B, class C, class D>
-inline std::string format( std::string fs, A a, B b, C c, D d)
-{
-  return Format::Format<A,B,C,D,char,char,char,char>( fs, a, b, c, d, 0, 0,  0, 0, 4).get_string();
+template<class Arg0, class Arg1, class Arg2, class Arg3>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3,char,char,char,char,char,char,char,char,char,char,char>( fs, var0, var1, var2, var3,0,0,0,0,0,0,0,0,0,0,0, 4).get_string();
 }
 
-template <class A, class B, class C>
-inline std::string format( std::string fs, A a, B b, C c )
-{
-  return Format::Format<A,B,C,char,char,char,char,char>( fs, a, b, c, 0, 0, 0, 0, 0, 3).get_string();
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4,char,char,char,char,char,char,char,char,char,char>( fs, var0, var1, var2, var3, var4,0,0,0,0,0,0,0,0,0,0, 5).get_string();
 }
 
-template <class A, class B>
-inline std::string format( std::string fs, A a, B b )
-{
-  return Format::Format<A,B,char,char,char,char,char,char>( fs, a, b, 0, 0, 0, 0, 0, 0, 2).get_string();
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5,char,char,char,char,char,char,char,char,char>( fs, var0, var1, var2, var3, var4, var5,0,0,0,0,0,0,0,0,0, 6).get_string();
 }
 
-template <class A>
-inline std::string format( std::string fs, A a)
-{
-  return Format::Format<A,char,char,char,char,char,char,char>( fs, a, 0, 0, 0, 0, 0, 0, 0, 1).get_string(); 
-} 
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,char,char,char,char,char,char,char,char>( fs, var0, var1, var2, var3, var4, var5, var6,0,0,0,0,0,0,0,0, 7).get_string();
+}
+
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,char,char,char,char,char,char,char>( fs, var0, var1, var2, var3, var4, var5, var6, var7,0,0,0,0,0,0,0, 8).get_string();
+}
+
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,char,char,char,char,char,char>( fs, var0, var1, var2, var3, var4, var5, var6, var7, var8,0,0,0,0,0,0, 9).get_string();
+}
+
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8, Arg9 var9) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9,char,char,char,char,char>( fs, var0, var1, var2, var3, var4, var5, var6, var7, var8, var9,0,0,0,0,0, 10).get_string();
+}
+
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8, Arg9 var9, Arg10 var10) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10,char,char,char,char>( fs, var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10,0,0,0,0, 11).get_string();
+}
+
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8, Arg9 var9, Arg10 var10, Arg11 var11) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11,char,char,char>( fs, var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11,0,0,0, 12).get_string();
+}
+
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8, Arg9 var9, Arg10 var10, Arg11 var11, Arg12 var12) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12,char,char>( fs, var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12,0,0, 13).get_string();
+}
+
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8, Arg9 var9, Arg10 var10, Arg11 var11, Arg12 var12, Arg13 var13) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13,char>( fs, var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13,0, 14).get_string();
+}
+
+template<class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14>
+inline std::string format( const std::string & fs,Arg0 var0, Arg1 var1, Arg2 var2, Arg3 var3, Arg4 var4, Arg5 var5, Arg6 var6, Arg7 var7, Arg8 var8, Arg9 var9, Arg10 var10, Arg11 var11, Arg12 var12, Arg13 var13, Arg14 var14) {
+  return Format::Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14>( fs, var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13, var14, 15).get_string();
+}
+
+
+
 
 
 namespace Format
@@ -808,77 +863,82 @@ namespace Format
       return *this;
     }
 
+	template<typename Arg0>
+PrintF& operator()( const std::string & fs,const Arg0& var0) {
+ if( check() ) out << format( fs,var0);
+ return *this;
+}
+template<typename Arg0, typename Arg1>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1) {
+ if( check() ) out << format( fs,var0, var1);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2) {
+ if( check() ) out << format( fs,var0, var1, var2);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3) {
+ if( check() ) out << format( fs,var0, var1, var2, var3);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6, const Arg7& var7) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6, var7);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6, const Arg7& var7, const Arg8& var8) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6, var7, var8);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8, typename Arg9>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6, const Arg7& var7, const Arg8& var8, const Arg9& var9) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6, var7, var8, var9);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8, typename Arg9, typename Arg10>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6, const Arg7& var7, const Arg8& var8, const Arg9& var9, const Arg10& var10) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8, typename Arg9, typename Arg10, typename Arg11>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6, const Arg7& var7, const Arg8& var8, const Arg9& var9, const Arg10& var10, const Arg11& var11) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8, typename Arg9, typename Arg10, typename Arg11, typename Arg12>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6, const Arg7& var7, const Arg8& var8, const Arg9& var9, const Arg10& var10, const Arg11& var11, const Arg12& var12) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8, typename Arg9, typename Arg10, typename Arg11, typename Arg12, typename Arg13>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6, const Arg7& var7, const Arg8& var8, const Arg9& var9, const Arg10& var10, const Arg11& var11, const Arg12& var12, const Arg13& var13) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13);
+ return *this;
+}
+template<typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8, typename Arg9, typename Arg10, typename Arg11, typename Arg12, typename Arg13, typename Arg14>
+PrintF& operator()( const std::string & fs,const Arg0& var0, const Arg1& var1, const Arg2& var2, const Arg3& var3, const Arg4& var4, const Arg5& var5, const Arg6& var6, const Arg7& var7, const Arg8& var8, const Arg9& var9, const Arg10& var10, const Arg11& var11, const Arg12& var12, const Arg13& var13, const Arg14& var14) {
+ if( check() ) out << format( fs,var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13, var14);
+ return *this;
+}
 
-    template<typename A> PrintF& operator()( std::string fs, const A &a )
-    {
-      if( check() )
-	out << format( fs, a );
-
-      return *this;
-    }
-
-    template<typename A, typename B> 
-    PrintF& operator()( std::string fs, const A &a, const B &b )
-    {
-      if( check() )
-	out << format( fs, a, b );
-
-      return *this;
-    }
-
-    template<typename A, typename B, typename C> 
-    PrintF& operator()( std::string fs, const A &a, const B &b, const C &c )
-    {
-      if( check() )
-	out << format( fs, a, b, c );
-
-      return *this;
-    }
-
-    template<typename A, typename B, typename C, typename D> 
-    PrintF& operator()( std::string fs, const A &a, const B &b, const C &c, const D &d )
-    {
-      if( check() )
-	out << format( fs, a, b, c, d );
-
-      return *this;
-    }
-
-    template<typename A, typename B, typename C, typename D, typename E> 
-    PrintF& operator()( std::string fs, const A &a, const B &b, const C &c, const D &d, const E &e )
-    {
-      if( check() ) 
-	out << format( fs, a, b, c, d, e );
-
-      return *this;
-    }
-
-    template<typename A, typename B, typename C, typename D, typename E, typename F> 
-    PrintF& operator()( std::string fs, const A &a, const B &b, const C &c, const D &d, const E &e, const F &f )
-    {
-      if( check() )
-	out << format( fs, a, b, c, d, e, f );
-
-      return *this;
-    }
-
-    template<typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H> 
-    PrintF& operator()( std::string fs, const A &a, const B &b, const C &c, const D &d, const E &e, const F &f, const G &g, const H &h )
-    {
-      if( check() )
-		out << format( fs, a, b, c, d, e, f, g, h );
-
-      return *this;
-    }
-
-    template<typename A, typename B, typename C, typename D, typename E, typename F, typename G> 
-	PrintF& operator()( std::string fs, const A &a, const B &b, const C &c, const D &d, const E &e, const F &f, const G &g )
-    {
-      if( check() )
-		out << format( fs, a, b, c, d, e, f, g );
-
-      return *this;
-    }
 
     bool check( int module_, int level_ ) const
       {
@@ -907,3 +967,4 @@ namespace Format
 #undef IS_DIGIT
 
 #endif
+
