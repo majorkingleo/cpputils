@@ -8,6 +8,9 @@
 
 /*
  * $Log$
+ * Revision 1.5  2009/03/27 10:55:22  wamas
+ * Fixes and extensions
+ *
  * Revision 1.4  2008/09/02 16:34:16  wamas
  * Merged with clp
  *
@@ -121,6 +124,9 @@ std::string strip_leading( const std::string& str, const std::string& what )
 
 std::string text_right_format( std::string s, unsigned int max_size, unsigned int spaces )
 {
+  if( max_size > s.size() && spaces == 0 )
+	return s;
+
   std::string space;
   
   for( unsigned int index = 0; index < spaces; ++index )
