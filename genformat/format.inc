@@ -123,7 +123,7 @@ namespace Format
       bool is_string;
     };
     
-    Arg args[8];
+    Arg args[MAXARGS];
 
     std::string format;
     
