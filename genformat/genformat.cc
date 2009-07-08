@@ -41,7 +41,7 @@ std::string gen_templatelist( int maxargs )
 
 	  res += gen_decl(i);
 	  res += " ";
-	  res += gen_var(i);
+	  res += gen_var(i) + "_";
 	}
   return res;
 }
@@ -57,7 +57,7 @@ std::string gen_consttemplatelist( int maxargs )
 
 	  res += "const " + gen_decl(i);
 	  res += "& ";
-	  res += gen_var(i);
+	  res += gen_var(i) + "_";
 	}
   return res;
 }
@@ -97,7 +97,7 @@ std::string gen_varinit( int maxargs )
 	{
 	  if( i > 0 )
 		res += ", ";
-	  res += gen_var(i) + "(" + gen_var(i) + ")";
+	  res += gen_var(i) + "(" + gen_var(i) + "_)";
 	}
   return res;
 }
@@ -148,7 +148,7 @@ std::string gen_varlist( int maxargs )
 	  if( i > 0 )
 		res += ", ";
 
-	  res += gen_var(i);
+	  res += gen_var(i) + "_";
 	}
 
   return res;
