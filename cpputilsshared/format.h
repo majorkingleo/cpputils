@@ -1,6 +1,6 @@
 /*
   Format a C++ library for typesafe string formating in printf style
-      (C) 2001 - 2003 by Martin Oberzalek <kingleo@gmx.at>  
+      (C) 2001 - 2009 by Martin Oberzalek <kingleo@gmx.at>  
 
    2004-01-01 remerged version 1.1 of Format with xstow's Format
 
@@ -701,7 +701,7 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
 	       if( cf.zero && (cf.adjust != CFormat::LEFT) )
 		 cf.internal = true;
 	       break;
-	       
+	       		  
 	     case 'X': cf.setupper = true;
 	     case 'x': 
 	       cf.base = CFormat::HEX;
@@ -737,6 +737,11 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
 		 cf.zero = false;
 	       break;
 	      
+
+		 case 'p':
+	       cf.base = CFormat::HEX;	
+		   cf.showbase = true;	   
+		   break;
 
 	       // unsupported modifiers
 
