@@ -8,6 +8,10 @@
 +*  PURPOSE:
 +*  NOTES:
 +*  $Log$
++*  Revision 1.1  2009/04/08 15:53:03  wamas
++*  MOBERZA Format und Logtool auf 30 Argumente erweitert.
++*  Über das genformat Tool erweiterbar.
++*
 +*  Revision 1.4  2009/03/27 10:55:22  wamas
 +*  Fixes and extensions
 +*
@@ -58,7 +62,7 @@ enum {
 };
 
 int _LogSetLocation( const char *file, int line );
-int _LogPrintf( const char *fac, int level, const char *str , const char *str );
+int _LogPrintf( const char *fac, int level, const char *str , const char *str2 );
 
 #endif
 
