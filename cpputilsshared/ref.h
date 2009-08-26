@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2008/09/02 12:16:52  wamas
+ * Umbau auf cpputils
+ *
  * Revision 1.4  2008/06/20 07:19:18  wamas
  * Memory Leaks Suchen
  *
@@ -59,7 +62,9 @@ class BaseException : public std::exception
   const char *err;
 
  public:
-  BaseException( const char* e ) : err( e ) {}
+  BaseException(const BaseException& ex): std::exception() , err ( ex.err ) {}
+  BaseException( const char* e ) : std::exception(), err( e ) {}
+  BaseException & operator=(const Tools::BaseException& ex) { err = ex.err; return *this; }	
 
   virtual const char* what() const throw() { return err; }
 

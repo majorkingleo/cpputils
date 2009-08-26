@@ -101,12 +101,27 @@ namespace Format
     std::string format;
 
   public:    
-    CFormat() { reset(); }
-    
-    void set( std::ostream& out );
-    
-  private:    
-    void reset();
+    CFormat() :
+	  valid(false),
+	  adjust(RIGHT),
+	  special(false),
+	  sign(false),
+	  grouping(false),
+	  conversion(false),
+	  zero(false),
+	  precision_explicit(false),
+	  internal(false),
+	  base(DEC),
+	  setupper(false),
+	  floating(FIXED),
+	  showbase(false),
+	  width(0),
+	  precision(6),
+	  strlength(0),
+	  format("")
+	{ }
+		
+		void set( std::ostream& out );
   };
   
   /****************************************/
@@ -162,7 +177,12 @@ Arg29 var29;
     unsigned int num_of_args;
     
     std::string s;
-    
+
+  private:
+	Format() {}
+	Format(const Format & f) {}
+	Format & operator=(const Format & f) {}
+
   public:
     Format( const std::string &format, Arg0 var0_, Arg1 var1_, Arg2 var2_, Arg3 var3_, Arg4 var4_, Arg5 var5_, Arg6 var6_, Arg7 var7_, Arg8 var8_, Arg9 var9_, Arg10 var10_, Arg11 var11_, Arg12 var12_, Arg13 var13_, Arg14 var14_, Arg15 var15_, Arg16 var16_, Arg17 var17_, Arg18 var18_, Arg19 var19_, Arg20 var20_, Arg21 var21_, Arg22 var22_, Arg23 var23_, Arg24 var24_, Arg25 var25_, Arg26 var26_, Arg27 var27_, Arg28 var28_, Arg29 var29_, unsigned int num_of_args );
     
@@ -186,7 +206,7 @@ Arg29 var29;
     bool is_string( char* ) { return true; }
     bool is_string( const char* ) { return true; }
 
-    int get_int_arg( unsigned int num );
+    int get_int_arg( int num );
     void gen_arg_list();
     std::string use_arg( unsigned int i, const CFormat &cf );
 
@@ -232,7 +252,7 @@ namespace Format { /* M$ Comiler can't handle it otherwiese */
 
 template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14, class Arg15, class Arg16, class Arg17, class Arg18, class Arg19, class Arg20, class Arg21, class Arg22, class Arg23, class Arg24, class Arg25, class Arg26, class Arg27, class Arg28, class Arg29>
   Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16, Arg17, Arg18, Arg19, Arg20, Arg21, Arg22, Arg23, Arg24, Arg25, Arg26, Arg27, Arg28, Arg29>::Format( std::string const &format_, Arg0 var0_, Arg1 var1_, Arg2 var2_, Arg3 var3_, Arg4 var4_, Arg5 var5_, Arg6 var6_, Arg7 var7_, Arg8 var8_, Arg9 var9_, Arg10 var10_, Arg11 var11_, Arg12 var12_, Arg13 var13_, Arg14 var14_, Arg15 var15_, Arg16 var16_, Arg17 var17_, Arg18 var18_, Arg19 var19_, Arg20 var20_, Arg21 var21_, Arg22 var22_, Arg23 var23_, Arg24 var24_, Arg25 var25_, Arg26 var26_, Arg27 var27_, Arg28 var28_, Arg29 var29_, unsigned int num_of_args_ )
-  : format( format_ ), var0(var0_), var1(var1_), var2(var2_), var3(var3_), var4(var4_), var5(var5_), var6(var6_), var7(var7_), var8(var8_), var9(var9_), var10(var10_), var11(var11_), var12(var12_), var13(var13_), var14(var14_), var15(var15_), var16(var16_), var17(var17_), var18(var18_), var19(var19_), var20(var20_), var21(var21_), var22(var22_), var23(var23_), var24(var24_), var25(var25_), var26(var26_), var27(var27_), var28(var28_), var29(var29_), num_of_args( num_of_args_ )
+  : format( format_ ), var0(var0_), var1(var1_), var2(var2_), var3(var3_), var4(var4_), var5(var5_), var6(var6_), var7(var7_), var8(var8_), var9(var9_), var10(var10_), var11(var11_), var12(var12_), var13(var13_), var14(var14_), var15(var15_), var16(var16_), var17(var17_), var18(var18_), var19(var19_), var20(var20_), var21(var21_), var22(var22_), var23(var23_), var24(var24_), var25(var25_), var26(var26_), var27(var27_), var28(var28_), var29(var29_), num_of_args( num_of_args_ ), s("")
 {
   if( num_of_args > 30 )
     throw Error( "Number of args out of range" );
@@ -243,7 +263,7 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
 }
 
 template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14, class Arg15, class Arg16, class Arg17, class Arg18, class Arg19, class Arg20, class Arg21, class Arg22, class Arg23, class Arg24, class Arg25, class Arg26, class Arg27, class Arg28, class Arg29>
-  int Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16, Arg17, Arg18, Arg19, Arg20, Arg21, Arg22, Arg23, Arg24, Arg25, Arg26, Arg27, Arg28, Arg29>::get_int_arg( unsigned int num )
+  int Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16, Arg17, Arg18, Arg19, Arg20, Arg21, Arg22, Arg23, Arg24, Arg25, Arg26, Arg27, Arg28, Arg29>::get_int_arg( int num )
 {
   if( static_cast<unsigned int>(num) > num_of_args - 1 )
     throw Error( "The arg you wan't to use is out of range" );
@@ -429,7 +449,7 @@ break;
 template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9, class Arg10, class Arg11, class Arg12, class Arg13, class Arg14, class Arg15, class Arg16, class Arg17, class Arg18, class Arg19, class Arg20, class Arg21, class Arg22, class Arg23, class Arg24, class Arg25, class Arg26, class Arg27, class Arg28, class Arg29>
   std::string Format<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16, Arg17, Arg18, Arg19, Arg20, Arg21, Arg22, Arg23, Arg24, Arg25, Arg26, Arg27, Arg28, Arg29>::use_arg( unsigned int i, const CFormat &cf )
 {
-  if( i > num_of_args || i < 0 )
+  if( i > num_of_args )
     throw Error( "out of arg range" );
 
   switch( i )

@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.3  2009/02/02 10:58:01  wamas
+ * WIN32 portage
+ *
  * Revision 1.2  2009/01/26 12:31:46  wamas
  * Tour Fertigbuchen für SAP Tests.
  *
@@ -41,7 +44,7 @@ private:
 	std::string message;
 	std::string info;
 
-	Ticket( int t, const std::string &m ) : ticket( t ), message( m ) {}
+	Ticket( int t, const std::string &m ) : ticket( t ), message( m ), info("") {}
     };
 
     std::list<Ticket> stack;

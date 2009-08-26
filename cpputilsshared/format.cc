@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2008/09/02 16:43:07  wamas
+ * Bugfixes
+ *
  * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
  * Initial import
  *
@@ -29,26 +32,6 @@
 #ifndef NFORMAT
 
 namespace Tools {
-
-void Format::CFormat::reset()
-{
-  valid = false;
-  adjust = RIGHT;
-  special = false;
-  precision = 6;
-  precision_explicit = false;
-  zero = false;
-  sign = false;
-  width = 0;
-  internal = false;
-  setupper = false;
-  grouping = false;
-  conversion = false;
-  base = DEC;
-  floating = FIXED;
-  showbase = false;
-  strlength = 0;
-}
 
 int Format::skip_atoi( std::string s, ST start, ST& pos )
 {
