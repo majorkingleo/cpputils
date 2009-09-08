@@ -8,6 +8,9 @@
 
 /*
  * $Log$
+ * Revision 1.6  2009/04/22 14:22:06  wamas
+ * Bugfix von Mario bezüglich auto_linebreak und simple_what wird bei einer sql exception nun auch gefuellt.
+ *
  * Revision 1.5  2009/03/27 10:55:22  wamas
  * Fixes and extensions
  *
@@ -54,6 +57,14 @@ std::string toupper( std::string s )
 {
   for( unsigned int i = 0; i < s.size(); ++i )
     s[i] = std::toupper( s[i] );
+
+  return s;
+}
+
+std::string tolower( std::string s )
+{
+  for( unsigned int i = 0; i < s.size(); ++i )
+    s[i] = std::tolower( s[i] );
 
   return s;
 }

@@ -101,12 +101,27 @@ namespace Format
     std::string format;
 
   public:    
-    CFormat() { reset(); }
-    
-    void set( std::ostream& out );
-    
-  private:    
-    void reset();
+    CFormat() :
+	  valid(false),
+	  adjust(RIGHT),
+	  special(false),
+	  sign(false),
+	  grouping(false),
+	  conversion(false),
+	  zero(false),
+	  precision_explicit(false),
+	  internal(false),
+	  base(DEC),
+	  setupper(false),
+	  floating(FIXED),
+	  showbase(false),
+	  width(0),
+	  precision(6),
+	  strlength(0),
+	  format("")
+	{ }
+		
+		void set( std::ostream& out );
   };
   
   /****************************************/
@@ -132,7 +147,12 @@ namespace Format
     unsigned int num_of_args;
     
     std::string s;
-    
+
+  private:
+	Format() {}
+	Format(const Format & f) {}
+	Format & operator=(const Format & f) {}
+
   public:
     Format( const std::string &format, TEMPLATELIST, unsigned int num_of_args );
     
@@ -156,7 +176,7 @@ namespace Format
     bool is_string( char* ) { return true; }
     bool is_string( const char* ) { return true; }
 
-    int get_int_arg( unsigned int num );
+    int get_int_arg( int num );
     void gen_arg_list();
     std::string use_arg( unsigned int i, const CFormat &cf );
 
@@ -202,7 +222,7 @@ namespace Format { /* M$ Comiler can't handle it otherwiese */
 
 template <TEMPLATECLASSES>
   Format<TEMPLATEDECL>::Format( std::string const &format_, TEMPLATELIST, unsigned int num_of_args_ )
-  : format( format_ ), VARINIT, num_of_args( num_of_args_ )
+  : format( format_ ), VARINIT, num_of_args( num_of_args_ ), s("")
 {
   if( num_of_args > MAXARGS )
     throw Error( "Number of args out of range" );
@@ -213,7 +233,7 @@ template <TEMPLATECLASSES>
 }
 
 template <TEMPLATECLASSES>
-  int Format<TEMPLATEDECL>::get_int_arg( unsigned int num )
+  int Format<TEMPLATEDECL>::get_int_arg( int num )
 {
   if( static_cast<unsigned int>(num) > num_of_args - 1 )
     throw Error( "The arg you wan't to use is out of range" );
@@ -249,7 +269,7 @@ template <TEMPLATECLASSES>
 template <TEMPLATECLASSES>
   std::string Format<TEMPLATEDECL>::use_arg( unsigned int i, const CFormat &cf )
 {
-  if( i > num_of_args || i < 0 )
+  if( i > num_of_args )
     throw Error( "out of arg range" );
 
   switch( i )

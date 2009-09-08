@@ -1,6 +1,9 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.3  2008/09/23 10:39:53  wamas
++*  Initiale Inventurliste Schicken.
++*
 +*  Revision 1.2  2008/09/02 16:34:16  wamas
 +*  Merged with clp
 +*
@@ -52,6 +55,7 @@
 namespace Tools {
 
 std::string toupper( std::string s );
+std::string tolower( std::string s );
 std::string strip( const std::string& str, const std::string& what = " \t\n\r" );
 std::string strip_leading( const std::string& str, const std::string& what = " \t\n\r" );
 bool is_int( const std::string &s );
