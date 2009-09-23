@@ -1,6 +1,9 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.4  2009/09/08 17:49:57  wamas
++*  Bugfixes and Updates
++*
 +*  Revision 1.3  2008/09/23 10:39:53  wamas
 +*  Initiale Inventurliste Schicken.
 +*
@@ -172,6 +175,26 @@ std::string group_thousand( const std::string &s, unsigned digit = 3, const std:
 std::string escape( const std::string &s );
 
 std::vector<std::string> split_safe( const std::string &s, const std::string &sep = " \n\t");
+
+template <class T> std::string createInStatement( const std::vector<T> & list )
+{
+  std::string res;
+
+  if( list.empty() )
+	return res;
+
+  for( unsigned i = 0; i < list.size(); i++ )
+	{
+	  if( !res.empty() )		
+		  res += ", ";
+
+	  res += "'";
+	  res += list[i];
+	  res += "'";		
+	}  
+
+  return "(" + res + ")";
+}
 
 } // namespace Tools
 
