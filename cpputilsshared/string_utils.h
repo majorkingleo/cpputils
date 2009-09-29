@@ -1,6 +1,9 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.5  2009/09/23 12:42:27  wamas
++*  Weiterentwicklung
++*
 +*  Revision 1.4  2009/09/08 17:49:57  wamas
 +*  Bugfixes and Updates
 +*
@@ -176,20 +179,20 @@ std::string escape( const std::string &s );
 
 std::vector<std::string> split_safe( const std::string &s, const std::string &sep = " \n\t");
 
-template <class T> std::string createInStatement( const std::vector<T> & list )
+template <class T> std::string createInStatement( const T & list )
 {
   std::string res;
 
   if( list.empty() )
 	return res;
 
-  for( unsigned i = 0; i < list.size(); i++ )
+  for( typename T::const_iterator it = list.begin(); it != list.end(); it++ )
 	{
-	  if( !res.empty() )		
+	  if( !res.empty() )
 		  res += ", ";
 
 	  res += "'";
-	  res += list[i];
+	  res += *it;
 	  res += "'";		
 	}  
 
