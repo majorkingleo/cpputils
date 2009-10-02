@@ -8,6 +8,9 @@
 
 /*
  * $Log$
+ * Revision 1.7  2009/09/08 17:49:57  wamas
+ * Bugfixes and Updates
+ *
  * Revision 1.6  2009/04/22 14:22:06  wamas
  * Bugfix von Mario bezüglich auto_linebreak und simple_what wird bei einer sql exception nun auch gefuellt.
  *
@@ -588,6 +591,27 @@ std::vector<std::string> split_and_strip_simple( std::string str, const std::str
     }
   
   return sl;
+}
+
+std::string fill_trailing( std::string s, const std::string fill_sign, unsigned int len )
+{
+	s.reserve(len);
+
+
+	while( s.size() < len )
+		s += fill_sign;
+
+	return s;
+}
+
+std::string fill_leading( std::string s, const std::string fill_sign, unsigned int len )
+{
+	s.reserve(len);
+
+	while( s.size() < len )
+		s = fill_sign + s;
+
+	return s;
 }
 
 } // namespace Tools

@@ -1,6 +1,9 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.6  2009/09/29 15:00:26  wamas
++*  Weiterentwicklung
++*
 +*  Revision 1.5  2009/09/23 12:42:27  wamas
 +*  Weiterentwicklung
 +*
@@ -198,6 +201,9 @@ template <class T> std::string createInStatement( const T & list )
 
   return "(" + res + ")";
 }
+
+std::string fill_leading( std::string s, const std::string fill_sign, unsigned int len );
+std::string fill_trailing( std::string s, const std::string fill_sign, unsigned int len );
 
 } // namespace Tools
 
