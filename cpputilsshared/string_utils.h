@@ -1,6 +1,9 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.8  2009/10/14 08:32:50  wamas
++*  Bugfix fur die Inventur.
++*
 +*  Revision 1.7  2009/10/02 13:43:03  wamas
 +*  fill_leading und fill_trailing eingebaut.
 +*
@@ -210,6 +213,8 @@ std::string fill_trailing( std::string s, const std::string fill_sign, unsigned 
 
 bool is_empty_str( const char *pcString );
 bool is_empty_str( const std::string & string );
+inline bool is_empty_string( const char *pcString ) { return is_empty_str( pcString ); }
+inline bool is_empty_string(  const std::string & s ) {  return is_empty_str( s ); }
 
 } // namespace Tools
 
