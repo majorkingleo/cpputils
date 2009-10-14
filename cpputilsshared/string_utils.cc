@@ -8,6 +8,9 @@
 
 /*
  * $Log$
+ * Revision 1.8  2009/10/02 13:43:03  wamas
+ * fill_leading und fill_trailing eingebaut.
+ *
  * Revision 1.7  2009/09/08 17:49:57  wamas
  * Bugfixes and Updates
  *
@@ -612,6 +615,28 @@ std::string fill_leading( std::string s, const std::string fill_sign, unsigned i
 		s = fill_sign + s;
 
 	return s;
+}
+
+bool is_empty_str( const char *pcString )
+{
+  if( pcString == NULL )
+	return true;
+
+  for( int i = 0; pcString[i] != '\0'; i++ )
+	{
+	  if( pcString[i] != ' ' )
+		return false;
+	}
+
+  return true;
+}
+
+bool is_empty_str( const std::string & string )
+{
+  if( string.empty() )
+	return true;
+
+  return is_empty_str( string.c_str() );
 }
 
 } // namespace Tools

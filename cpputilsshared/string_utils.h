@@ -1,6 +1,9 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.7  2009/10/02 13:43:03  wamas
++*  fill_leading und fill_trailing eingebaut.
++*
 +*  Revision 1.6  2009/09/29 15:00:26  wamas
 +*  Weiterentwicklung
 +*
@@ -204,6 +207,9 @@ template <class T> std::string createInStatement( const T & list )
 
 std::string fill_leading( std::string s, const std::string fill_sign, unsigned int len );
 std::string fill_trailing( std::string s, const std::string fill_sign, unsigned int len );
+
+bool is_empty_str( const char *pcString );
+bool is_empty_str( const std::string & string );
 
 } // namespace Tools
 
