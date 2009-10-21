@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.4  2009/08/26 09:27:58  wamas
+ * GCC 4 Port
+ *
  * Revision 1.3  2009/02/02 10:58:01  wamas
  * WIN32 portage
  *
@@ -53,7 +56,7 @@ private:
     int count;
     
 public:
-    BackTrace() : count( 0 ) {}
+    BackTrace() : stack(std::list<Ticket>()), count(0) {}
 
 
     int push( const std::string & message )
@@ -134,8 +137,9 @@ public:
 
 public:
     BackTraceHelper( const std::string &func_name )
+	  : ticket(bt.push( func_name ))
 	{
-	    ticket = bt.push( func_name );
+
 	}
 
     ~BackTraceHelper()

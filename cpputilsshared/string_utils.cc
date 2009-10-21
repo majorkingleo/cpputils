@@ -8,6 +8,9 @@
 
 /*
  * $Log$
+ * Revision 1.9  2009/10/14 08:32:50  wamas
+ * Bugfix fur die Inventur.
+ *
  * Revision 1.8  2009/10/02 13:43:03  wamas
  * fill_leading und fill_trailing eingebaut.
  *
@@ -149,7 +152,7 @@ std::string text_right_format( std::string s, unsigned int max_size, unsigned in
   for( unsigned int index = 0; index < spaces; ++index )
     space += ' ';
   
-  unsigned int i;
+  int i;
   
   for( i = max_size; i >= 0 && s[i] != ' '; --i );
   
@@ -160,7 +163,7 @@ std::string text_right_format( std::string s, unsigned int max_size, unsigned in
  
   while( !ss.empty() )
     {
-      for( i = max_size - spaces; i < ss.size() && i >= 0 && ss[i] != ' '; --i );
+      for( i = static_cast<int>(max_size) - spaces; i < static_cast<int>(ss.size()) && i >= 0 && ss[i] != ' '; --i );
       
       s += '\n';
       s += space;      
@@ -169,7 +172,7 @@ std::string text_right_format( std::string s, unsigned int max_size, unsigned in
       
       has_new_line = true;
 
-      if( i >= ss.size() )
+      if( i >= static_cast<int>(ss.size()) )
 	break;
       
       ss = ss.substr( i + 1 );
