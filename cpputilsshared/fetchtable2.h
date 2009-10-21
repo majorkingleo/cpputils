@@ -51,16 +51,16 @@ template <class Table> class FetchTable : public JVector<Table>
 
   FetchTable & operator=( const FetchTable<Table> & table )
 	{
-	    std::vector<Table>::clear();
-	    std::vector<Table>::insert( std::vector<Table>::end(), table.begin(), table.end() );	
-		tid = table.tid;
-		sc = table.sc;
-		table_name = table.table_name;
-		where = table.where;
-		failed = table.failed;
-		sql = table.sql;
-
-		return *this;
+	  JVector<Table>::clear();
+	  JVector<Table>::insert( JVector<Table>::end(), table.begin(), table.end() );	
+	  tid = table.tid;
+	  sc = table.sc;
+	  table_name = table.table_name;
+	  where = table.where;
+	  failed = table.failed;
+	  sql = table.sql;
+	  
+	  return *this;
 	}
 
  public:
