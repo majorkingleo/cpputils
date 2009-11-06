@@ -8,6 +8,7 @@
 #define _Tools_FETCHTABLE2_H
 
 #include <map>
+#include <report_exception.h>
 
 #ifndef NOWAMAS
 # include <dbsql.h>
@@ -19,6 +20,14 @@
 namespace Tools {
 
 #ifndef NOWAMAS
+
+#ifdef FIX_BUG_20809
+#  define WORKAROUND_BUG_20809_TExecSqlX _TExecSqlX
+#  define WORKAROUND_BUG_20809_TExecSqlV _TExecSqlV
+#else
+#  define WORKAROUND_BUG_20809_TExecSqlX TExecSqlX
+#  define WORKAROUND_BUG_20809_TExecSqlV TExecSqlV
+#endif
 
 template <class Table> class FetchTable : public JVector<Table>
 {
@@ -92,17 +101,25 @@ template <class Table> class FetchTable : public JVector<Table>
 	  
       do
 		{
-		  rv = ( rv == 0 ) ?  TExecSqlX( tid, sc, 
+		  rv = ( rv == 0 ) ?  WORKAROUND_BUG_20809_TExecSqlX( tid, sc, 
 										 const_cast<char*>(sql.c_str()),
 										 BLOCKSIZE, 0,
 										 SELSTRUCT( const_cast<char*>(table_name.c_str()), vec[0] ),
 										 NULL )
-			: TExecSqlV( tid, sc, NULL, NULL, NULL, NULL );
+			: WORKAROUND_BUG_20809_TExecSqlV( tid, sc, NULL, NULL, NULL, NULL );
 		  
 		  
 		  if( rv < BLOCKSIZE  && TSqlError(tid) != SqlNotFound )	    
 			{
 			  failed = true;
+
+			  if( std::string( __FILE__ ).find(":") != std::string::npos )
+				{
+				  throw REPORT_EXCEPTION( "WARNING YOU TRIGGERT BUG http://bugzilla.salomon.at/show_bug.cgi?id=20809\n"
+										  "Possible Workaround: recompiling your file with defined FIX_BUG_20809 before\n"
+										  "including this '" __FILE__ "' Header file." );
+				}
+
 			  return;
 			}
 		  
