@@ -113,11 +113,14 @@ template <class Table> class FetchTable : public JVector<Table>
 			{
 			  failed = true;
 
-			  if( std::string( __FILE__ ).find(":") != std::string::npos )
+			  if( std::string( __FILE__ ).find(":") != std::string::npos &&
+				  std::string( TSqlErrTxt(tid) ).find( "too few bind variables" ) != std::string::npos )  
 				{
-				  throw REPORT_EXCEPTION( "WARNING YOU TRIGGERT BUG http://bugzilla.salomon.at/show_bug.cgi?id=20809\n"
+				  throw REPORT_EXCEPTION( Tools::format("WARNING YOU TRIGGERT BUG http://bugzilla.salomon.at/show_bug.cgi?id=20809\n"
 										  "Possible Workaround: recompiling your file with defined FIX_BUG_20809 before\n"
-										  "including this '" __FILE__ "' Header file." );
+										  "including this '" __FILE__ "' Header file.\n" 
+										  "SqlError: %d SqlError is: %s", TSqlError, TSqlErrTxt(tid) )
+										  );
 				}
 
 			  return;
