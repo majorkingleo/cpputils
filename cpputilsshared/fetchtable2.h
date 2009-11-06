@@ -75,6 +75,7 @@ class FetchTableBase
 
   void check_bug_20809()
 	{
+#ifdef WIN32
 	  if( std::string( __FILE__ ).find(":") != std::string::npos &&
 		  std::string( TSqlErrTxt(tid) ).find( "too few bind variables" ) != std::string::npos )  
 		{
@@ -82,8 +83,9 @@ class FetchTableBase
 												"Possible Workaround: recompiling your file with defined FIX_BUG_20809 before\n"
 												"including this '" __FILE__ "' Header file.\n" 
 												"SqlError: %d SqlError is: %s", TSqlError, TSqlErrTxt(tid) )
-								  );
+							  );
 		}
+#endif	  
 	}
 
   FetchTableBase & operator=( const FetchTableBase & table )
