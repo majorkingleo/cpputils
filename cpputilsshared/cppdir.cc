@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2009/02/02 10:58:01  wamas
+ * WIN32 portage
+ *
  * Revision 1.1  2009/01/27 12:37:37  wamas
  * Weiter nützliche Klassen.
  *
@@ -266,6 +269,19 @@ std::string CppDir::File::get_link_buf() const
     return readlink( concat_dir( path, name ) );
   
   return std::string();
+}
+
+
+// private
+CppDir::Directory::Directory( const Directory & other )
+{
+
+}
+
+// private
+CppDir::Directory & CppDir::Directory::operator=( const Directory & other )
+{
+
 }
 
 CppDir::Directory::Directory( std::string pname )

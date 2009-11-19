@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2009/02/02 10:58:01  wamas
+ * WIN32 portage
+ *
  * Revision 1.1  2009/01/27 12:37:37  wamas
  * Weiter nützliche Klassen.
  *
@@ -86,8 +89,8 @@ namespace CppDir
     bool link;
     std::string path;  
     size_type file_size;
-    size_type date;
-    size_type access_date;
+    time_t date;
+    time_t access_date;
     bool err;
     bool can_read;
     bool can_write;
@@ -133,8 +136,8 @@ namespace CppDir
     size_type   get_msize() const { return get_ksize() / 1024; }
     size_type   get_gsize() const { return get_msize() / 1024; }
 
-    size_type   get_date() const { return date; } /// last change date
-    size_type   get_access_date() const { return access_date; } /// last access date
+    time_t   get_date() const { return date; } /// last change date
+    time_t   get_access_date() const { return access_date; } /// last access date
 
     /** the function returns true if you have read access at the file */
     bool        read_access() const { return can_read; }
@@ -169,6 +172,9 @@ namespace CppDir
       bool is_open;     /// true if the directory is open
       
       DIR* dir;  /// directory HANDLE
+
+	  Directory( const Directory & other );
+	  Directory & operator=( const Directory & other );
 
     public:
       Directory( std::string pname );

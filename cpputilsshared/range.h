@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1  2009/01/27 12:37:38  wamas
+ * Weiter nützliche Klassen.
+ *
  * Revision 1.3  2008/06/20 14:47:41  wamas
  * strcpy improved
  *
@@ -31,10 +34,17 @@ namespace Tools {
   template<class EClass, class Copy=CopyNone<EClass> > class EnumRange : public EClass
 {    
 public:
-    struct Error : public std::exception {
-	const char *err;
-	Error( const char *e ) throw() : exception(), err(e) {}
-	virtual const char * what() const throw() { return err; }
+    class Error : public std::exception {
+	  const char *err;
+	  public:
+
+	  Error( const Error & e ) throw() : exception(), err( e.err ) {}
+	  Error & operator=( const Error & e ) throw() { err = e.err; return *this; }
+	  Error( const char *e ) throw() : exception(), err(e) {}
+
+	  virtual ~Error() throw() {}
+
+	  virtual const char * what() const throw() { return err; }	  
     };
 
     typedef typename EClass::ETYPE ETYPE;       
