@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1  2009/01/27 12:37:37  wamas
+ * Weiter nützliche Klassen.
+ *
  * Revision 1.6  2008/08/06 12:24:55  wamas
  * new g++ fixes
  *
@@ -89,7 +92,7 @@ std::string Leo::Ini::Line::get_line()
   return str;
 }
 
-void Leo::Ini::MemElement::operator=(const Element& e )
+Leo::Ini::MemElement & Leo::Ini::MemElement::operator=(const Element& e )
 {
   section = e.section;
   key = e.key; 
@@ -111,9 +114,22 @@ void Leo::Ini::MemElement::operator=(const Element& e )
     for( element_list_it it = e.elements.begin();
 	 it != e.elements.end(); it++ )
       *this = *it;
+
+  return *this;
 }
 
 Leo::Ini::Ini( std::string filename, int mode )
+: elements(),
+  comments(),
+  openmode(mode),
+  file_name( filename ),
+  file(),
+  is_open(false),
+  valid(false),
+  file_readed(false),
+  eof_reached(false),
+  line_number(0),
+  changed(false)
 {
   is_open = false;
   valid = false;

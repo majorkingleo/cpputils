@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.1  2008/09/23 13:01:39  wamas
+ * moved xml.h and c and iterator to cpputils
+ *
  * Revision 1.2  2006/11/23 16:46:27  wamas
  * MOBERZA -Wshadow dazugeschalten und ausgebessert
  *
@@ -31,10 +34,29 @@ struct Item
     std::string name;
     std::string value;
 
-    Option() {}
+    Option()
+    : name(),
+      value()
+    {}
+
     Option( const std::string &name_, const std::string &value_ )
       : name( name_ ), value( value_ )
     {}
+
+    Option( const Option & other )
+    : name( other.name ),
+      value( other.value )
+      {
+
+      }
+
+    Option & operator=( const Option & other )
+    {
+    	name = other.name;
+    	value = other.value;
+    	return *this;
+    }
+
   };
 
   std::string name;
@@ -51,7 +73,49 @@ struct Item
   std::string::size_type start_pos, end_pos;
   unsigned line;
 
-  Item() : beg_close( false ), end_close( false ), parent(0), start_pos(0), end_pos(0), line(0) {}
+  Item()
+  :
+	name(),
+	beg_close( false ),
+	end_close( false ),
+	options(),
+	subitems(),
+	parent(0),
+	text(),
+	start_pos(0),
+	end_pos(0),
+	line(0)
+   {}
+
+  Item( const Item & other )
+  : name( other.name ),
+    beg_close( other.beg_close ),
+	end_close( other.end_close ),
+	options(other.options),
+	subitems(other.subitems),
+	parent(other.parent),
+	text(other.text),
+	start_pos(other.start_pos),
+	end_pos(other.end_pos),
+	line(other.line)
+  {
+  }
+
+  Item & operator=( const Item & other )
+  {
+	  name = other.name;
+	  beg_close = other.beg_close;
+	  end_close = other.end_close;
+	  options = other.options;
+	  subitems = other.subitems;
+	  parent = other.parent;
+	  text = other.text;
+	  start_pos = other.start_pos;
+	  end_pos = other.end_pos;
+	  line = other.line;
+
+	  return *this;
+  }
 
   std::string get_option( const std::string &name_ )
   {

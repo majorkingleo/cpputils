@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.3  2009/11/19 10:52:10  wamas
+ * Bugfixes
+ *
  * Revision 1.2  2009/02/02 10:58:01  wamas
  * WIN32 portage
  *
@@ -90,6 +93,20 @@ std::string CppDir::concat_dir( std::string path, std::string name )
 }
 
 CppDir::File::File( struct dirent *d, std::string p)
+: name(),
+  type( EFILE::UNKNOWN ),
+  inode_number(0),
+  valid(false),
+  link(false),
+  path(),
+  file_size(0),
+  date(0),
+  access_date(0),
+  err(false),
+  can_read(false),
+  can_write(false),
+  can_exec(false),
+  fullpath()
 {
   inode_number = d->d_ino;
   name = d->d_name;
@@ -105,7 +122,20 @@ CppDir::File::File( struct dirent *d, std::string p)
 }
 
 CppDir::File::File( std::string path_, std::string name_ )
-  : name( name_ ), path( path_ )
+: name(name_),
+  type( EFILE::UNKNOWN ),
+  inode_number(0),
+  valid(false),
+  link(false),
+  path(path_),
+  file_size(0),
+  date(0),
+  access_date(0),
+  err(false),
+  can_read(false),
+  can_write(false),
+  can_exec(false),
+  fullpath()
 {
   inode_number = 0;
   link = false;
@@ -119,7 +149,20 @@ CppDir::File::File( std::string path_, std::string name_ )
 
 
 CppDir::File::File( std::string f )
-  : fullpath( f )
+: name(),
+  type( EFILE::UNKNOWN ),
+  inode_number(0),
+  valid(false),
+  link(false),
+  path(),
+  file_size(0),
+  date(0),
+  access_date(0),
+  err(false),
+  can_read(false),
+  can_write(false),
+  can_exec(false),
+  fullpath(f)
 {
   inode_number = 0;
   link = false;
@@ -274,6 +317,12 @@ std::string CppDir::File::get_link_buf() const
 
 // private
 CppDir::Directory::Directory( const Directory & other )
+: error( other.error ),
+  name( other.name ),
+  valid(other.valid),
+  files( other.files),
+  is_open( false ),
+  dir( 0 )
 {
 
 }
@@ -281,21 +330,29 @@ CppDir::Directory::Directory( const Directory & other )
 // private
 CppDir::Directory & CppDir::Directory::operator=( const Directory & other )
 {
-
+	return *this;
 }
 
 CppDir::Directory::Directory( std::string pname )
+: error(),
+  name(),
+  valid(false),
+  files(),
+  is_open( false ),
+  dir( 0 )
 {
-  is_open = false;
-
   valid = open( pname );
 }
 
 
 CppDir::Directory::Directory( File file )
+: error(),
+  name(),
+  valid(false),
+  files(),
+  is_open( false ),
+  dir( 0 )
 {
-  is_open = false;
-
   valid = open( file );
 }
 

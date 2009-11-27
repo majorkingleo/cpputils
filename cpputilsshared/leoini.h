@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2009/02/02 10:58:01  wamas
+ * WIN32 portage
+ *
  * Revision 1.1  2009/01/27 12:37:38  wamas
  * Weiter nützliche Klassen.
  *
@@ -69,6 +72,8 @@ namespace Leo
 		UNDEF,        ///< not defined
 		LAST__
 	    };
+
+	    virtual ~EnumType() {}
 	};
       
       typedef Tools::EnumRange<EnumType> TYPE;
@@ -76,8 +81,15 @@ namespace Leo
       TYPE type; ///< the type of the element
       
       Element( TYPE type_ = TYPE::UNDEF, std::string section_ = "", std::string key_ = "", std::string value_ = "" )
-	: section( section_ ), key( key_ ), value( value_ ), type( type_ ) {}
+		  : section( section_ ),
+		    key( key_ ),
+		    value( value_ ),
+		    elements(),
+		    type( type_ )
+	  {}
       
+      virtual ~Element() {}
+
       /// adds a section to the section list, or adds a key to the section
       /** returns false on error */
       bool add( Element& element ); 
@@ -90,7 +102,7 @@ namespace Leo
       {
 	std::string::size_type pos;   ///< the cursor position
 	std::string str;              ///< the string
-	String() : pos(0) {}          
+	String() : pos(0), str() {}
 	void clear() { pos = 0; str =""; } ///< clear the String
       };
       
@@ -99,7 +111,7 @@ namespace Leo
       String tag;      ///< the stripped key, section,.. 
       std::string str; ///< the whole line
       
-      Line() : number( 0 ) {}
+      Line() : number( 0 ), comment(), tag(), str() {}
       void clear()  ///< clears the Line
       { number = 0; comment.clear(); tag.clear(); str = ""; }
       std::string get_line(); ///< returns regenerated Line
@@ -118,13 +130,15 @@ namespace Leo
       
       mutable mem_element_list mem_elements; ///< list of subelements
       
-      MemElement() : Element(){}     
+      MemElement() : Element(), line(), mem_elements(){}
       
       MemElement( const Element& e )  ///< copy contructor for Elements
-	: Element() 
+	: Element() ,
+	  line(),
+	  mem_elements()
       { *this = e; }
       
-      void operator=( const Element& e ); ///< copy en Element
+      MemElement & operator=( const Element& e ); ///< copy en Element
       void clear(); ///< clear it
       
       Element get_element(); ///< returns en Element
@@ -146,7 +160,20 @@ namespace Leo
     
     bool changed;          ///< true if something has changed and we have to write it to the file
   public:
-    Ini() : is_open( false ), valid( false ), eof_reached( false ), changed( false ) {}
+    Ini()
+    : elements(),
+      comments(),
+      openmode(0),
+      file_name(),
+      file(),
+      is_open( false ),
+      valid( false ),
+      file_readed(false),
+      eof_reached( false ),
+      line_number(0),
+      changed( false )
+    {}
+
     Ini( std::string filename, int mode = std::ios::in | std::ios::out);
     
     /// destructor

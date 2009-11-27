@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.3  2009/11/19 10:52:10  wamas
+ * Bugfixes
+ *
  * Revision 1.2  2009/02/02 10:58:01  wamas
  * WIN32 portage
  *
@@ -70,6 +73,8 @@ namespace CppDir
 	    LINK     = 10, ///< link
 	    LAST__
 	};	
+
+		virtual ~EnumFile() {}
     };
 
     typedef EnumRange<EnumFile> EFILE;

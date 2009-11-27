@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2009/11/19 10:52:10  wamas
+ * Bugfixes
+ *
  * Revision 1.1  2009/01/27 12:37:38  wamas
  * Weiter nützliche Klassen.
  *
@@ -53,14 +56,16 @@ public:
     ETYPE value;
 
     EnumRange( ETYPE value_ ) 
-	: value( value_ )
+	: EClass(),
+	  value( value_ )
 	{
 	    if( value <= EClass::FIRST__ || value >= EClass::LAST__ )
 		throw( Error( "EnumRange: Out of range!" ) );
 	}    
 
     EnumRange(  const EnumRange<EClass>& er ) 
-	: value( er.value )
+	: EClass(),
+	  value( er.value )
 	{
 	    if( value <= EClass::FIRST__ || value >= EClass::LAST__ )
 		throw( Error( "EnumRange: Out of range!" ) );
@@ -70,7 +75,7 @@ public:
 		cp(*this,er);
 	}    
 
-    EnumRange() : value( INVALID__ ) {}
+    EnumRange() : EClass(), value( INVALID__ ) {}
 
     ETYPE operator()() const {
 	if( value == INVALID__ )

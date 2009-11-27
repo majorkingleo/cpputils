@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.3  2009/08/26 09:27:59  wamas
+ * GCC 4 Port
+ *
  * Revision 1.2  2008/09/02 12:16:52  wamas
  * Umbau auf cpputils
  *
@@ -102,8 +105,23 @@ template <class V> class Ref
     bool del;     ///< if this value is true, the object will be deleted, count <= 0
     
     Rep( int c, pointer o, bool d = true ) : count(c), obj( o ), del( d ) {}
+    Rep( const Rep & other )
+    : count( other.count ),
+      obj( other.obj ),
+      del( other.del )
+    {
+
+    }
     
-    ~Rep() 
+    Rep & operator=( const Rep & other )
+    {
+    	count = other.count;
+    	obj = other.obj;
+    	del = other.del;
+    	return *this;
+    }
+
+    virtual ~Rep()
     { 
       if( del) 
 	{
