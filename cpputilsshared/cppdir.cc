@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.4  2009/11/27 16:04:04  wamas
+ * Warnings ausgebaut.
+ *
  * Revision 1.3  2009/11/19 10:52:10  wamas
  * Bugfixes
  *
@@ -148,7 +151,7 @@ CppDir::File::File( std::string path_, std::string name_ )
 }
 
 
-CppDir::File::File( std::string f )
+CppDir::File::File( const std::string & f )
 : name(),
   type( EFILE::UNKNOWN ),
   inode_number(0),
@@ -174,6 +177,10 @@ CppDir::File::File( std::string f )
   split_name( f, path, name );
 }
 
+
+CppDir::File::~File()
+{
+}
 
 CppDir::EFILE CppDir::File::get_type( const std::string& cname )
 {

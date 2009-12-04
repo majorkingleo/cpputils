@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.4  2009/11/27 16:04:04  wamas
+ * Warnings ausgebaut.
+ *
  * Revision 1.3  2009/11/19 10:52:10  wamas
  * Bugfixes
  *
@@ -106,7 +109,8 @@ namespace CppDir
     /** extract file informations from the dirent structure */
     File( struct dirent *d, std::string path ); 
     File( std::string path, std::string name );
-    File( std::string file );
+    File( const std::string & file );
+	~File();
 
     bool is_valid() const { return valid; }
     bool operator!() const { return !valid; }
