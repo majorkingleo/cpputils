@@ -1,6 +1,9 @@
 /*
 +*  VERSID:    "%Z% @(#)$Header$";
 +*  $Log$
++*  Revision 1.9  2009/10/14 09:49:31  wamas
++*  IsEmptyStr weggerissen und durch Tools::is_empty_str, oder Util_IsEmptyStr ersetzt
++*
 +*  Revision 1.8  2009/10/14 08:32:50  wamas
 +*  Bugfix fur die Inventur.
 +*
@@ -161,7 +164,7 @@ inline std::string auto_linebreak( std::string text, unsigned int max_size = 90 
   return text_right_format( text, max_size, 0 );
 }
 
-std::string substitude( std::string str, std::string what, std::string with );
+std::string substitude( std::string str, std::string what, std::string with, std::string::size_type start = 0 );
 
 std::string prepand( std::string str, std::string what, std::string prefix );
 

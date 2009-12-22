@@ -8,6 +8,9 @@
 
 /*
  * $Log$
+ * Revision 1.10  2009/10/21 12:23:53  wamas
+ * Toolsbox Port
+ *
  * Revision 1.9  2009/10/14 08:32:50  wamas
  * Bugfix fur die Inventur.
  *
@@ -286,9 +289,9 @@ std::string x2s( bool b )
   return "FALSE";
 }
 
-std::string substitude( std::string str, std::string what, std::string with )
+std::string substitude( std::string str, std::string what, std::string with, std::string::size_type start  )
 {
-  std::string::size_type pos=0;
+  std::string::size_type pos=start;
 
   if( what.empty() )
       return str;
