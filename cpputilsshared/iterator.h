@@ -3,6 +3,9 @@
 
 /*
  * $Log$
+ * Revision 1.1  2008/09/23 13:01:39  wamas
+ * moved xml.h and c and iterator to cpputils
+ *
  * Revision 1.3  2006/11/24 09:47:27  wamas
  * -Wshadow Warnings ausgebaut
  *
@@ -103,7 +106,7 @@ namespace Tools {
     Iterator<iterator,_pointer>& operator--() { --it; return *this; }
     Iterator<iterator,_pointer>& operator++() { ++it; return *this; }
 
-    Iterator<iterator,_pointer>& operator++(int c) { it.operator++(c); return *this; } 
+    Iterator<iterator,_pointer> operator++(int c) { it.operator++(c); return *this; } 
     
     bool operator<( const Iterator<iterator,_pointer> &i ) const
     { 
