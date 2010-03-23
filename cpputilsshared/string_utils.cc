@@ -1,64 +1,3 @@
-#ifndef NOWAMAS
-#include <versid.h>
-#if !defined(__lint) && !defined(__LINT__) && !defined(lint)
-/**********************************************************************
-+*/ VERSIDC( string_utils, "%Z% @(#)$Header$" );
-#endif
-#endif
-
-/*
- * $Log$
- * Revision 1.10  2009/10/21 12:23:53  wamas
- * Toolsbox Port
- *
- * Revision 1.9  2009/10/14 08:32:50  wamas
- * Bugfix fur die Inventur.
- *
- * Revision 1.8  2009/10/02 13:43:03  wamas
- * fill_leading und fill_trailing eingebaut.
- *
- * Revision 1.7  2009/09/08 17:49:57  wamas
- * Bugfixes and Updates
- *
- * Revision 1.6  2009/04/22 14:22:06  wamas
- * Bugfix von Mario bezüglich auto_linebreak und simple_what wird bei einer sql exception nun auch gefuellt.
- *
- * Revision 1.5  2009/03/27 10:55:22  wamas
- * Fixes and extensions
- *
- * Revision 1.4  2008/09/02 16:34:16  wamas
- * Merged with clp
- *
- * Revision 1.3  2008/09/02 12:16:52  wamas
- * Umbau auf cpputils
- *
- * Revision 1.2  2008/09/02 09:55:13  wamas
- * Removed WIN32 warnings
- * user: mmattl
- *
- * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
- * Initial import
- *
- * Revision 1.2  2008/06/24 14:31:59  wamas
- * Fixed leading zeros.
- *
- * Revision 1.1  2008/02/25 10:41:38  wamas
- * MOBERZA TS-115979 Menï¿½ Transporteinheiten Erstellen hinzugefuegt,
- * sowie wood und andere C++ Dateien.
- *
- * Revision 1.1  2007/02/19 07:14:04  wamas
- * sis: Eingecheckt
- *
- * Revision 1.1.2.2  2006/09/26 09:22:51  wamas
- * MOBERZA TS-80568 Standorthandling und Bugfixes
- *
- * Revision 1.1.2.1  2006/05/11 08:27:36  wamas
- * Toolsbox Umstellung
- *
- * Revision 1.1.2.2  2005/07/27 16:29:59  wamas
- * MOBERZA add Versid and logging stuff
- *
- */
 #include "string_utils.h"
 #include "format.h"
 #include <cctype>
@@ -289,8 +228,9 @@ std::string x2s( bool b )
   return "FALSE";
 }
 
-std::string substitude( std::string str, std::string what, std::string with, std::string::size_type start  )
+std::string substitude( const std::string & str_orig, const std::string & what, const std::string & with, std::string::size_type start  )
 {
+  std::string str( str_orig );
   std::string::size_type pos=start;
 
   if( what.empty() )
