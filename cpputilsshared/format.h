@@ -809,6 +809,23 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
 	  if( had_precision && args[upar].is_string )
 	    str = str.substr( 0, cf.precision );
 
+	  // cut null bytes out of the string
+	  // can happen when std::string.resize() is called 
+	  // eg: std::string foo="foo";
+	  //     foo.resize(4);
+	  //     std::cout << (foo + "bar").c_str();
+	  //     will result in only the string "foo"
+	  //     we avoid this by cutting zeor bytes out
+	  
+	  for( std::string::size_type p = 0; p < str.size(); p++ )
+	  {
+		  if( str[p] ==  '\0' )
+	      {
+			  str = str.substr( 0, p );
+			  break;
+		  }
+	  }			  
+
 	  s += str;
 
 	  if( use_par == par )
