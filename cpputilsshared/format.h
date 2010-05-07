@@ -199,6 +199,8 @@ Arg29 var29;
     bool is_int( unsigned long ) { return true; }
     bool is_int( unsigned long long ) { return true; }
     bool is_int( long long ) { return true; }
+    bool is_int( long &n ) { return true; }
+    bool is_int( const long &n ) { return true; }
 
     template <class S> bool is_string( S &s_ ) { return false; }
     bool is_string( std::string& s_ ) { return true; }
