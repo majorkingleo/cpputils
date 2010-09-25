@@ -199,8 +199,6 @@ Arg29 var29;
     bool is_int( unsigned long ) { return true; }
     bool is_int( unsigned long long ) { return true; }
     bool is_int( long long ) { return true; }
-    bool is_int( long &n ) { return true; }
-    bool is_int( const long &n ) { return true; }
 
     template <class S> bool is_string( S &s_ ) { return false; }
     bool is_string( std::string& s_ ) { return true; }
@@ -718,6 +716,7 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
 	   switch( format[pos] )
 	     {
 	     case 'd':
+	     case 'u':
 	     case 'i':
 	       cf.base = CFormat::DEC;
 	       if( cf.zero && (cf.adjust != CFormat::LEFT) )
