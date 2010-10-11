@@ -114,7 +114,7 @@ std::string text_right_format( std::string s, unsigned int max_size, unsigned in
       
       has_new_line = true;
 
-      if( i >= static_cast<int>(ss.size()) )
+      if( i >= static_cast<int>(ss.size()) || i < 0 )
 	break;
       
       ss = ss.substr( i + 1 );
