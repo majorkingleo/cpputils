@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.3  2009/11/27 16:04:04  wamas
+ * Warnings ausgebaut.
+ *
  * Revision 1.2  2009/02/02 10:58:01  wamas
  * WIN32 portage
  *
@@ -159,6 +162,9 @@ namespace Leo
     int line_number;       ///< the current line number
     
     bool changed;          ///< true if something has changed and we have to write it to the file
+
+	std::string auto_global_section_name;
+
   public:
     Ini()
     : elements(),
@@ -171,15 +177,26 @@ namespace Leo
       file_readed(false),
       eof_reached( false ),
       line_number(0),
-      changed( false )
+      changed( false ),
+	  auto_global_section_name()
     {}
 
-    Ini( std::string filename, int mode = std::ios::in | std::ios::out);
-    
+    Ini( std::string filename, int mode = std::ios::in | std::ios::out);   
+
     /// destructor
     /** if a file is still open the buffer will be flushed and the file closed */
     ~Ini();
     
+	/// name of the autoglobal section
+	/*** automatically create a section for key value pairs that are 
+		 not assigned to a section and stores in a section named here
+		 call this function before reading any data from the ini file
+	*/
+	void setAutoGlobalSectionName( const std::string & name )
+	{
+	  auto_global_section_name = name;
+	}
+
     /// open a ini file
     /** returns false if we already opened a file or file opening failed */
     bool open( std::string filename, int mode = std::ios::in | std::ios::out );

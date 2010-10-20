@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.2  2009/11/27 16:04:04  wamas
+ * Warnings ausgebaut.
+ *
  * Revision 1.1  2009/01/27 12:37:37  wamas
  * Weiter nützliche Klassen.
  *
@@ -129,7 +132,8 @@ Leo::Ini::Ini( std::string filename, int mode )
   file_readed(false),
   eof_reached(false),
   line_number(0),
-  changed(false)
+  changed(false),
+  auto_global_section_name()
 {
   is_open = false;
   valid = false;
@@ -260,43 +264,55 @@ bool Leo::Ini::read()
       Line line = read_line();
 
       if( eof_reached && line.str.empty() )
-	break;
+		break;
 
       if( line.tag.str.empty() )
-	{
-	  // simple comment
-	  comments.push_back( line );
-	  continue;
-	}
+		{
+		  // simple comment
+		  comments.push_back( line );
+		  continue;
+		}
 
-      if( is_section( line.tag.str ) )
-	{
-	  if( in_section )
-	    {
-	      elements.push_back( current_section );
-	      current_section.clear();
-	    }
+	  if( is_section( line.tag.str ) )
+		{
+		  if( in_section )
+			{
+			  elements.push_back( current_section );
+			  current_section.clear();
+			}
 	  
-	  // create a new section
-	  current_section.line = line;
-	  current_section.section = extract_section_name( line.tag.str );
-	  current_section.type = Element::TYPE::SECTION;
+		  // create a new section
+		  current_section.line = line;
+		  current_section.section = extract_section_name( line.tag.str );
+		  current_section.type = Element::TYPE::SECTION;
 
-	  in_section = true;
-	}
-      else if( is_key( line.tag.str ) && in_section )
-	{
-	  // create a new key
-	  MemElement me;
+		  in_section = true;
+		}
+      else if( is_key( line.tag.str ) )
+		{
+		  if( !in_section && !auto_global_section_name.empty() )
+			{
+			  // create a new section
+			  current_section.line = line;
+			  current_section.section = auto_global_section_name;
+			  current_section.type = Element::TYPE::SECTION;
+			  in_section = true;
+			}
 
-	  me.line = line;
-	  me.section = current_section.section;
-	  me.key = extract_key_name( line.tag.str );
-	  me.value = extract_key_data( line.tag.str );
-	  me.type = Element::TYPE::KEY;
+		  if( in_section )
+			{
+			  // create a new key
+			  MemElement me;
 
-	  current_section.mem_elements.push_back( me );
-	}
+			  me.line = line;
+			  me.section = current_section.section;
+			  me.key = extract_key_name( line.tag.str );
+			  me.value = extract_key_data( line.tag.str );
+			  me.type = Element::TYPE::KEY;
+
+			  current_section.mem_elements.push_back( me );
+			}
+		}
     }
 
   if( !current_section.section.empty() )
