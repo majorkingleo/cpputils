@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.6  2011/04/28 12:33:09  wamas
+ * Toolsbox 2010 Portierung mit Interix
+ *
  * Revision 1.5  2009/12/04 09:48:31  wamas
  * Bugfixes
  *
@@ -38,7 +41,7 @@
 
   extended for xstow 
 */
-#ifndef WIN32 || _WIN32
+#if !defined WIN32 && !defined _WIN32
 #ifndef TOOLS_cppdir_h
 #define TOOLS_cppdir_h
 
@@ -46,7 +49,7 @@
 #include <list>
 
 extern "C" {
-#ifndef WIN32 || _WIN32
+#if !defined WIN32 && !defined _WIN32
 #include <dirent.h>
 #endif /* WIN32 || _WIN32 */
 #include <sys/types.h>
@@ -162,7 +165,7 @@ namespace CppDir
 
   private:
     EFILE get_type( const std::string& name );
-#ifndef WIN32 || _WIN32
+#if !defined WIN32 && !defined _WIN32
     inline bool in_groups( gid_t gid, const int size, gid_t list[] );
 #endif
     };

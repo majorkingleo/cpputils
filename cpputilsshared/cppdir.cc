@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.6  2011/04/28 12:33:09  wamas
+ * Toolsbox 2010 Portierung mit Interix
+ *
  * Revision 1.5  2009/12/04 09:48:31  wamas
  * Bugfixes
  *
@@ -187,7 +190,7 @@ CppDir::File::~File()
 
 CppDir::EFILE CppDir::File::get_type( const std::string& cname )
 {
-#ifdef WIN32 || _WIN32
+#if defined WIN32 || defined _WIN32
     return EFILE::REGULAR;
 #else
   struct stat stat_buf;
@@ -305,7 +308,7 @@ CppDir::EFILE CppDir::File::get_type( const std::string& cname )
 #endif
 }
 
-#ifndef WIN32 || _WIN32
+#if !defined WIN32 && !defined _WIN32
 inline bool CppDir::File::in_groups( gid_t gid, const int size, gid_t list[] )
 {
   for( int i = 0; i < size; ++i )
@@ -603,7 +606,7 @@ std::string CppDir::simplify_path( std::string path )
 
 std::string CppDir::readlink( const std::string &path )
 {
-#ifdef WIN32 || _WIN32
+#if defined WIN32 || defined _WIN32
 	return path;
 #else
 #ifndef PATH_MAX
