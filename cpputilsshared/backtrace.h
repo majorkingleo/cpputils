@@ -1,10 +1,13 @@
 /*
  * $Log$
+ * Revision 1.5  2009/10/21 12:23:52  wamas
+ * Toolsbox Port
+ *
  * Revision 1.4  2009/08/26 09:27:58  wamas
  * GCC 4 Port
  *
  * Revision 1.3  2009/02/02 10:58:01  wamas
- * WIN32 portage
+ * WIN32 || _WIN32 portage
  *
  * Revision 1.2  2009/01/26 12:31:46  wamas
  * Tour Fertigbuchen für SAP Tests.

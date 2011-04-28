@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.5  2009/12/04 09:48:31  wamas
+ * Bugfixes
+ *
  * Revision 1.4  2009/11/27 16:04:04  wamas
  * Warnings ausgebaut.
  *
@@ -7,7 +10,7 @@
  * Bugfixes
  *
  * Revision 1.2  2009/02/02 10:58:01  wamas
- * WIN32 portage
+ * WIN32 || _WIN32 portage
  *
  * Revision 1.1  2009/01/27 12:37:37  wamas
  * Weiter nützliche Klassen.
@@ -31,7 +34,7 @@
  * Added CVS Log Info
  *
  */
-#ifndef WIN32
+#if !defined WIN32 && !defined _WIN32
 #include "cppdir.h"
 
 #undef OUT
@@ -184,7 +187,7 @@ CppDir::File::~File()
 
 CppDir::EFILE CppDir::File::get_type( const std::string& cname )
 {
-#ifdef WIN32
+#ifdef WIN32 || _WIN32
     return EFILE::REGULAR;
 #else
   struct stat stat_buf;
@@ -302,7 +305,7 @@ CppDir::EFILE CppDir::File::get_type( const std::string& cname )
 #endif
 }
 
-#ifndef WIN32
+#ifndef WIN32 || _WIN32
 inline bool CppDir::File::in_groups( gid_t gid, const int size, gid_t list[] )
 {
   for( int i = 0; i < size; ++i )
@@ -600,7 +603,7 @@ std::string CppDir::simplify_path( std::string path )
 
 std::string CppDir::readlink( const std::string &path )
 {
-#ifdef WIN32
+#ifdef WIN32 || _WIN32
 	return path;
 #else
 #ifndef PATH_MAX
@@ -800,4 +803,4 @@ bool CppDir::is_in_dir( const std::string &path, const std::string &dir )
 
   return false;
 }
-#endif /* WIN32 */
+#endif /* WIN32 || _WIN32 */

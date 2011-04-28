@@ -1,10 +1,14 @@
 /*
  * $Log$
+ * Revision 1.4  2010/10/20 13:02:07  wamas
+ * Anpassung, das Parameter, die in keiner Sektion drinnen sind,
+ * automatisch zu einer hinzugefügt werden können.
+ *
  * Revision 1.3  2009/11/27 16:04:04  wamas
  * Warnings ausgebaut.
  *
  * Revision 1.2  2009/02/02 10:58:01  wamas
- * WIN32 portage
+ * WIN32 || _WIN32 portage
  *
  * Revision 1.1  2009/01/27 12:37:38  wamas
  * Weiter n�tzliche Klassen.

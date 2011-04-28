@@ -1,5 +1,8 @@
 /*
  * $Log$
+ * Revision 1.5  2009/12/04 09:48:31  wamas
+ * Bugfixes
+ *
  * Revision 1.4  2009/11/27 16:04:04  wamas
  * Warnings ausgebaut.
  *
@@ -7,7 +10,7 @@
  * Bugfixes
  *
  * Revision 1.2  2009/02/02 10:58:01  wamas
- * WIN32 portage
+ * WIN32 || _WIN32 portage
  *
  * Revision 1.1  2009/01/27 12:37:37  wamas
  * Weiter nützliche Klassen.
@@ -35,7 +38,7 @@
 
   extended for xstow 
 */
-#ifndef WIN32
+#ifndef WIN32 || _WIN32
 #ifndef TOOLS_cppdir_h
 #define TOOLS_cppdir_h
 
@@ -43,9 +46,9 @@
 #include <list>
 
 extern "C" {
-#ifndef WIN32
+#ifndef WIN32 || _WIN32
 #include <dirent.h>
-#endif /* WIN32 */
+#endif /* WIN32 || _WIN32 */
 #include <sys/types.h>
 
 }
@@ -159,7 +162,7 @@ namespace CppDir
 
   private:
     EFILE get_type( const std::string& name );
-#ifndef WIN32
+#ifndef WIN32 || _WIN32
     inline bool in_groups( gid_t gid, const int size, gid_t list[] );
 #endif
     };
@@ -236,4 +239,4 @@ namespace CppDir
 } // namespace Tools
 
 #endif
-#endif /* WIN32 */
+#endif /* WIN32 || _WIN32 */
