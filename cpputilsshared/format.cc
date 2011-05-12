@@ -1,31 +1,3 @@
-/*
- * $Log$
- * Revision 1.2  2008/09/02 16:43:07  wamas
- * Bugfixes
- *
- * Revision 1.1.1.1  2008/08/14 14:11:32  moberza
- * Initial import
- *
- * Revision 1.2  2008/04/15 08:52:19  wamas
- * Anpassungen in der Vorzone und neue Menüs
- * user: karl, moberza
- *
- * Revision 1.1  2008/02/25 10:41:38  wamas
- * MOBERZA TS-115979 Menü Transporteinheiten Erstellen hinzugefuegt,
- * sowie wood und andere C++ Dateien.
- *
- * Revision 1.2  2008/02/20 09:30:20  wamas
- * rewrote format for porting code to gccs -fstrict-aliasing
- * and make it on M$ compiler work
- *
- * Revision 1.1.1.1  2006/03/17 19:49:16  wamas
- * own tools reponsitority
- *
- * Revision 1.2  2006/03/09 00:48:27  wamas
- * Added CVS Log Info
- *
- */
-
 #include "format.h"
 #include <cstdlib>
 
@@ -50,8 +22,7 @@ void Format::CFormat::set( std::ostream& out )
     {
       return;
     }
-
-/*
+  /*
   printf( "valid: %d\n", valid );
   printf( "adjust: %d\n", adjust );
   printf( "special: %d\n", special );
@@ -68,8 +39,7 @@ void Format::CFormat::set( std::ostream& out )
   printf( "floating: %d\n", floating );
   printf( "showbase: %d\n", showbase );
   printf( "strlength: %d\n", strlength );
-*/
-
+  */
   if( base == HEX && special && showbase && zero ) 
   {
       // without this correction:
