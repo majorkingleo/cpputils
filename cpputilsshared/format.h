@@ -501,10 +501,10 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
   ST pos = 0;
   ST len = format.size();
   s = "";
-  bool had_precision = false;
 
   while( par < num_of_args && pos < len )
     { // while
+  	  bool had_precision = false;
 
       use_par = par;
 
