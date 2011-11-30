@@ -1,34 +1,3 @@
-/*
- * $Log$
- * Revision 1.2  2009/11/27 16:04:04  wamas
- * Warnings ausgebaut.
- *
- * Revision 1.1  2009/01/27 12:37:37  wamas
- * Weiter nützliche Klassen.
- *
- * Revision 1.6  2008/08/06 12:24:55  wamas
- * new g++ fixes
- *
- * Revision 1.5  2007/02/09 17:25:35  wamas
- * GCC 2.95 port
- *
- * Revision 1.4  2006/11/23 16:46:26  wamas
- * MOBERZA -Wshadow dazugeschalten und ausgebessert
- *
- * Revision 1.3  2006/04/05 08:16:46  wamas
- * Alte c++ lib version braucht ein file.clear()
- *
- * Revision 1.2  2006/03/29 09:25:14  wamas
- * Operator << in namespace Tools gebracht
- *
- * Revision 1.1.1.1  2006/03/17 19:49:15  wamas
- * own tools reponsitority
- *
- * Revision 1.2  2006/03/09 00:48:27  wamas
- * Added CVS Log Info
- *
- */
-
 #include "leoini.h"
 #include <iostream>
 

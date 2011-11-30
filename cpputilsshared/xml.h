@@ -1,19 +1,3 @@
-/*
- * $Log$
- * Revision 1.1  2008/09/23 13:01:39  wamas
- * moved xml.h and c and iterator to cpputils
- *
- * Revision 1.2  2006/11/23 16:46:27  wamas
- * MOBERZA -Wshadow dazugeschalten und ausgebessert
- *
- * Revision 1.1.1.1  2006/03/17 19:49:15  wamas
- * own tools reponsitority
- *
- * Revision 1.2  2006/03/09 00:48:27  wamas
- * Added CVS Log Info
- *
- */
-
 #ifndef TOOLS_XML_H
 #define TOOLS_XML_H
 

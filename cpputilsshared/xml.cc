@@ -1,25 +1,3 @@
-/*
- * $Log$
- * Revision 1.1  2008/09/23 13:01:39  wamas
- * moved xml.h and c and iterator to cpputils
- *
- * Revision 1.6  2007/02/09 17:25:35  wamas
- * GCC 2.95 port
- *
- * Revision 1.5  2006/12/27 21:51:42  wamas
- * making file reading faster if using gcc
- *
- * Revision 1.4  2006/11/23 16:46:27  wamas
- * MOBERZA -Wshadow dazugeschalten und ausgebessert
- *
- * Revision 1.3  2006/04/19 19:29:44  wamas
- * Performance Tuning
- *
- * Revision 1.2  2006/03/17 19:54:17  wamas
- * Logentry added
- *
- */
-
 #include "xml.h"
 #include "string_utils.h"
 #include <iostream>

@@ -1,28 +1,3 @@
-/*
- * $Log$
- * Revision 1.3  2009/08/26 09:27:59  wamas
- * GCC 4 Port
- *
- * Revision 1.2  2008/09/02 12:16:52  wamas
- * Umbau auf cpputils
- *
- * Revision 1.4  2008/06/20 07:19:18  wamas
- * Memory Leaks Suchen
- *
- * Revision 1.3  2007/03/28 07:30:12  wamas
- * Bugfixes um Abstuerze beim Multithreading zu verhindern
- *
- * Revision 1.2  2006/11/23 16:46:27  wamas
- * MOBERZA -Wshadow dazugeschalten und ausgebessert
- *
- * Revision 1.1.1.1  2006/03/17 19:49:15  wamas
- * own tools reponsitority
- *
- * Revision 1.2  2006/03/09 00:48:27  wamas
- * Added CVS Log Info
- *
- */
-
 #ifndef TOOLS_ref_h
 #define TOOLS_ref_h
 

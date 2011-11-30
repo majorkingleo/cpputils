@@ -1,25 +1,3 @@
-/*
- * $Log$
- * Revision 1.2  2009/11/19 10:52:10  wamas
- * Bugfixes
- *
- * Revision 1.1  2009/01/27 12:37:38  wamas
- * Weiter nützliche Klassen.
- *
- * Revision 1.3  2008/06/20 14:47:41  wamas
- * strcpy improved
- *
- * Revision 1.2  2006/11/23 16:46:27  wamas
- * MOBERZA -Wshadow dazugeschalten und ausgebessert
- *
- * Revision 1.1.1.1  2006/03/17 19:49:15  wamas
- * own tools reponsitority
- *
- * Revision 1.2  2006/03/09 00:48:27  wamas
- * Added CVS Log Info
- *
- */
-
 #ifndef TOOLS_RANGE_H
 #define TOOLS_RANGE_H
 

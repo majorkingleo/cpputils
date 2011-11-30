@@ -1,34 +1,3 @@
-/*
- * $Log$
- * Revision 1.5  2009/10/21 12:23:52  wamas
- * Toolsbox Port
- *
- * Revision 1.4  2009/08/26 09:27:58  wamas
- * GCC 4 Port
- *
- * Revision 1.3  2009/02/02 10:58:01  wamas
- * WIN32 || _WIN32 portage
- *
- * Revision 1.2  2009/01/26 12:31:46  wamas
- * Tour Fertigbuchen für SAP Tests.
- *
- * Revision 1.1  2009/01/16 13:12:55  wamas
- * Added Backtrace Helping Module
- *
- * Revision 1.3  2007/02/09 19:37:32  wamas
- * bugfix
- *
- * Revision 1.2  2007/02/09 17:25:35  wamas
- * GCC 2.95 port
- *
- * Revision 1.1.1.1  2006/03/17 19:49:17  wamas
- * own tools reponsitority
- *
- * Revision 1.2  2006/03/09 00:48:26  wamas
- * Added CVS Log Info
- *
- */
-
 #ifndef TOOLS_BACKTRACE_H
 #define TOOLS_BACKTRACE_H
 
