@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "ref.h"
+#include "string_utils.h"
 
 #define HAVE_STL_SSTREAM
 
@@ -846,11 +847,7 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
 
   if( pos < len )
     {
-      while( pos < len )
-	{
-	  s += format[pos];
-	  pos++;
-	}
+	   s += Tools::substitude( format.substr(pos), "%%", "%" );
     }
 }
 
