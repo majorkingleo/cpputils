@@ -254,7 +254,7 @@ std::string substitude( const std::string & str_orig, const std::string & what, 
 	  str.replace( pos, what.size(), with );
 	}
 
-      pos += (what.size() > with.size() ? what.size() : with.size() );
+      pos += with.size();
     }
   return str;
 }
