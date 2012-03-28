@@ -391,7 +391,11 @@ bool XML::read_file( const std::string &file, std::string &s )
 
       getline( in, ss );
       
+#ifdef _WIN32	  
+      s += ss + "\r\n";
+#else	  
       s += ss + '\n';
+#endif	  
     }
 #endif 
 /*
