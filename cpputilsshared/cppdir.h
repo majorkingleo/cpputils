@@ -1,4 +1,3 @@
-#if !defined WIN32 && !defined _WIN32
 #ifndef TOOLS_cppdir_h
 #define TOOLS_cppdir_h
 
@@ -6,11 +5,8 @@
 #include <list>
 
 extern "C" {
-#if !defined WIN32 && !defined _WIN32
 #include <dirent.h>
-#endif /* WIN32 || _WIN32 */
 #include <sys/types.h>
-
 }
 
 #include <iostream>
@@ -73,7 +69,6 @@ namespace CppDir
     File( struct dirent *d, std::string path ); 
     File( std::string path, std::string name );
     File( const std::string & file );
-	~File();
 
     bool is_valid() const { return valid; }
     bool operator!() const { return !valid; }
@@ -199,4 +194,3 @@ namespace CppDir
 } // namespace Tools
 
 #endif
-#endif /* WIN32 || _WIN32 */

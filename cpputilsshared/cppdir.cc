@@ -1,4 +1,3 @@
-#if !defined WIN32 && !defined _WIN32
 #include "cppdir.h"
 
 #undef OUT
@@ -142,11 +141,6 @@ CppDir::File::File( const std::string & f )
   valid = !err;
 
   split_name( f, path, name );
-}
-
-
-CppDir::File::~File()
-{
 }
 
 CppDir::EFILE CppDir::File::get_type( const std::string& cname )
@@ -767,4 +761,3 @@ bool CppDir::is_in_dir( const std::string &path, const std::string &dir )
 
   return false;
 }
-#endif /* WIN32 || _WIN32 */
