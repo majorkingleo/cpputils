@@ -15,6 +15,14 @@ extern "C" {
 #include <vector>
 #include <cstdlib>
 
+#ifdef WIN32
+#define PATH_SEP '\\'
+#define PATH_SEP_STR "\\"
+#else
+#define PATH_SEP '/'
+#define PATH_SEP_STR "/"
+#endif
+
 using namespace Tools;
 
 extern "C" { int lstat(const char *file_name, struct stat *buf); }
@@ -22,15 +30,15 @@ extern "C" { int lstat(const char *file_name, struct stat *buf); }
 std::string CppDir::concat_dir( std::string path, std::string name )
 {
   if( name.size() > 0 )
-    if( name[0] == '/' && !path.empty() )
+    if( name[0] == PATH_SEP && !path.empty() )
       name = name.substr( 1 );
 
   if( path.size() > 0 )
     {
-      if( path[path.size()-1] == '/' )
+      if( path[path.size()-1] == PATH_SEP )
 	path = path.substr( 0, path.size() - 1 );
 
-      path += "/" + name;
+      path += PATH_SEP + name;
     }
   else
     path = name;
@@ -39,7 +47,11 @@ std::string CppDir::concat_dir( std::string path, std::string name )
 
   while( true )
     {
+#ifdef WIN32	
+      pos = path.find( "\\.\\" );
+#else	  
       pos = path.find( "/./" );
+#endif	  
       if( pos == std::string::npos )
 	break;
 
@@ -474,7 +486,7 @@ std::string CppDir::get_full_path( std::string file, std::string current_dir )
   else
     if( !current_dir.empty() )
       {
-	if( current_dir[0] == '/' )
+	if( current_dir[0] == PATH_SEP )
 	  {
 	    DEBUG( OUT(4) << "current_dir: " << current_dir << std::endl );
 	    DEBUG( OUT(4) << "file: " << file << std::endl );
@@ -501,17 +513,17 @@ std::string CppDir::get_full_path( std::string file, std::string current_dir )
 
 void CppDir::split_name(std::string file_name, std::string & path, std::string & name )
 {
-  if( file_name == "/" )
+  if( file_name == PATH_SEP_STR )
     {
       name = file_name;
       path = file_name;
       return;
     }
 
-  if( file_name.rfind( '/' ) == file_name.size() - 1 )
+  if( file_name.rfind( PATH_SEP ) == file_name.size() - 1 )
     file_name = file_name.substr( 0, file_name.size() - 1 );
     
-  std::string::size_type p = file_name.rfind( '/' );
+  std::string::size_type p = file_name.rfind( PATH_SEP );
   if( p == std::string::npos )
     name = file_name;
   else
@@ -601,10 +613,10 @@ std::string CppDir::beautify_path( std::string path )
     {
       std::string::size_type first, second;
       
-      if( (first = path.find( "/../" ) ) == std::string::npos )
+      if( (first = path.find( PATH_SEP_STR ".." PATH_SEP_STR ) ) == std::string::npos )
 	break;
 
-      if( (second = path.rfind( '/', first - 1 ) ) != std::string::npos )
+      if( (second = path.rfind( PATH_SEP, first - 1 ) ) != std::string::npos )
 	{
 	  std::string left = path.substr( 0, second );
 	  std::string right = path.substr( first + 4 );
@@ -620,19 +632,19 @@ std::string CppDir::beautify_path( std::string path )
 
   while( true )
     {
-      pos = path.find( "/./" );
+      pos = path.find( PATH_SEP_STR  "." PATH_SEP_STR );
       if( pos == std::string::npos )
 	break;
 
       path = path.substr( 0, pos ) + path.substr( pos + 2 );
     } 
 
-  if( path.rfind( "/." ) == path.size() - 2 )
+  if( path.rfind( PATH_SEP_STR "." ) == path.size() - 2 )
     path = path.substr( 0, path.size() - 2 );
   else
     {
 
-      if( path.rfind( '/' ) == path.size() - 1 )
+      if( path.rfind( PATH_SEP ) == path.size() - 1 )
 	path = path.substr( 0, path.size() - 1 );
 
     }
@@ -655,12 +667,12 @@ std::string CppDir::make_relative( std::string path, std::string dir )
     {
       std::string::size_type first;
 
-      if( (first = path.find( '/' ) ) == std::string::npos )
+      if( (first = path.find( PATH_SEP ) ) == std::string::npos )
 	{
 	  if( !path.empty()  )
 	    {
-	      DEBUG( OUT(3) << "push from path: " << path + '/'  << std::endl );
-	      lpath.push_back( path + '/' );
+	      DEBUG( OUT(3) << "push from path: " << path + PATH_SEP  << std::endl );
+	      lpath.push_back( path + PATH_SEP );
 	    }
 
 	  break;
@@ -681,12 +693,12 @@ std::string CppDir::make_relative( std::string path, std::string dir )
     {
       std::string::size_type first;
 
-      if( (first = dir.find( '/' ) ) == std::string::npos )
+      if( (first = dir.find( PATH_SEP ) ) == std::string::npos )
 	{
 	  if( !dir.empty()  )
 	    {
-	      DEBUG( OUT(3) << "push from dir: " << dir + '/' << std::endl );
-	      ldir.push_back( dir + '/' );
+	      DEBUG( OUT(3) << "push from dir: " << dir + PATH_SEP << std::endl );
+	      ldir.push_back( dir + PATH_SEP );
 	    }
 
 	  break;
@@ -721,7 +733,7 @@ std::string CppDir::make_relative( std::string path, std::string dir )
 
   // remove '/' 
   
-  if( res.rfind( '/' ) == res.size() - 1 )
+  if( res.rfind( PATH_SEP ) == res.size() - 1 )
     res = res.substr( 0, res.size() - 1 );
   
   DEBUG( OUT(3) << "res: " << res << std::endl );
@@ -745,16 +757,16 @@ bool CppDir::is_in_dir( const std::string &path, const std::string &dir )
   if( path.find( dir ) != 0 )
     return false;
 
-  if( dir[ dir.size() -1 ] != '/' )
+  if( dir[ dir.size() -1 ] != PATH_SEP )
     {
       if( path.size() <= dir.size() )
 	return true;
 
-      if( path[dir.size()] == '/' )
+      if( path[dir.size()] == PATH_SEP )
 	return true;      
     }  
 
-  if( dir == "/" )
+  if( dir == PATH_SEP_STR )
       return true;
 
   DEBUG( OUT(4)( "failed is_in_dir: path: %s, dir %s\n", path, dir ) );
