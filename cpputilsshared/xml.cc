@@ -359,6 +359,7 @@ bool XML::read_file( const std::string &file, std::string &s )
       return false;
     }
 
+#ifndef WIN32	
 #if __GNUC__ > 2
   in.seekg( 0, std::ios_base::end );
 #else
@@ -398,14 +399,14 @@ bool XML::read_file( const std::string &file, std::string &s )
 #endif	  
     }
 #endif 
-/*
+#else
   // that's the most beatiful way reading a file
   // but is very slow on __GNUC__ <= 3 
   std::istreambuf_iterator<char> begin(in);
   std::istreambuf_iterator<char> end;
 
   s = std::string( begin, end );
-*/
+#endif  
   return true;
 }
 

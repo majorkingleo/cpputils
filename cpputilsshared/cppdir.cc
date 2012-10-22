@@ -36,9 +36,13 @@ std::string CppDir::concat_dir( std::string path, std::string name )
   if( path.size() > 0 )
     {
       if( path[path.size()-1] == PATH_SEP )
-	path = path.substr( 0, path.size() - 1 );
+		path = path.substr( 0, path.size() - 1 );
 
-      path += PATH_SEP + name;
+	  if( path == "." ) {
+	    path = name;
+      } else {
+	    path += PATH_SEP + name;
+	  }	
     }
   else
     path = name;
@@ -157,19 +161,28 @@ CppDir::File::File( const std::string & f )
 
 CppDir::EFILE CppDir::File::get_type( const std::string& cname )
 {
-#if defined WIN32 || defined _WIN32
-    return EFILE::REGULAR;
-#else
+//#if defined WIN32 || defined _WIN32
+//    return EFILE::REGULAR;
+//#else
   struct stat stat_buf;
 
   err = false;
 
-  if( lstat( cname.c_str(), &stat_buf ) == -1 )
+#ifdef WIN32
+  int rv =  stat( cname.c_str(), &stat_buf );
+#else
+  int rv =  lstat( cname.c_str(), &stat_buf );
+#endif
+
+//	std::cout << "DIR: " << cname << ' ' <<  S_ISDIR( stat_buf.st_mode ) << std::endl;
+
+  if( rv == -1 )
     {
       err = true;
       return EFILE::UNKNOWN;
     }
 
+#if !defined WIN32 || !defined _WIN32
   if( S_ISLNK( stat_buf.st_mode ) )
     {
       link = true;
@@ -180,6 +193,7 @@ CppDir::EFILE CppDir::File::get_type( const std::string& cname )
 	  return EFILE::UNKNOWN;
 	}
     }
+#endif	
 
 
   // extract some other informations
@@ -188,6 +202,7 @@ CppDir::EFILE CppDir::File::get_type( const std::string& cname )
   access_date = stat_buf.st_atime;
 
 #ifndef USE_THREADS /* fixme, oda is des wurscht? */
+#ifndef WIN32
   /* getting ids */
   const uid_t fuid = stat_buf.st_uid;
   const gid_t fgid = stat_buf.st_gid;
@@ -247,6 +262,7 @@ CppDir::EFILE CppDir::File::get_type( const std::string& cname )
       can_write = IS( S_IWOTH );
       can_exec = IS( S_IXOTH );
     }
+#endif	
 #else
 # warning TODO Thread safe implementation of cppdir, can_read, can_write,... disabled
 #endif
@@ -256,23 +272,25 @@ CppDir::EFILE CppDir::File::get_type( const std::string& cname )
  if( S_ISREG( stat_buf.st_mode ) )
     return EFILE::REGULAR;
 
+
   if( S_ISDIR( stat_buf.st_mode ) )
     return EFILE::DIR;
     
   if( S_ISCHR( stat_buf.st_mode ) )
     return EFILE::CHAR;
-
+#ifndef WIN32
   if( S_ISBLK( stat_buf.st_mode ) )
     return EFILE::BLOCK;
 
   if( S_ISFIFO( stat_buf.st_mode ) )
     return EFILE::FIFO;
+#endif	
 
   if( link )
     return EFILE::LINK;
 
   return EFILE::UNKNOWN;
-#endif
+//#endif
 }
 
 #if !defined WIN32 && !defined _WIN32
