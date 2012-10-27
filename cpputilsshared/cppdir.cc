@@ -264,7 +264,9 @@ CppDir::EFILE CppDir::File::get_type( const std::string& cname )
     }
 #endif	
 #else
+# ifndef _MSC_VER
 # warning TODO Thread safe implementation of cppdir, can_read, can_write,... disabled
+# endif
 #endif
 
 #undef IS
