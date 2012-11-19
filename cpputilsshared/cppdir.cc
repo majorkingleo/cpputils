@@ -15,6 +15,10 @@ extern "C" {
 #include <vector>
 #include <cstdlib>
 
+#ifdef _WIN32
+#define WIN32
+#endif //_WIN32
+
 #ifdef WIN32
 #define PATH_SEP '\\'
 #define PATH_SEP_STR "\\"
