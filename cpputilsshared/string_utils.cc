@@ -50,7 +50,7 @@ bool is_int( const std::string &s )
 }
 
 /*
-  Re: Trim Funktion fï¿½r Strings
+  Re: Trim Funktion für Strings
   Von: Hubert Schmid <h.schmid-usenet@gmx.de>
   Datum:  Sonntag, 10. Oktober 2004 14:13:35
   Gruppen:  de.comp.lang.iso-c++
