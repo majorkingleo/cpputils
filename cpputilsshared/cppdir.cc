@@ -1,3 +1,8 @@
+
+#if (defined _WIN32 || defined WIN32) && defined _MSC_VER && _MSC_VER < 1500
+// Windows with VS7 (2003)  : Exclude file
+#else
+
 #include "cppdir.h"
 
 #undef OUT
@@ -797,3 +802,5 @@ bool CppDir::is_in_dir( const std::string &path, const std::string &dir )
 
   return false;
 }
+
+#endif // WIN32 && _MSC_VER_
