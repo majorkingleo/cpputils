@@ -169,6 +169,11 @@ namespace CppDir
   /// concats 2 directory names, or dir and filename .....
   std::string concat_dir( std::string path, std::string name );
 
+  inline std::string concat_dir( std::string path, std::string path_part_2 , std::string name )
+  {
+    return concat_dir( concat_dir( path, path_part_2 ), name );
+  }
+
   /// gets the current directory
   std::string pwd();
 
