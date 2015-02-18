@@ -9,4 +9,14 @@
 
 #include <cpputil.h>
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
 #endif  /* _wamas_CPPUTIL_H */
