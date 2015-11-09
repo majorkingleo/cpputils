@@ -28,6 +28,7 @@ std::string toupper( std::string s );
 std::string tolower( std::string s );
 std::string strip( const std::string& str, const std::string& what = " \t\n\r" );
 std::string strip_leading( const std::string& str, const std::string& what = " \t\n\r" );
+std::string strip_trailing( const std::string& str, const std::string& what = " \t\n\r" );
 bool is_int( const std::string &s );
 std::vector<std::string> split_simple( std::string str, std::string seperator = " \t\n", int max = -1 );
 std::vector<std::string> split_string( std::string str, std::string seperator, int max = -1 );

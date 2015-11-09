@@ -84,6 +84,18 @@ std::string strip_leading( const std::string& str, const std::string& what )
     }
 }
 
+std::string strip_trailing( const std::string& str, const std::string& what )
+{
+    std::string::size_type p = str.find_last_not_of(what);
+    
+    if( p == std::string::npos )
+    {
+	  return std::string();
+    } else {
+	  return str.substr(0,p+1);
+    }
+}
+
 std::string text_right_format( std::string s, unsigned int max_size, unsigned int spaces )
 {
   if( max_size > s.size() && spaces == 0 )
