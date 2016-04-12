@@ -1,6 +1,6 @@
 
-#if (defined _WIN32 || defined WIN32) && defined _MSC_VER && _MSC_VER < 1500
-// Windows with VS7 (2003)  : Exclude file
+#if (defined _WIN32 || defined WIN32) && defined NATIVEWIN32
+// Windows native  : Exclude file
 #else
 
 #include "cppdir.h"
