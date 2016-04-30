@@ -1,5 +1,5 @@
 
-#if (defined _WIN32 || defined WIN32) && defined NATIVEWIN32
+#if (defined _WIN32 || defined WIN32)
 // Windows native  : Exclude file
 #else
 
