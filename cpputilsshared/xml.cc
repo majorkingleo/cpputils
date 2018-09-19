@@ -359,7 +359,7 @@ bool XML::read_file( const std::string &file, std::string &s )
       return false;
     }
 
-#ifndef WIN32	
+#ifndef _WIN32	
 #if __GNUC__ > 2
   in.seekg( 0, std::ios_base::end );
 #else
