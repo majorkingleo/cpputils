@@ -725,6 +725,7 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
 	       break;
 	       		  
 	     case 'X': cf.setupper = true;
+			// fallthrough
 	     case 'x': 
 	       cf.base = CFormat::HEX;
 	       if( cf.special )
@@ -740,7 +741,7 @@ template <class Arg0, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5
 	       
 	     case 'E': 
 	       cf.setupper = true;
-
+			// fallthrough
 	     case 'e': 
 	       if( cf.special )
 		 cf.sign = true;
