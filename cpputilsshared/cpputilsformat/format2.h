@@ -7,6 +7,7 @@
 #ifndef _wamas_FORMAT2_H
 #define _wamas_FORMAT2_H
 
+#if __cplusplus - 0 >= 201103L
 
 #include <string>
 #include <iomanip>
@@ -305,4 +306,5 @@ namespace Tools {
   }
 } // /namespace Tools
 
+#endif
 #endif  /* _wamas_FORMAT2_H */

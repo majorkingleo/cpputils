@@ -6,6 +6,8 @@
 
 #include "format2.h"
 
+#if __cplusplus - 0 >= 201103L
+
 using namespace Tools::Format;
 
 namespace Tools {
@@ -481,3 +483,4 @@ namespace Tools {
   } // /namespace Format2
 } // /namespace Tools
 
+#endif
