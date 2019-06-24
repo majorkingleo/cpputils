@@ -1,7 +1,5 @@
-#include "format.h"
+#include "format1.h"
 #include <cstdlib>
-
-#ifndef NFORMAT
 
 namespace Tools {
 
@@ -125,6 +123,36 @@ void Format::CFormat::set( std::ostream& out )
   out << std::setprecision( precision );
 }
 
+
+std::string Format::substitude( const std::string & str_orig, const std::string & what, const std::string & with, std::string::size_type start )
+{
+  std::string str( str_orig );
+  std::string::size_type pos=start;
+
+  if( what.empty() )
+      return str;
+
+  for(;;)
+    {
+      pos = str.find( what, pos );
+      if( pos == std::string::npos )
+        break;
+
+      if( with.empty() )
+    {
+      std::string s = str.substr( 0, pos );
+      s += str.substr( pos + what.size() );
+      str = s;
+      continue;
+    }
+      else
+    {
+      str.replace( pos, what.size(), with );
+    }
+
+      pos += with.size();
+    }
+  return str;
+}
 } /* namespace Tools */
 
-#endif
