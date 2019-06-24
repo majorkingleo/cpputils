@@ -157,7 +157,7 @@ template <class T> std::string createInStatement( const T & list )
 		  res += ", ";
 
 	  res += "'";
-	  res += *it;
+	  res += x2s(*it);
 	  res += "'";		
 	}  
 

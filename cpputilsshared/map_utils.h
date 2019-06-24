@@ -10,6 +10,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <algorithm>
 
 namespace Tools {
 
