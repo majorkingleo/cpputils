@@ -45,8 +45,9 @@ public:
 	: EClass(),
 	  value( er.value )
 	{
-	    if( value <= EClass::FIRST__ || value >= EClass::LAST__ )
-		throw( Error( "EnumRange: Out of range!" ) );
+	    if( value <= EClass::FIRST__ || value >= EClass::LAST__ ) {
+			throw( Error( "EnumRange: Out of range!" ) );
+		}
 
 		Copy cp;
 

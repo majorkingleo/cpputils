@@ -307,6 +307,7 @@ namespace Tools {
                 break;
 
               case 'X': cf.setupper = true;
+				/* Fallthrough */				
               case 'x':
                 cf.numerical_representation = true;
                 cf.base = CFormat::HEX;
@@ -324,6 +325,7 @@ namespace Tools {
 
               case 'E':
                 cf.setupper = true;
+				/* Fallthrough */				
 
               case 'e':
                 if( cf.special )
