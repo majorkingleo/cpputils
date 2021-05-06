@@ -234,8 +234,12 @@ CppDir::EFILE CppDir::File::get_type( const std::string& cname )
       */
       gid_list = new gid_t[ gid_list_size ];
       
-      getgroups( gid_list_size, gid_list );
-      
+      int ret = getgroups( gid_list_size, gid_list );
+	  if (ret < 0 ) {
+	  	err = true;
+	  	return EFILE::UNKNOWN;
+	  }     
+ 
       if( !in_groups( gid, gid_list_size, gid_list ) )
 	{
 	  gid_list_size++;
