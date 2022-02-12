@@ -26,11 +26,17 @@ namespace Tools {
 
 std::string toupper( std::string s );
 std::string tolower( std::string s );
+
 std::string strip( const std::string& str, const std::string& what = " \t\n\r" );
+std::wstring strip( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
+
 std::string strip_leading( const std::string& str, const std::string& what = " \t\n\r" );
 std::string strip_trailing( const std::string& str, const std::string& what = " \t\n\r" );
 bool is_int( const std::string &s );
+
 std::vector<std::string> split_simple( std::string str, std::string seperator = " \t\n", int max = -1 );
+std::vector<std::wstring> split_simple( std::wstring str, std::wstring seperator = L" \t\n", int max = -1 );
+
 std::vector<std::string> split_string( std::string str, std::string seperator, int max = -1 );
 std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep = " \t\n", int max = -1 );
 
@@ -118,7 +124,8 @@ inline std::string auto_linebreak( std::string text, unsigned int max_size = 90 
 }
 
 std::string substitude( const std::string & str, const std::string & what, const std::string & with, std::string::size_type start = 0 );
-
+std::wstring substitude( const std::wstring & str, const std::wstring & what, const std::wstring & with, std::wstring::size_type start = 0 );
+ 
 std::string prepand( std::string str, std::string what, std::string prefix );
 
 inline bool icase_cmp( const std::string &a, const std::string &b )
