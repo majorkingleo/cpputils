@@ -25,6 +25,11 @@ public:
 
 	static std::wstring toWcharString16( const std::string & text );
 	static std::wstring toWcharString32( const std::string & text );
+
+	static std::string wStringToUtf8( const std::wstring & text );
+
+	static std::string utf16toString( const std::wstring & text );
+	static std::string utf32toString( const std::wstring & text );
 };
 
 }
