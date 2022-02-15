@@ -12,6 +12,14 @@ std::string toupper( std::string s )
   return s;
 }
 
+std::wstring toupper( std::wstring s )
+{
+  for( unsigned int i = 0; i < s.size(); ++i )
+    s[i] = std::toupper( s[i] );
+
+  return s;
+}
+
 std::string tolower( std::string s )
 {
   for( unsigned int i = 0; i < s.size(); ++i )
@@ -19,6 +27,15 @@ std::string tolower( std::string s )
 
   return s;
 }
+
+std::wstring tolower( std::wstring s )
+{
+  for( unsigned int i = 0; i < s.size(); ++i )
+    s[i] = std::tolower( s[i] );
+
+  return s;
+}
+
 
 bool is_int( const std::string &s )
 {
@@ -47,6 +64,36 @@ bool is_int( const std::string &s )
     }
 
   return true;
+}
+
+bool is_int( const std::wstring &s )
+{
+	if( s.empty() ) {
+		return false;
+	}
+
+	for( unsigned int i = 0; i < s.size(); ++i )
+	{
+		switch( s[i] )
+		{
+		case L'0':
+		case L'1':
+		case L'2':
+		case L'3':
+		case L'4':
+		case L'5':
+		case L'6':
+		case L'7':
+		case L'8':
+		case L'9':
+			break;
+
+		default:
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /*
@@ -103,6 +150,18 @@ std::string strip_leading( const std::string& str, const std::string& what )
     }
 }
 
+std::wstring strip_leading( const std::wstring& str, const std::wstring& what )
+{
+    std::wstring::size_type p = str.find_first_not_of(what);
+
+    if( p == std::wstring::npos )
+    {
+	  return std::wstring();
+    } else {
+	  return std::wstring(str, p);
+    }
+}
+
 std::string strip_trailing( const std::string& str, const std::string& what )
 {
     std::string::size_type p = str.find_last_not_of(what);
@@ -110,6 +169,18 @@ std::string strip_trailing( const std::string& str, const std::string& what )
     if( p == std::string::npos )
     {
 	  return std::string();
+    } else {
+	  return str.substr(0,p+1);
+    }
+}
+
+std::wstring strip_trailing( const std::wstring& str, const std::wstring& what )
+{
+    std::wstring::size_type p = str.find_last_not_of(what);
+
+    if( p == std::wstring::npos )
+    {
+	  return std::wstring();
     } else {
 	  return str.substr(0,p+1);
     }
@@ -213,39 +284,57 @@ std::vector<std::wstring> split_simple( std::wstring str, std::wstring sep, int 
 	return tsplit.split_simple( str, sep, max );
 }
 
+namespace {
+
+template<class t_std_string> class TSplitString {
+public:
+	std::vector<t_std_string> split_string( t_std_string str, t_std_string sep, int max  )
+	{
+		typename t_std_string::size_type start = 0, last = 0;
+		int count = 0;
+
+		std::vector<t_std_string> sl;
+
+		while( true )
+		{
+			if( max > 0 )
+				count++;
+
+			if( count >= max && max > 0 )
+			{
+				sl.push_back( str.substr( last ) );
+				break;
+			}
+
+
+			start = str.find( sep, last );
+
+			if( start == t_std_string::npos )
+			{
+				sl.push_back( str.substr( last ) );
+				break;
+			}
+
+			sl.push_back( str.substr( last, start - last ) );
+
+			last = start + sep.size();
+		}
+
+		return sl;
+	}
+}; // class TSplitString
+} // namespace
+
 std::vector<std::string> split_string( std::string str, std::string sep, int max  )
 {
-  std::string::size_type start = 0, last = 0;
-  int count = 0;
+	TSplitString<std::string> tsplit;
+	return tsplit.split_string( str, sep, max );
+}
 
-  std::vector<std::string> sl;
-
-  while( true )
-    {
-      if( max > 0 )
-	count++;
-
-      if( count >= max && max > 0 )
-	{
-	  sl.push_back( str.substr( last ) );
-	  break;
-	}
-
-
-      start = str.find( sep, last );
-
-      if( start == std::string::npos )
-	{
-	  sl.push_back( str.substr( last ) );
-	  break;
-	}
-
-      sl.push_back( str.substr( last, start - last ) );
-
-      last = start + sep.size();
-    }
-
-  return sl;
+std::vector<std::wstring> split_string( std::wstring str, std::wstring sep, int max  )
+{
+	TSplitString<std::wstring> tsplit;
+	return tsplit.split_string( str, sep, max );
 }
 /*
 bool s2x( const std::string &s )
@@ -265,6 +354,14 @@ bool s2x( const std::string &s )
 bool s2bool( const std::string &s )
 {
     if( s == "1" || toupper( s ) == "TRUE" )
+	return true;
+
+    return false;
+}
+
+bool s2bool( const std::wstring &s )
+{
+    if( s == L"1" || toupper( s ) == L"TRUE" )
 	return true;
 
     return false;
