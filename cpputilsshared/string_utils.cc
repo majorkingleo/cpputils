@@ -12,14 +12,6 @@ std::string toupper( std::string s )
   return s;
 }
 
-std::wstring toupper( std::wstring s )
-{
-  for( unsigned int i = 0; i < s.size(); ++i )
-    s[i] = std::toupper( s[i] );
-
-  return s;
-}
-
 std::string tolower( std::string s )
 {
   for( unsigned int i = 0; i < s.size(); ++i )
@@ -27,15 +19,6 @@ std::string tolower( std::string s )
 
   return s;
 }
-
-std::wstring tolower( std::wstring s )
-{
-  for( unsigned int i = 0; i < s.size(); ++i )
-    s[i] = std::tolower( s[i] );
-
-  return s;
-}
-
 
 bool is_int( const std::string &s )
 {
@@ -66,76 +49,27 @@ bool is_int( const std::string &s )
   return true;
 }
 
-bool is_int( const std::wstring &s )
-{
-	if( s.empty() ) {
-		return false;
-	}
-
-	for( unsigned int i = 0; i < s.size(); ++i )
-	{
-		switch( s[i] )
-		{
-		case L'0':
-		case L'1':
-		case L'2':
-		case L'3':
-		case L'4':
-		case L'5':
-		case L'6':
-		case L'7':
-		case L'8':
-		case L'9':
-			break;
-
-		default:
-			return false;
-		}
-	}
-
-	return true;
-}
-
 /*
-  Re: Trim Funktion fï¿½r Strings
+  Re: Trim Funktion für Strings
   Von: Hubert Schmid <h.schmid-usenet@gmx.de>
   Datum:  Sonntag, 10. Oktober 2004 14:13:35
   Gruppen:  de.comp.lang.iso-c++
   Message-ID:  <87acuug49c.fsf@dent.z42.de>
 */
+std::string strip( const std::string& str, const std::string& what )
+{
+    std::string::size_type p = str.find_first_not_of(what);
+    
+    if( p == std::string::npos )
+    {
+	return std::string();
 
+    } else {
 
-namespace {
+	std::string::size_type q = str.find_last_not_of(what);
 
-template<class t_std_string> class TStrip {
-public:
-
-	t_std_string strip( const t_std_string& str, const t_std_string& what )
-	{
-		typename t_std_string::size_type p = str.find_first_not_of(what);
-
-		if( p == std::string::npos )
-		{
-			return t_std_string();
-
-		} else {
-
-			typename t_std_string::size_type q = str.find_last_not_of(what);
-
-			return t_std_string(str, p, q - p + 1);
-		}
-	}
-};
-} // namespace
-
-std::string strip( const std::string& str, const std::string& what ) {
-	TStrip<std::string> tstrip;
-	return tstrip.strip( str, what );
-}
-
-std::wstring strip( const std::wstring& str, const std::wstring& what ) {
-	TStrip<std::wstring> tstrip;
-	return tstrip.strip( str, what );
+	return std::string(str, p, q - p + 1);
+    }
 }
 
 std::string strip_leading( const std::string& str, const std::string& what )
@@ -150,18 +84,6 @@ std::string strip_leading( const std::string& str, const std::string& what )
     }
 }
 
-std::wstring strip_leading( const std::wstring& str, const std::wstring& what )
-{
-    std::wstring::size_type p = str.find_first_not_of(what);
-
-    if( p == std::wstring::npos )
-    {
-	  return std::wstring();
-    } else {
-	  return std::wstring(str, p);
-    }
-}
-
 std::string strip_trailing( const std::string& str, const std::string& what )
 {
     std::string::size_type p = str.find_last_not_of(what);
@@ -169,18 +91,6 @@ std::string strip_trailing( const std::string& str, const std::string& what )
     if( p == std::string::npos )
     {
 	  return std::string();
-    } else {
-	  return str.substr(0,p+1);
-    }
-}
-
-std::wstring strip_trailing( const std::wstring& str, const std::wstring& what )
-{
-    std::wstring::size_type p = str.find_last_not_of(what);
-
-    if( p == std::wstring::npos )
-    {
-	  return std::wstring();
     } else {
 	  return str.substr(0,p+1);
     }
@@ -228,113 +138,76 @@ std::string text_right_format( std::string s, unsigned int max_size, unsigned in
   return s;
 }
 
-namespace {
-
-template<class t_std_string> class TSplitSimple {
-public:
-	std::vector<t_std_string> split_simple( t_std_string str, t_std_string sep, int max )
-	{
-		str = strip( str, sep );
-
-		typename t_std_string::size_type start = 0, last = 0;
-		int count = 0;
-
-		std::vector<t_std_string> sl;
-
-		while( true )
-		{
-			if( max > 0 ) {
-				count++;
-			}
-
-			if( count >= max && max > 0 )
-			{
-				sl.push_back( str.substr( last ) );
-				break;
-			}
-
-
-			start = str.find_first_of( sep, last );
-
-			if( start == std::string::npos )
-			{
-				sl.push_back( str.substr( last ) );
-				break;
-			}
-
-			sl.push_back( str.substr( last, start - last ) );
-
-			last = start + 1;
-		}
-
-		return sl;
-	}
-};
-} // namespace
-
 std::vector<std::string> split_simple( std::string str, std::string sep, int max )
 {
-	TSplitSimple<std::string> tsplit;
-	return tsplit.split_simple( str, sep, max );
-}
+  str = strip( str, sep );
 
-std::vector<std::wstring> split_simple( std::wstring str, std::wstring sep, int max )
-{
-	TSplitSimple<std::wstring> tsplit;
-	return tsplit.split_simple( str, sep, max );
-}
+  std::string::size_type start = 0, last = 0;
+  int count = 0;
 
-namespace {
+  std::vector<std::string> sl;
 
-template<class t_std_string> class TSplitString {
-public:
-	std::vector<t_std_string> split_string( t_std_string str, t_std_string sep, int max  )
+  while( true )
+    {
+      if( max > 0 )
+	count++;
+
+      if( count >= max && max > 0 )
 	{
-		typename t_std_string::size_type start = 0, last = 0;
-		int count = 0;
-
-		std::vector<t_std_string> sl;
-
-		while( true )
-		{
-			if( max > 0 )
-				count++;
-
-			if( count >= max && max > 0 )
-			{
-				sl.push_back( str.substr( last ) );
-				break;
-			}
-
-
-			start = str.find( sep, last );
-
-			if( start == t_std_string::npos )
-			{
-				sl.push_back( str.substr( last ) );
-				break;
-			}
-
-			sl.push_back( str.substr( last, start - last ) );
-
-			last = start + sep.size();
-		}
-
-		return sl;
+	  sl.push_back( str.substr( last ) );
+	  break;
 	}
-}; // class TSplitString
-} // namespace
+
+
+      start = str.find_first_of( sep, last );
+
+      if( start == std::string::npos )
+	{
+	  sl.push_back( str.substr( last ) );
+	  break;
+	}
+
+      sl.push_back( str.substr( last, start - last ) );
+
+      last = start + 1;
+    }
+
+  return sl;
+}
 
 std::vector<std::string> split_string( std::string str, std::string sep, int max  )
 {
-	TSplitString<std::string> tsplit;
-	return tsplit.split_string( str, sep, max );
-}
+  std::string::size_type start = 0, last = 0;
+  int count = 0;
 
-std::vector<std::wstring> split_string( std::wstring str, std::wstring sep, int max  )
-{
-	TSplitString<std::wstring> tsplit;
-	return tsplit.split_string( str, sep, max );
+  std::vector<std::string> sl;
+
+  while( true )
+    {
+      if( max > 0 )
+	count++;
+
+      if( count >= max && max > 0 )
+	{
+	  sl.push_back( str.substr( last ) );
+	  break;
+	}
+
+
+      start = str.find( sep, last );
+
+      if( start == std::string::npos )
+	{
+	  sl.push_back( str.substr( last ) );
+	  break;
+	}
+
+      sl.push_back( str.substr( last, start - last ) );
+
+      last = start + sep.size();
+    }
+
+  return sl;
 }
 /*
 bool s2x( const std::string &s )
@@ -359,14 +232,6 @@ bool s2bool( const std::string &s )
     return false;
 }
 
-bool s2bool( const std::wstring &s )
-{
-    if( s == L"1" || toupper( s ) == L"TRUE" )
-	return true;
-
-    return false;
-}
-
 std::string x2s( bool b )
 {
   if( b )
@@ -375,57 +240,37 @@ std::string x2s( bool b )
   return "FALSE";
 }
 
-namespace {
+std::string substitude( const std::string & str_orig, const std::string & what, const std::string & with, std::string::size_type start  )
+{
+  std::string str( str_orig );
+  std::string::size_type pos=start;
 
-template<class t_std_string> class TSubstitude {
-public:
+  if( what.empty() )
+      return str;
 
-	t_std_string substitude( const t_std_string &str_orig,
-							 const t_std_string &what,
-							 const t_std_string &with,
-							 typename t_std_string::size_type start ) {
-		t_std_string str(str_orig);
-		typename t_std_string::size_type pos = start;
+  for(;;)
+    {
+      pos = str.find( what, pos );
+      if( pos == std::string::npos )
+        break;
 
-		if (what.empty()) {
-			return str;
-		}
-
-		for (;;) {
-			pos = str.find(what, pos);
-			if (pos == std::string::npos) {
-				break;
-			}
-
-			if (with.empty()) {
-				t_std_string s = str.substr(0, pos);
-				s += str.substr(pos + what.size());
-				str = s;
-				continue;
-			} else {
-				str.replace(pos, what.size(), with);
-			}
-
-			pos += with.size();
-		}
-		return str;
+      if( with.empty() )
+	{
+	  std::string s = str.substr( 0, pos );
+	  s += str.substr( pos + what.size() );
+	  str = s;
+	  continue;
 	}
-};
+      else
+	{
+	  str.replace( pos, what.size(), with );
+	}
 
-} // namespace
-
-std::string substitude(const std::string &str_orig, const std::string &what,
-		               const std::string &with, std::string::size_type start) {
-	TSubstitude<std::string> subst;
-	return subst.substitude(str_orig, what, with, start);
+      pos += with.size();
+    }
+  return str;
 }
 
-std::wstring substitude(const std::wstring &str_orig, const std::wstring &what,
-					    const std::wstring &with, std::wstring::size_type start) {
-	TSubstitude<std::wstring> subst;
-	return subst.substitude(str_orig, what, with, start);
-}
-  
 std::string prepand( std::string str, std::string what, std::string prefix )
 {
     std::string::size_type pos = 0, start1 = 0, start2 = 0, start = 0;
@@ -730,17 +575,6 @@ std::string fill_leading( std::string s, const std::string fill_sign, unsigned i
 	return s;
 }
 
-std::wstring fill_leading( std::wstring s, const std::wstring fill_sign, unsigned int len )
-{
-	s.reserve(len);
-
-	while( s.size() < len )
-		s = fill_sign + s;
-
-	return s;
-}
-
-
 bool is_empty_str( const char *pcString )
 {
   if( pcString == NULL )
@@ -756,28 +590,6 @@ bool is_empty_str( const char *pcString )
 }
 
 bool is_empty_str( const std::string & string )
-{
-  if( string.empty() )
-	return true;
-
-  return is_empty_str( string.c_str() );
-}
-
-bool is_empty_str( const wchar_t *pcString )
-{
-  if( pcString == NULL )
-	return true;
-
-  for( int i = 0; pcString[i] != L'\0'; i++ )
-	{
-	  if( pcString[i] != L' ' )
-		return false;
-	}
-
-  return true;
-}
-
-bool is_empty_str( const std::wstring & string )
 {
   if( string.empty() )
 	return true;

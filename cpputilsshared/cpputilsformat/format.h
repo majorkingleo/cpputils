@@ -11,7 +11,6 @@
 #include <format1.h>
 #else
 #include <format2.h>
-#include <wformat2.h>
 #endif
 
 #endif  /* _wamas_FORMAT_H */
