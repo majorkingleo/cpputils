@@ -39,7 +39,7 @@ namespace Tools {
     Format2::Format2( const std::string &format_, std::vector<BaseArg*> & args_ )
     : args(args_),
       format(format_),
-      num_of_args(args.size()),
+      num_of_args((int)args.size()),
       s()
     {
       parse();
@@ -144,7 +144,7 @@ namespace Tools {
           if( pos < len )
             {
               // search for the $ digit
-              unsigned int dp = pos;
+              unsigned int dp = (int)pos;
 
               while( dp < len && isdigit( format[dp] ) )
                 dp++;
@@ -166,7 +166,7 @@ namespace Tools {
                   pos++;
 
                   // search for the $ digit
-                  unsigned int dp = pos;
+                  unsigned int dp = (int)pos;
 
                   while( dp < len && isdigit( format[dp] ) )
                     dp++;
@@ -214,7 +214,7 @@ namespace Tools {
 
 
                       // search for the $ digit
-                      unsigned int dp = pos;
+                      unsigned int dp = (int)pos;
 
                       while( dp < len && isdigit( format[dp] ) )
                         dp++;
@@ -390,7 +390,7 @@ namespace Tools {
                   CFormat f2;
                   f2.base = cf.base;
                   std::string ss = use_arg( upar, f2 );
-                  cf.strlength = ss.size();
+                  cf.strlength = (int)ss.size();
                   //        printf( "str: %s\n", s.c_str() );
                 }
 

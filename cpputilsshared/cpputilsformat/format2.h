@@ -111,14 +111,14 @@ namespace Tools {
       }
 
       template<class T> int get_int( const T &t ) { return 0; }
-      int get_int( int n ) { return n; }
-      int get_int( unsigned int n ) { return n; }
-      int get_int( short n ) { return n; }
-      int get_int( unsigned short n ) { return n; }
-      int get_int( long long n ) { return n; }
-      int get_int( unsigned long long n  ) { return n; }
-      int get_int( long n ) { return n; }
-      int get_int( unsigned long n ) { return n; }
+      int get_int( int n ) { return (int)n; }
+      int get_int( unsigned int n ) { return (int)n; }
+      int get_int( short n ) { return (int)n; }
+      int get_int( unsigned short n ) { return (int)n; }
+      int get_int( long long n ) { return (int)n; }
+      int get_int( unsigned long long n  ) { return (int)n; }
+      int get_int( long n ) { return (int)n; }
+      int get_int( unsigned long n ) { return (int)n; }
 
       virtual int get_int() {
         BaseArg::get_int();
@@ -273,14 +273,14 @@ namespace Tools {
       std::string use_arg( unsigned int i, const Format::CFormat &cf );
 
       template<class T> int get_int( const T &t ) { return 0; }
-      int get_int( int n ) { return n; }
-      int get_int( unsigned int n ) { return n; }
-      int get_int( short n ) { return n; }
-      int get_int( unsigned short n ) { return n; }
+      int get_int( int n ) { return (int)n; }
+      int get_int( unsigned int n ) { return (int)n; }
+      int get_int( short n ) { return (int)n; }
+      int get_int( unsigned short n ) { return (int)n; }
       int get_int( long long n ) { return (int)n; }
       int get_int( unsigned long long n  ) { return (int)n; }
-      int get_int( long n ) { return n; }
-      int get_int( unsigned long n ) { return n; }
+      int get_int( long n ) { return (int)n; }
+      int get_int( unsigned long n ) { return (int)n; }
 
 
       int skip_atoi( std::string s, std::string::size_type start, std::string::size_type & pos ) const;
