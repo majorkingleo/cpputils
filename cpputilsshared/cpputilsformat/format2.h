@@ -288,7 +288,33 @@ namespace Tools {
     }; // class Format2
 
   } // namespace Format2
+} // /namespace Tools
 
+#if TOOLS_VERSION+0 >= 40
+
+// forward to tools implementation
+#include <sstring.h>
+
+namespace Tools {
+  template <typename... Args> std::string format( const std::string & format, Args... args )
+  {
+    std::vector<wamas::platform::format_2011::BaseArg*> v_args;
+
+    wamas::platform::format_2011::add_args( v_args, args... );
+
+    wamas::platform::format_2011::Format2011 f2( format, v_args );
+
+    for( auto x: v_args )
+      {
+        delete x;
+      }
+
+    return f2.get_string();
+  }
+} // /namespace Tools
+
+#else
+namespace Tools {
   template <typename... Args> std::string format( const std::string & format, Args... args )
   {
     std::vector<Format2::BaseArg*> v_args;
@@ -305,6 +331,7 @@ namespace Tools {
     return f2.get_string();
   }
 } // /namespace Tools
+#endif
 
 #endif
 #endif  /* _wamas_FORMAT2_H */
