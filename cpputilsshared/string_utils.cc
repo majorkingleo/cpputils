@@ -709,6 +709,63 @@ std::vector<std::string> split_and_strip_simple( std::string str, const std::str
   return sl;
 }
 
+std::vector<std::wstring> split_and_strip_simple( std::wstring str, const std::wstring & sep , int max )
+{
+  str = strip( str, sep );
+
+  std::wstring::size_type start = 0, last = 0;
+  int count = 0;
+
+  std::vector<std::wstring> sl;
+
+  while( true )
+    {
+      if( max > 0 )
+		count++;
+
+      if( count >= max && max > 0 )
+		{
+		  sl.push_back( str.substr( last ) );
+		  break;
+		}
+
+      start = str.find_first_of( sep, last );
+
+      if( start == std::wstring::npos )
+		{
+		  sl.push_back( str.substr( last ) );
+		  break;
+		}
+
+      sl.push_back( str.substr( last, start - last ) );
+
+	  for( std::wstring::size_type pos = start + 1;
+		   pos < str.size(); pos++ )
+		{
+		  bool found = false;
+
+		  for( std::wstring::size_type i = 0; i < sep.size(); i++ )
+			{
+			  if( str[pos] == sep[i] )
+				{
+				  found = true;
+				  break;
+				}
+			}
+
+		  if( found == false )
+			{
+			  last = pos;
+			  break;
+			}
+		}
+
+	  //      last = start + 1;
+    }
+
+  return sl;
+}
+
 std::string fill_trailing( std::string s, const std::string fill_sign, unsigned int len )
 {
 	s.reserve(len);
