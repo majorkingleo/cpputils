@@ -1,10 +1,6 @@
 #ifndef TOOLS_cppdir_h
 #define TOOLS_cppdir_h
 
-#if (defined _WIN32 || defined WIN32)
-// Windows native  : Exclude file
-#else
-
 #include <string>
 #include <list>
 
@@ -201,7 +197,5 @@ namespace CppDir
 }
 
 } // namespace Tools
-
-#endif // WIN32 && _MSC_VER
 
 #endif
