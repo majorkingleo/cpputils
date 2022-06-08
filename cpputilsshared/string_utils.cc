@@ -777,6 +777,17 @@ std::string fill_trailing( std::string s, const std::string fill_sign, unsigned 
 	return s;
 }
 
+std::wstring fill_trailing( std::wstring s, const std::wstring fill_sign, unsigned int len )
+{
+	s.reserve(len);
+
+
+	while( s.size() < len )
+		s += fill_sign;
+
+	return s;
+}
+
 std::string fill_leading( std::string s, const std::string fill_sign, unsigned int len )
 {
 	s.reserve(len);
