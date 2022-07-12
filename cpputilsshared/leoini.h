@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <list>
+#include <set>
 
 #include "range.h"
 
@@ -129,21 +130,10 @@ namespace Leo
 
 	std::string auto_global_section_name;
 
+	std::set<std::string> comment_signs; ///< comment signs, default is only ';'
+
   public:
-    Ini()
-    : elements(),
-      comments(),
-      openmode(0),
-      file_name(),
-      file(),
-      is_open( false ),
-      valid( false ),
-      file_readed(false),
-      eof_reached( false ),
-      line_number(0),
-      changed( false ),
-	  auto_global_section_name()
-    {}
+    Ini();
 
     Ini( std::string filename, int mode = std::ios::in | std::ios::out);   
 
@@ -222,6 +212,14 @@ namespace Leo
     friend bool operator == ( const Ini::MemElement& a, const Ini::MemElement& b );
   
     std::string get_file_name() const { return file_name; }
+
+    void add_comment_sign( const std::string & sign ) {
+    	comment_signs.insert( sign );
+    }
+
+    void clear_comment_signs() {
+    	comment_signs.clear();
+    }
 
   private:
     Line read_line(); ///< reads one line

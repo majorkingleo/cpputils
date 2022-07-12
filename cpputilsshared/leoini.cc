@@ -90,6 +90,24 @@ Leo::Ini::MemElement & Leo::Ini::MemElement::operator=(const Element& e )
   return *this;
 }
 
+Leo::Ini::Ini()
+: elements(),
+  comments(),
+  openmode(0),
+  file_name(),
+  file(),
+  is_open( false ),
+  valid( false ),
+  file_readed(false),
+  eof_reached( false ),
+  line_number(0),
+  changed( false ),
+  auto_global_section_name(),
+  comment_signs()
+{
+	comment_signs.insert(";");
+}
+
 Leo::Ini::Ini( std::string filename, int mode )
 : elements(),
   comments(),
@@ -102,13 +120,17 @@ Leo::Ini::Ini( std::string filename, int mode )
   eof_reached(false),
   line_number(0),
   changed(false),
-  auto_global_section_name()
+  auto_global_section_name(),
+  comment_signs()
 {
   is_open = false;
   valid = false;
   eof_reached = false;
+  comment_signs.insert(";");
   open( filename, mode );
 }
+
+
 
 Leo::Ini::~Ini()
 {
@@ -295,7 +317,19 @@ bool Leo::Ini::read()
 std::string::size_type Leo::Ini::find_comment( const std::string& str )
 {
   // maybe I'll add later an better implementation if this
-  return str.find( ";" );
+
+  for( std::set<std::string>::const_iterator it = comment_signs.begin();
+	   it != comment_signs.end();
+	   it++ ) {
+
+	  std::string::size_type pos = str.find( *it );
+
+	  if( pos != std::string::npos ) {
+		  return pos;
+	  }
+  }
+
+  return std::string::npos;
 }
 
 bool Leo::Ini::find_tag( std::string::size_type& start, std::string::size_type& end, const std::string& str )
