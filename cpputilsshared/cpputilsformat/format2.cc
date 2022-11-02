@@ -1,7 +1,13 @@
 /**
- * @file
- * @todo describe file content
- * @author Copyright (c) 2019 Salomon Automation GmbH
+ * Classes for typesave versions of sprintf() that are returning a std::string
+ * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ *
+ * C++-11 version with variadic templates
+ *
+ * Examples:
+ *    std::cout << format( "Hello %s, I have $05d$ in my pocket", "world", 5 ) << std::endl;
+ *    std::cout << format( "Do not try this with printf: %s", 10101 ) << std::endl;
+ *
  */
 
 #include "format2.h"
