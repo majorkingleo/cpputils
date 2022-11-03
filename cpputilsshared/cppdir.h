@@ -1,3 +1,8 @@
+/**
+ * Simple C++ interface for getting informations about files and directories.
+ * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ */
+
 #ifndef TOOLS_cppdir_h
 #define TOOLS_cppdir_h
 

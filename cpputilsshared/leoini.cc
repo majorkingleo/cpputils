@@ -1,3 +1,8 @@
+/**
+ * Read and write ini files
+ * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ */
+
 #include "leoini.h"
 #include <iostream>
 

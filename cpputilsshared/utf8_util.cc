@@ -1,8 +1,6 @@
-/*
- * utf8_util.cc
- *
- *  Created on: 10.02.2022
- *      Author: martin
+/**
+ * utf conversion utilities
+ * @author Copyright (c) 2001 - 2022 Martin Oberzalek
  */
 #include "utf8_util.h"
 #include "utf8.h"

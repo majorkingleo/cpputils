@@ -1,3 +1,8 @@
+/**
+ * Read and write ini files
+ * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ */
+
 #ifndef TOOLS_Leo_Ini_h
 #define TOOLS_Leo_Ini_h
 

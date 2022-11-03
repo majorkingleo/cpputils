@@ -1,3 +1,8 @@
+/**
+ * std::string and std::wstring utilty functions
+ * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ */
+
 #ifndef TOOLS_string_utils_h
 #define TOOLS_string_utils_h
 

@@ -5,7 +5,7 @@
  * tuple_reverse: returns the reverse type of a given tuple
  * reverseTuple( tuple ): reverses tuple values
  *
- * @author Copyright (c) 2022 Salomon Automation GmbH
+ * @author Copyright (c) 2001 - 2022 Martin Oberzalek
  */
 
 #ifndef _TOOLS_TUPLEREVERSE_H
@@ -45,7 +45,7 @@ struct gens<0, S...> {
 #endif
 };
 
-// end of Faheem Mithas code
+// end of Faheem Mitha's code
 
 } // namespace SequenceHelper
 
@@ -76,13 +76,13 @@ struct tuple_reverse<std::tuple<T, Ts...>>
   using type = decltype(std::tuple_cat(std::declval<tail>(), std::declval<head>()));
 };
 
-// end of Jonathan Wakely code
+// end of Jonathan Wakely's code
 
 // reverses the content of the tuple too
 namespace TupleReverseImpl {
 
 
-// Helper functions to recursivly copy the source tuple to the target tuple
+// Helper functions to recursively copy the source tuple to the target tuple
 template <class ...Args>
 void doCopyTypes( std::vector<void*>::size_type index,
                   std::vector<const void*> & content_source,
@@ -114,7 +114,7 @@ void copyTypes( std::vector<const void*> & content_source,
   doCopyTypes( 0, content_source, content_target, &std::get<S>(tuple)... );
 }
 
-// Helper functions to fill an vector of pointers, to prepare copying
+// Helper functions to fill a vector of pointers, to prepare copying
 
 template <class V>
 void dofillContent( V & content ) {}
