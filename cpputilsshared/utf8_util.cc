@@ -4,7 +4,7 @@
  */
 #include "utf8_util.h"
 #include "utf8.h"
-#include <cpp_util.h>
+#include "stderr_exception.h"
 
 #if __cplusplus >= 201103
 
@@ -70,7 +70,7 @@ std::wstring Utf8Util::utf8toWString( const std::string & text )
 	} else if( sizeof( wchar_t ) == sizeof( int32_t ) ) {
 		return toWcharString32( text );
 	} else {
-		throw REPORT_EXCEPTION( "unknown wchar size" );
+		throw STDERR_EXCEPTION( "unknown wchar size" );
 	}
 }
 
@@ -112,7 +112,7 @@ std::string Utf8Util::wStringToUtf8( const std::wstring & text )
 	} else if( sizeof( wchar_t ) == sizeof( int32_t ) ) {
 		return utf32toString( text );
 	} else {
-		throw REPORT_EXCEPTION( "unknown wchar size" );
+		throw STDERR_EXCEPTION( "unknown wchar size" );
 	}
 }
 
