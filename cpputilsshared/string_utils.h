@@ -175,19 +175,8 @@ std::wstring substitude( const std::wstring & str, const std::wstring & what, co
  
 std::string prepand( std::string str, std::string what, std::string prefix );
 
-inline bool icase_cmp( const std::string &a, const std::string &b )
-{
-    if( a.size() != b.size() )
-	return false;
-    
-    if( a == b )
-	return true;
-
-    if( toupper( a ) == toupper( b ) )
-	return true;
-
-    return false;
-}
+bool icase_cmp( const std::string &a, const std::string &b );
+bool icase_cmp( const std::wstring &a, const std::wstring &b );
 
 std::string bin_encode( const std::string &s );
 std::string bin_decode( const std::string &s );

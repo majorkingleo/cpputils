@@ -102,7 +102,7 @@ bool is_int( const std::wstring &s )
 }
 
 /*
-  Re: Trim Funktion für Strings
+  Re: Trim Funktion fï¿½r Strings
   Von: Hubert Schmid <h.schmid-usenet@gmx.de>
   Datum:  Sonntag, 10. Oktober 2004 14:13:35
   Gruppen:  de.comp.lang.iso-c++
@@ -856,6 +856,40 @@ bool is_empty_str( const std::wstring & string )
 	return true;
 
   return is_empty_str( string.c_str() );
+}
+
+bool icase_cmp( const std::string &a, const std::string &b )
+{
+    if( a.size() != b.size() ) {
+    	return false;
+    }
+
+    if( a == b ) {
+    	return true;
+    }
+
+    if( toupper( a ) == toupper( b ) ) {
+    	return true;
+    }
+
+    return false;
+}
+
+bool icase_cmp( const std::wstring &a, const std::wstring &b )
+{
+    if( a.size() != b.size() ) {
+    	return false;
+    }
+
+    if( a == b ) {
+    	return true;
+    }
+
+    if( toupper( a ) == toupper( b ) ) {
+    	return true;
+    }
+
+    return false;
 }
 
 } // namespace Tools
