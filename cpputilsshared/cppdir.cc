@@ -26,7 +26,9 @@ extern "C" {
 #include <cstdlib>
 
 #ifdef _WIN32
-#define WIN32
+# if !defined(WIN32)
+#   define WIN32
+# endif
 #endif //_WIN32
 
 #ifdef WIN32

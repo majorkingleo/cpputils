@@ -1277,7 +1277,12 @@ bool ReadFile::convert( const std::string & s, const std::string & from, const s
         in_buffer[s.size()]='\0';
 
         size_t size, in_left=s.size()+1, out_left=s.size()+extra_bufsize;
-        char *in, *out;
+#ifdef WIN32
+        const char *in;
+#else
+        char *in;
+#endif
+        char *out;
 
         in = in_buffer;
         out = out_buffer;

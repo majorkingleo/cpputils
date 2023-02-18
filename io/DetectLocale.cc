@@ -39,9 +39,14 @@ void DetectLocale::init()
 	language2encoding["mt"] = "ISO-8859-3"; // Maltesich
 	language2encoding["et"] = "ISO-8859-3"; // Esperanto
 
+	char *pcLocale = nullptr;
 
-
-	char *pcLocale = std::setlocale( LC_MESSAGES, "" );
+#ifdef WIN32
+	pcLocale = std::setlocale( LC_ALL, "" );
+#else
+	// LC_MESSAGES is a POSIX defined value
+	pcLocale = std::setlocale( LC_MESSAGES, "" );
+#endif
 
 	if( pcLocale == NULL ) {
 		is_utf8 = false;
