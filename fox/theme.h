@@ -1,7 +1,7 @@
 #ifndef THEME_H
 #define THEME_H
 
-#include "../tools_config.h"
+#include "../../tools_config.h"
 
 #ifdef TOOLS_USE_GUI
 
