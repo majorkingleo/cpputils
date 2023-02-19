@@ -12,6 +12,7 @@
 #include "read_file.h"
 #include <format.h>
 #include <stderr_exception.h>
+#include <debug.h>
 
 using namespace Tools;
 
@@ -99,6 +100,8 @@ void DetectLocale::init()
 			input_encoding = it->second;
 		}
 	}
+
+	//std::cout << format( "detected input encoding: '%s'", input_encoding ) << std::endl;
 }
 
 std::wstring DetectLocale::inputString2wString( const std::string & str )
@@ -110,9 +113,11 @@ std::wstring DetectLocale::inputString2wString( const std::string & str )
 	std::string utf8_str;
 
 	if( !input_encoding.empty() ) {
-		if( READ_FILE.convert( str, "ISO-8859-1", "UTF-8", utf8_str ) ) {
+		if( READ_FILE.convert( str, input_encoding, "UTF-8", utf8_str ) ) {
 			return Utf8Util::utf8toWString( utf8_str );
 		} else {
+			READ_FILE.convert( str, "ISO-8859-1", "UTF-8", utf8_str );
+			return Utf8Util::utf8toWString( utf8_str );
 			// std::cout << "error: " << READ_FILE.getError() << "str: '" << str << "'" << std::endl;
 		}
 	}
