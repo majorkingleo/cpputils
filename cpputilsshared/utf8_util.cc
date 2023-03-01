@@ -63,6 +63,39 @@ std::wstring Utf8Util::toWcharString32( const std::string & text )
 	return wstr;
 }
 
+#if __cplusplus >= 2020
+std::wstring Utf8Util::toWcharString16( const std::u8string & text )
+{
+	std::u16string str = utf8::utf8to16(text);
+	std::wstring wstr;
+
+	wstr.resize(str.size());
+
+	for( unsigned i = 0; i < str.size(); i++ ) {
+		wstr[i] = str[i];
+	}
+
+	return wstr;
+}
+#endif
+
+#if __cplusplus >= 2020
+std::wstring Utf8Util::toWcharString32( const std::u8string & text )
+{
+	std::u32string str = utf8::utf8to32(text);
+
+	std::wstring wstr;
+
+	wstr.resize(str.size());
+
+	for( unsigned i = 0; i < str.size(); i++ ) {
+		wstr[i] = str[i];
+	}
+
+	return wstr;
+}
+#endif
+
 std::wstring Utf8Util::utf8toWString( const std::string & text )
 {
 	if( sizeof( wchar_t ) == sizeof( int16_t ) ) {
@@ -74,6 +107,18 @@ std::wstring Utf8Util::utf8toWString( const std::string & text )
 	}
 }
 
+#if __cplusplus >= 2020
+std::wstring Utf8Util::utf8toWString( const std::u8string & text )
+{
+	if( sizeof( wchar_t ) == sizeof( int16_t ) ) {
+		return toWcharString16( text );
+	} else if( sizeof( wchar_t ) == sizeof( int32_t ) ) {
+		return toWcharString32( text );
+	} else {
+		throw STDERR_EXCEPTION( "unknown wchar size" );
+	}
+}
+#endif
 
 std::string Utf8Util::utf16toString( const std::wstring & text )
 {

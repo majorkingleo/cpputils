@@ -53,6 +53,15 @@ namespace utf8
         return result;
     }
 
+#if __cplusplus >= 2020
+    inline std::u16string utf8to16(std::u8string_view s)
+    {
+        std::u16string result;
+        utf8to16(s.begin(), s.end(), std::back_inserter(result));
+        return result;
+    }
+#endif
+
     inline std::string utf32to8(std::u32string_view s)
     {
         std::string result;
@@ -66,6 +75,15 @@ namespace utf8
         utf8to32(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
+
+#if __cplusplus >= 2020
+    inline std::u32string utf8to32(std::u8string_view s)
+    {
+        std::u32string result;
+        utf8to32(s.begin(), s.end(), std::back_inserter(result));
+        return result;
+    }
+#endif
 
     inline std::size_t find_invalid(std::string_view s)
     {

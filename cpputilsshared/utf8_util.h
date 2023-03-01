@@ -21,6 +21,12 @@ public:
 
 	static std::wstring utf8toWString( const std::string & text );
 
+#if __cplusplus >= 2020
+	static std::wstring utf8toWString( const std::u8string & text );
+	static std::wstring toWcharString16( const std::u8string & text );
+	static std::wstring toWcharString32( const std::u8string & text );
+#endif
+
 	static std::wstring toWcharString16( const std::string & text );
 	static std::wstring toWcharString32( const std::string & text );
 
