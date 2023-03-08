@@ -6,38 +6,31 @@
 #include "string_utils.h"
 #include "format.h"
 #include <cctype>
+#include <algorithm>
 
 namespace Tools {
 
 std::string toupper( std::string s )
 {
-  for( unsigned int i = 0; i < s.size(); ++i )
-    s[i] = std::toupper( s[i] );
-
+  std::transform( s.begin(), s.end(), s.begin(), ::toupper);
   return s;
 }
 
 std::wstring toupper( std::wstring s )
 {
-  for( unsigned int i = 0; i < s.size(); ++i )
-    s[i] = std::toupper( s[i] );
-
+  std::transform( s.begin(), s.end(), s.begin(), std::towupper);
   return s;
 }
 
 std::string tolower( std::string s )
 {
-  for( unsigned int i = 0; i < s.size(); ++i )
-    s[i] = std::tolower( s[i] );
-
+  std::transform( s.begin(), s.end(), s.begin(), ::tolower);
   return s;
 }
 
 std::wstring tolower( std::wstring s )
 {
-  for( unsigned int i = 0; i < s.size(); ++i )
-    s[i] = std::tolower( s[i] );
-
+  std::transform( s.begin(), s.end(), s.begin(), std::towlower);
   return s;
 }
 
