@@ -6,6 +6,7 @@
 #include "string_utils.h"
 #include "format.h"
 #include <cctype>
+#include <cwctype>
 #include <algorithm>
 
 namespace Tools {
