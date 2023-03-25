@@ -660,6 +660,10 @@ std::vector<std::string> split_and_strip_simple( std::string str, const std::str
   
   std::vector<std::string> sl;
   
+  if( str.empty() ) {
+	  return sl;
+  }
+
   while( true )
     {
       if( max > 0 )
@@ -716,6 +720,11 @@ std::vector<std::wstring> split_and_strip_simple( std::wstring str, const std::w
   int count = 0;
 
   std::vector<std::wstring> sl;
+
+  if( str.empty() ) {
+	  return sl;
+  }
+
 
   while( true )
     {
