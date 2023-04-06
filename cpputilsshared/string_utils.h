@@ -1,6 +1,6 @@
 /**
  * std::string and std::wstring utilty functions
- * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ * @author Copyright (c) 2001 - 2023 Martin Oberzalek
  */
 
 #ifndef TOOLS_string_utils_h
@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #define HAVE_STL_SSTREAM
 
@@ -150,7 +151,7 @@ template<class T>std::string x2s( T what )
 
 #if __cplusplus >= 201103
 /// converts anything to a string
-template<class T>std::wstring x2ws( T what )
+template<class T> std::wstring x2ws( T what )
 {
   std::wstringstream str;
 
@@ -252,15 +253,17 @@ template <class T> std::string createInStatement( const T & list )
  *		87604, 87624 (...)
  *
  */
-template <class T> std::string IterableToFormattedString (
+template <class T, class t_std_string> t_std_string IterableToFormattedStringT (
 		const T & list,
-		const std::string &eleSep = ", ",
-		const std::string &lineSep = "\n",
-		unsigned int lineEle = 5,
-		unsigned int maxEle = 10,
-		const std::string &strFurtherEle = " (...)") {
+		const t_std_string & eleSep,
+		const t_std_string & lineSep,
+		unsigned int lineEle,
+		unsigned int maxEle,
+		const t_std_string & strFurtherEle,
+		auto x2sfunc )
+{
 
-	std::string res;
+	t_std_string res;
 
 	if (list.empty()) {
 		return res;
@@ -277,7 +280,7 @@ template <class T> std::string IterableToFormattedString (
 				}
 			}
 		}
-		res += x2s(*it);
+		res += x2sfunc(*it);
 		cnt++;
 
 		if( maxEle != static_cast<unsigned int>(-1) ) {
@@ -289,6 +292,30 @@ template <class T> std::string IterableToFormattedString (
 
 	}
 	return res;
+}
+
+template <class T> std::string IterableToFormattedString (
+		const T & list,
+		const std::string &eleSep = ", ",
+		const std::string &lineSep = "\n",
+		unsigned int lineEle = 5,
+		unsigned int maxEle = 10,
+		const std::string &strFurtherEle = " (...)")
+{
+	return IterableToFormattedStringT<T,std::string>(list, eleSep, lineSep, lineEle, maxEle, strFurtherEle,
+			[]( auto value ) { return x2s( value ); });
+}
+
+template <class T> std::wstring IterableToFormattedWString (
+		const T & list,
+		const std::wstring &eleSep = L", ",
+		const std::wstring &lineSep = L"\n",
+		unsigned int lineEle = 5,
+		unsigned int maxEle = 10,
+		const std::wstring &strFurtherEle = L" (...)")
+{
+	return IterableToFormattedStringT<T,std::wstring>(list, eleSep, lineSep, lineEle, maxEle, strFurtherEle,
+			[]( auto value ) { return x2ws( value ); });
 }
 
 template <class T> std::string IterableToCommaSeparatedString( const T & list, 
@@ -315,6 +342,69 @@ inline bool is_empty_string(  const std::string & s ) {  return is_empty_str( s 
 inline bool is_empty_string( const wchar_t *pcString ) { return is_empty_str( pcString ); }
 inline bool is_empty_string(  const std::wstring & s ) {  return is_empty_str( s ); }
 
+
+/**
+ * find all occurences of the needle in the haystack
+ * and passes the found position to the func()
+ */
+template <class t_std_string>
+void find_all_of_t( const t_std_string & haystack,
+				  const t_std_string & needle,
+				  std::function< bool(typename t_std_string::size_type) > func )
+{
+	typename t_std_string::size_type start = 0;
+	typename t_std_string::size_type pos;
+
+	while( (pos = haystack.find( needle, start ) ) != t_std_string::npos ) {
+		if( !func( pos ) ) {
+			return;
+		}
+
+		start = pos + needle.size();
+	}
+}
+
+inline void find_all_of( const std::wstring & haystack,
+				  	  	 const std::wstring & needle,
+						 std::function< bool(typename std::wstring::size_type) > func )
+{
+	find_all_of_t<std::wstring>( haystack, needle, func );
+}
+
+inline void find_all_of( const std::string & haystack,
+				  	  	 const std::string & needle,
+						 std::function< bool(typename std::string::size_type) > func )
+{
+	find_all_of_t<std::string>( haystack, needle, func );
+}
+
+template <class container, class t_std_string>
+container find_all_of_t( const t_std_string & haystack,
+				  	   const t_std_string & needle )
+{
+	container res;
+	Tools::find_all_of( haystack, needle,
+			[&res]( t_std_string::size_type pos ) {
+				res.push_back( pos );
+				return true;
+			});
+
+	return res;
+}
+
+template <class container>
+container find_all_of( const std::string & haystack,
+				  	   const std::string & needle )
+{
+	return find_all_of_t<container>( haystack, needle );
+}
+
+template <class container>
+container find_all_of( const std::wstring & haystack,
+				  	   const std::wstring & needle )
+{
+	return find_all_of_t<container>( haystack, needle );
+}
 
 } // namespace Tools
 
