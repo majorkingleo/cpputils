@@ -3,19 +3,13 @@
  * @author Copyright (c) 2001 - 2022 Martin Oberzalek
  */
 
-// is not support at this board
-#ifdef STM32F401xE
-#else
-# define SUPPORTED_PLATFORM
-#endif
-
-
-#ifdef SUPPORTED_PLATFORM
 #if defined(_WIN32) || defined(WIN32)
 #include <windows.h>
 #endif
 
 #include "cppdir.h"
+
+#ifndef DISABLE_CPPUTILS_CPPDIR
 
 #undef OUT
 #define OUT(level) DEBUG_OUT( level, MODULE::CPPDIR)
@@ -852,3 +846,4 @@ size_t CppDir::get_path_max()
 #endif
 }
 #endif
+

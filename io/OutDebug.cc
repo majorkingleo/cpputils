@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <DetectLocale.h>
 
+#ifndef DISABLE_CPPUTILS_DETECT_LOCALE
+
 OutDebug::OutDebug(  ColoredOutput::Color color_ )
 : Debug(),
   ColoredOutput(),
@@ -36,3 +38,5 @@ void OutDebug::add( const char *file, unsigned line, const char *function, const
 {
 	add( file, line, function,  DetectLocale::w2out(s) );
 }
+
+#endif

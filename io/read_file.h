@@ -8,6 +8,10 @@
 #ifndef READ_FILE_H_
 #define READ_FILE_H_
 
+#include "../../tools_config.h"
+
+#ifndef DISABLE_CPPUTILS_READFILE
+
 #include <string>
 
 class ReadFile
@@ -43,5 +47,7 @@ public:
 };
 
 extern ReadFile READ_FILE;
+
+#endif
 
 #endif /* READ_FILE_H_ */

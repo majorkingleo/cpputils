@@ -5,6 +5,10 @@
 #ifndef file_option_h
 #define file_option_h
 
+#include "cppdir.h"
+
+#ifndef DISABLE_CPPUTILS_CPPDIR
+
 #include "arg.h"
 
 /* 
@@ -59,4 +63,5 @@ namespace Arg {
 }
 }
 
+#endif
 #endif

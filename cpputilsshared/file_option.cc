@@ -2,13 +2,7 @@
 #include "cppdir.h"
 
 
-// is not support at this board
-#ifdef STM32F401xE
-#else
-# define SUPPORTED_PLATFORM
-#endif
-
-#ifdef SUPPORTED_PLATFORM
+#ifndef DISABLE_CPPUTILS_CPPDIR
 using namespace Tools::CppDir;
 
 namespace Tools {

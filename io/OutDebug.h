@@ -3,6 +3,9 @@
 
 #include "CpputilsDebug.h"
 #include "ColoredOutput.h"
+#include "DetectLocale.h"
+
+#ifndef DISABLE_CPPUTILS_DETECT_LOCALE
 
 class OutDebug : public Tools::Debug, ColoredOutput
 {
@@ -23,5 +26,7 @@ public:
 	void add( const char *file, unsigned line, const char *function, const std::string & s ) override;
 	void add( const char *file, unsigned line, const char *function, const std::wstring & s ) override;
 };
+
+#endif
 
 #endif /* OUTDEBUG_H_ */

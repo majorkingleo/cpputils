@@ -9,6 +9,7 @@
 #include <xml.h>
 #include <utf8_util.h>
 
+#ifndef DISABLE_CPPUTILS_READFILE
 
 /* win-iconv seems to define source pointer as const char * */
 #if defined(__MINGW64__) || defined(__MINGW32__)
@@ -1321,3 +1322,4 @@ bool ReadFile::convert( const std::string & s, const std::string & from, const s
     return true;
 }
 
+#endif

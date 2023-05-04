@@ -8,6 +8,14 @@
 #ifndef DETECTLOCALE_H_
 #define DETECTLOCALE_H_
 
+#include "../../tools_config.h"
+
+#ifdef DISABLE_CPPUTILS_READFILE
+# define DISABLE_CPPUTILS_DETECT_LOCALE
+#endif
+
+#ifndef DISABLE_CPPUTILS_DETECT_LOCALE
+
 #include <string>
 #include <map>
 
@@ -41,5 +49,7 @@ public:
 };
 
 extern DetectLocale DETECT_LOCALE;
+
+#endif
 
 #endif /* DETECTLOCALE_H_ */

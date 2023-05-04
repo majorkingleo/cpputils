@@ -14,6 +14,8 @@
 #include <stderr_exception.h>
 #include <CpputilsDebug.h>
 
+#ifndef DISABLE_CPPUTILS_READFILE
+
 using namespace Tools;
 
 DetectLocale DETECT_LOCALE;
@@ -149,3 +151,5 @@ std::wstring DetectLocale::in2w( const std::string & in )
 {
 	return DETECT_LOCALE.inputString2wString( in );
 }
+
+#endif
