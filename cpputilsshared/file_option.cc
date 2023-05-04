@@ -1,6 +1,14 @@
 #include "file_option.h"
 #include "cppdir.h"
 
+
+// is not support at this board
+#ifdef STM32F401xE
+#else
+# define SUPPORTED_PLATFORM
+#endif
+
+#ifdef SUPPORTED_PLATFORM
 using namespace Tools::CppDir;
 
 namespace Tools {
@@ -80,3 +88,4 @@ Arg::EmptyFileOption::EmptyFileOption( FILE type )
   setMinValues( 1 );
 }
 }
+#endif

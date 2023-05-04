@@ -3,6 +3,10 @@
  * @author Copyright (c) 2001 - 2022 Martin Oberzalek
  */
 
+// is not support at this board
+#ifdef STM32F401xE
+#define TOOLS_cppdir_h
+#endif
 #ifndef TOOLS_cppdir_h
 #define TOOLS_cppdir_h
 
