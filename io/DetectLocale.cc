@@ -12,7 +12,7 @@
 #include "read_file.h"
 #include <format.h>
 #include <stderr_exception.h>
-#include <debug.h>
+#include <CpputilsDebug.h>
 
 using namespace Tools;
 

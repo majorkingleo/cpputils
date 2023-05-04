@@ -5,7 +5,7 @@
  *      Author: martin
  */
 #include "read_file.h"
-#include <debug.h>
+#include <CpputilsDebug.h>
 #include <xml.h>
 #include <utf8_util.h>
 

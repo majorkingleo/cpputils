@@ -1,4 +1,4 @@
-#include "debug.h"
+#include "CpputilsDebug.h"
 
 Tools::Debug* Tools::x_debug = NULL;
 

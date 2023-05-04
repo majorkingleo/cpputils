@@ -1,5 +1,5 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef CPPUTILS_IO_DEBUG_H
+#define CPPUTILS_IO_DEBUG_H
 
 #ifdef NDEBUG
 # define DEBUG( out )
