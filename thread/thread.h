@@ -1,7 +1,7 @@
 #ifndef TOOLS_THREAD_H
 #define TOOLS_THREAD_H
 
-#include "../tools_config.h"
+#include "../../tools_config.h"
 
 #ifdef TOOLS_USE_THREADS
 
