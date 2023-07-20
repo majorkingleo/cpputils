@@ -253,14 +253,14 @@ template <class T> std::string createInStatement( const T & list )
  *		87604, 87624 (...)
  *
  */
-template <class T, class t_std_string> t_std_string IterableToFormattedStringT (
+template <class T, class t_std_string, class convertFunc> t_std_string IterableToFormattedStringT (
 		const T & list,
 		const t_std_string & eleSep,
 		const t_std_string & lineSep,
 		unsigned int lineEle,
 		unsigned int maxEle,
 		const t_std_string & strFurtherEle,
-		auto x2sfunc )
+        convertFunc x2sfunc)
 {
 
 	t_std_string res;
