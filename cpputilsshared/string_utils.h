@@ -384,7 +384,7 @@ container find_all_of_t( const t_std_string & haystack,
 {
 	container res;
 	Tools::find_all_of( haystack, needle,
-			[&res]( t_std_string::size_type pos ) {
+			[&res]( typename t_std_string::size_type pos ) {
 				res.push_back( pos );
 				return true;
 			});

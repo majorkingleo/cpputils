@@ -5,6 +5,7 @@
 #include "utf8_util.h"
 #include "utf8.h"
 #include "stderr_exception.h"
+#include <ctype.h>
 
 #if __cplusplus >= 201103
 
@@ -23,6 +24,7 @@ bool Utf8Util::isUtf8( const std::string & text_ )
 	return true;
 }
 
+#if defined(_BSD_SOURCE) || defined(_SVID_SOURCE) || defined(_XOPEN_SOURCE)
 bool Utf8Util::isAsciiOnly( const std::string & text )
 {
 	for( unsigned i = 0; i < text.size(); i++ ) {
@@ -33,6 +35,7 @@ bool Utf8Util::isAsciiOnly( const std::string & text )
 
 	return true;
 }
+#endif
 
 std::wstring Utf8Util::toWcharString16( const std::string & text )
 {
@@ -63,7 +66,7 @@ std::wstring Utf8Util::toWcharString32( const std::string & text )
 	return wstr;
 }
 
-#if __cplusplus >= 2020
+#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
 std::wstring Utf8Util::toWcharString16( const std::u8string & text )
 {
 	std::u16string str = utf8::utf8to16(text);
@@ -79,7 +82,7 @@ std::wstring Utf8Util::toWcharString16( const std::u8string & text )
 }
 #endif
 
-#if __cplusplus >= 2020
+#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
 std::wstring Utf8Util::toWcharString32( const std::u8string & text )
 {
 	std::u32string str = utf8::utf8to32(text);
@@ -107,7 +110,7 @@ std::wstring Utf8Util::utf8toWString( const std::string & text )
 	}
 }
 
-#if __cplusplus >= 2020
+#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
 std::wstring Utf8Util::utf8toWString( const std::u8string & text )
 {
 	if( sizeof( wchar_t ) == sizeof( int16_t ) ) {
