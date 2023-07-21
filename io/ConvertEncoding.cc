@@ -7,7 +7,7 @@
 #include <utf8_util.h>
 
 /* win-iconv seems to define source pointer as const char * */
-#if defined(__MINGW64__) || defined(__MINGW32__)
+#if defined(__MINGW64__) || defined(__MINGW32__) || defined(_MSC_VER)
 #  define ICONV_CONST
 #endif
 #include <iconv.h>
