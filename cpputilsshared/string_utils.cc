@@ -516,139 +516,170 @@ std::string escape( const std::string &s )
     return substitude( s, "'", "\\'" );
 }
 
-struct Pair
+template <class character_type> struct Pair
 {
-  std::string::size_type start;
-  std::string::size_type end;
+  std::basic_string<character_type>::size_type start;
+  std::basic_string<character_type>::size_type end;
 
-  Pair( std::string::size_type start_,   std::string::size_type end_ )
-    : start( start_ ) , end( end_ )
+  Pair( std::basic_string<character_type>::size_type start_, std::basic_string<character_type>::size_type end_ )
+    : start( start_ ),
+	  end( end_ )
   {}
 };
 
+
 static bool is_escaped( const std::string &s, std::string::size_type start )
 {
-  bool escaped = false;
+	bool escaped = false;
 
-  if( start > 0 )
-    {
-      if( s[start-1] == '\\' )
+	if( start > 0 ) {
+		if( s[start-1] == '\\' ) {
+			escaped = true;
+
+			if( start > 1 )	{
+				if( s[start-2] == '\\' ) {
+					escaped = false;
+				}
+			}
+		}
+	}
+
+	return escaped;
+}
+
+static bool is_escaped( const std::wstring &s, std::wstring::size_type start )
+{
+	bool escaped = false;
+
+	if( start > 0 ) {
+		if( s[start-1] == L'\\' ) {
+			escaped = true;
+
+			if( start > 1 ) {
+				if( s[start-2] == L'\\' ) {
+					escaped = false;
+				}
+			}
+		}
+	}
+
+	return escaped;
+}
+
+template <class t_std_string>
+static std::vector<Pair<typename t_std_string::value_type>> find_exclusive( const t_std_string &s )
+{
+	std::vector<Pair<typename t_std_string::value_type>> ex;
+
+	std::string::size_type pos = 0, start = 0, end = 0;
+
+	while( true )
 	{
-	  escaped = true;
 
-	  if( start > 1 )
-	    {
-	      if( s[start-2] == '\\' )
+		/* find starting pos */
+		while( true )
 		{
-		  escaped = false;
-		} 
-	      }
-	}	
-    }
+			start = s.find( '"', pos );
 
-  return escaped;
+			if( start == t_std_string::npos )
+				return ex;
+
+			/* is the " escaped? */
+			if( is_escaped( s, start ) )
+			{
+				pos = start + 1;
+				continue;
+			}
+
+			break;
+		}
+
+		// find second "
+		pos = start + 1;
+		while( true )
+		{
+			end = s.find( '"', pos );
+
+			if( end == t_std_string::npos )
+				return ex;
+
+			if( is_escaped( s, end ) )
+			{
+				pos = end + 1;
+				continue;
+			}
+
+			break;
+		}
+
+		ex.push_back( Pair<typename t_std_string::value_type>( start, end ) );
+		pos = end + 1;
+	}
 }
 
-static std::vector<Pair> find_exclusive( const std::string &s )
+template <class t_std_string>
+static bool is_exclusive( const t_std_string &s,
+						  const std::vector<Pair<typename t_std_string::value_type>> &exclude,
+						  typename t_std_string::size_type pos1 )
 {
-  std::vector<Pair> ex;
-
-  std::string::size_type pos = 0, start = 0, end = 0;
-
-  while( true )
-    {
-
-      /* find starting pos */
-      while( true )
-	{
-	  start = s.find( '"', pos ); 
-	  
-	  if( start == std::string::npos )
-	    return ex;
-	  
-	  /* is the " escaped? */
-	  if( is_escaped( s, start ) )
-	    {
-	      pos = start + 1;
-	      continue;
-	    }
-
-	  break;
+	bool exclusive = false;
+	for( unsigned i = 0; i < exclude.size(); i++ ) {
+		if( exclude[i].start < pos1 &&
+				exclude[i].end > pos1 )
+		{
+			exclusive = true;
+			break;
+		}
 	}
 
-      // find second "
-      pos = start + 1;
-      while( true )
-	{	  
-	  end = s.find( '"', pos );
-	  
-	  if( end == std::string::npos )
-	    return ex;
-
-	  if( is_escaped( s, end ) )
-	    {
-	      pos = end + 1;
-	      continue;
-	    }
-
-	  break;
-	}
-      
-      ex.push_back( Pair( start, end ) );
-      pos = end + 1;
-    }
-}
-
-static bool is_exclusive( const std::string &s, const std::vector<Pair> &exclude, std::string::size_type pos1 )
-{
-  bool exclusive = false;
-  for( unsigned i = 0; i < exclude.size(); i++ )
-    {
-      if( exclude[i].start < pos1 &&
-	  exclude[i].end > pos1 )
-        {
-	  exclusive = true;
-	  break;
-	}
-    }
-
-  return exclusive;
+	return exclusive;
 }
 
 /* splits
        hello "my name is" 
    correct up into 'hello' and '"my name is"'
 */
-std::vector<std::string> split_safe( const std::string &s, const std::string &sep )
+template <class t_std_string>
+static std::vector<t_std_string> split_safe_int( const t_std_string &s, const t_std_string &sep )
 {
-  std::vector<Pair> exclude = find_exclusive( s );
+  std::vector<Pair<typename t_std_string::value_type>> exclude = find_exclusive( s );
 
-  std::string::size_type pos1 = 0, pos2 = 0;
+  typename t_std_string::size_type pos1 = 0, pos2 = 0;
 
-  std::vector<std::string> sl;
+  std::vector<t_std_string> sl;
 
   while( true )
-    {
-      pos1 = s.find_first_of( sep, pos1 );
-      
-      if( pos1 == std::string::npos )
-	{
-	  sl.push_back( s.substr( pos2 ) );
-	  return sl;
-	}
-      
-      if( is_exclusive( s, exclude, pos1 ) )
-	{
-	  pos1++;
-	  continue;
-	}
+  {
+	  pos1 = s.find_first_of( sep, pos1 );
 
-      sl.push_back( s.substr( pos2, pos1 - pos2 ) );
-      pos2 = pos1 + 1;
-      pos1++;
-    }
+	  if( pos1 == t_std_string::npos )
+	  {
+		  sl.push_back( s.substr( pos2 ) );
+		  return sl;
+	  }
+
+	  if( is_exclusive( s, exclude, pos1 ) )
+	  {
+		  pos1++;
+		  continue;
+	  }
+
+	  sl.push_back( s.substr( pos2, pos1 - pos2 ) );
+	  pos2 = pos1 + 1;
+	  pos1++;
+  }
 
   return sl;
+}
+
+std::vector<std::string> split_safe( const std::string &s, const std::string &sep )
+{
+	return split_safe_int( s, sep );
+}
+
+std::vector<std::wstring> split_safe( const std::wstring &s, const std::wstring &sep )
+{
+	return split_safe_int( s, sep );
 }
 
 std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep , int max )

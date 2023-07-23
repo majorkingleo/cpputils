@@ -187,6 +187,7 @@ std::string group_thousand( const std::string &s, unsigned digit = 3, const std:
 std::string escape( const std::string &s );
 
 std::vector<std::string> split_safe( const std::string &s, const std::string &sep = " \n\t");
+std::vector<std::wstring> split_safe( const std::wstring &s, const std::wstring &sep = L" \n\t");
 
 template <class T> std::string createInStatement( const T & list )
 {
