@@ -33,7 +33,7 @@ public:
 
 	static std::wstring utf8toWString( const std::string & text );
 
-#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
+#if defined(CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE)
 	static std::wstring utf8toWString( const std::u8string & text );
 	static std::wstring toWcharString16( const std::u8string & text );
 	static std::wstring toWcharString32( const std::u8string & text );

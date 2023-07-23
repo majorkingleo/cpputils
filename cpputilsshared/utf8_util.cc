@@ -66,7 +66,7 @@ std::wstring Utf8Util::toWcharString32( const std::string & text )
 	return wstr;
 }
 
-#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
+#if defined(CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE)
 std::wstring Utf8Util::toWcharString16( const std::u8string & text )
 {
 	std::u16string str = utf8::utf8to16(text);
@@ -82,7 +82,7 @@ std::wstring Utf8Util::toWcharString16( const std::u8string & text )
 }
 #endif
 
-#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
+#if defined(CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE)
 std::wstring Utf8Util::toWcharString32( const std::u8string & text )
 {
 	std::u32string str = utf8::utf8to32(text);
@@ -110,7 +110,7 @@ std::wstring Utf8Util::utf8toWString( const std::string & text )
 	}
 }
 
-#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
+#if defined(CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE)
 std::wstring Utf8Util::utf8toWString( const std::u8string & text )
 {
 	if( sizeof( wchar_t ) == sizeof( int16_t ) ) {

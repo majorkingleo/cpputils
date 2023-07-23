@@ -53,7 +53,7 @@ namespace utf8
         return result;
     }
 
-#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
+#if defined(CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE)
     inline std::u16string utf8to16(std::u8string_view s)
     {
         std::u16string result;
@@ -76,7 +76,7 @@ namespace utf8
         return result;
     }
 
-#if CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
+#if defined(CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE)
     inline std::u32string utf8to32(std::u8string_view s)
     {
         std::u32string result;

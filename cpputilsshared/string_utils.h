@@ -304,7 +304,7 @@ template <class T> std::string IterableToFormattedString (
 		const std::string &strFurtherEle = " (...)")
 {
 	return IterableToFormattedStringT<T,std::string>(list, eleSep, lineSep, lineEle, maxEle, strFurtherEle,
-			[]( auto value ) { return x2s( value ); });
+			[]( const T::value_type & value ) { return x2s( value ); });
 }
 
 template <class T> std::wstring IterableToFormattedWString (
@@ -316,7 +316,7 @@ template <class T> std::wstring IterableToFormattedWString (
 		const std::wstring &strFurtherEle = L" (...)")
 {
 	return IterableToFormattedStringT<T,std::wstring>(list, eleSep, lineSep, lineEle, maxEle, strFurtherEle,
-			[]( auto value ) { return x2ws( value ); });
+			[]( const T::value_type & value ) { return x2ws( value ); });
 }
 
 template <class T> std::string IterableToCommaSeparatedString( const T & list, 
