@@ -518,10 +518,10 @@ std::string escape( const std::string &s )
 
 template <class character_type> struct Pair
 {
-  std::basic_string<character_type>::size_type start;
-  std::basic_string<character_type>::size_type end;
+  typename std::basic_string<character_type>::size_type start;
+  typename std::basic_string<character_type>::size_type end;
 
-  Pair( std::basic_string<character_type>::size_type start_, std::basic_string<character_type>::size_type end_ )
+  Pair( typename std::basic_string<character_type>::size_type start_, typename std::basic_string<character_type>::size_type end_ )
     : start( start_ ),
 	  end( end_ )
   {}
