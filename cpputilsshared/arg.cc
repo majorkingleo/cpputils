@@ -12,7 +12,7 @@ using namespace Tools;
 
 #include <iostream>
 
-#ifdef HAVE_CURSES_H
+#if defined(HAVE_CURSES_H) && !defined(DISABLE_CURSES)
 extern "C" {
 #include <curses.h>
 }
@@ -23,7 +23,7 @@ int Arg::get_terminal_width()
 {      
     const int DEFAULT_COLS = 80;
     
-#ifdef HAVE_CURSES_H
+#if defined(HAVE_CURSES_H) && !defined(DISABLE_CURSES)
     initscr();
     endwin();
 
