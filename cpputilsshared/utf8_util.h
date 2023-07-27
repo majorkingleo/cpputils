@@ -10,7 +10,7 @@
 
 #if __cplusplus >= 201103
 
-#if __cplusplus >= 2020
+#if __cplusplus >= 202002L
 # define CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
 # if __GNUC__ <= 9
 #  undef CPPUTILS_CPPUTILSSHARED_U8STRING_AVAILABLE
