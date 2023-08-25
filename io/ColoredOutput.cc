@@ -1,8 +1,6 @@
-/*
- * ColoredOutput.cc
- *
- *  Created on: 27.01.2023
- *      Author: Martin Oberzalek <oberzalek@gmx.at>
+/**
+ * class for printing console colours
+ * @author Copyright (c) 2019 - 2023 Martin Oberzalek
  */
 #include <sstream>
 #include <stdlib.h>
@@ -14,6 +12,8 @@
 #else
 #	include <unistd.h>
 #endif
+
+using namespace Tools;
 
 ColoredOutput::ColoredOutput()
 : colored_output( false )

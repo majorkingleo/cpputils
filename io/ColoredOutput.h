@@ -1,13 +1,13 @@
-/*
- * ColoredOutput.h
- *
- *  Created on: 27.01.2023
- *      Author: Martin Oberzalek <oberzalek@gmx.at>
+/**
+ * class for printing console colours
+ * @author Copyright (c) 2019 - 2023 Martin Oberzalek
  */
 #ifndef COLORED_OUTPUT_H_
 #define COLORED_OUTPUT_H_
 
 #include <string>
+
+namespace Tools {
 
 /*
  * class to color a string on the console.
@@ -46,5 +46,7 @@ public:
 			colored_output = colored_output_;
 	}
 };
+
+} // namespace Tools
 
 #endif /* COLORED_OUTPUT_H_ */

@@ -7,9 +7,11 @@
 
 #ifndef DISABLE_CPPUTILS_DETECT_LOCALE
 
-class OutDebug : public Tools::Debug, ColoredOutput
+namespace Tools {
+
+class OutDebug : public Tools::Debug, public ColoredOutput
 {
-private:
+protected:
 	ColoredOutput::Color color;
 	std::wstring prefix;
 	bool print_line_and_file_info;
@@ -26,6 +28,8 @@ public:
 	void add( const char *file, unsigned line, const char *function, const std::string & s ) override;
 	void add( const char *file, unsigned line, const char *function, const std::wstring & s ) override;
 };
+
+} // namespace Tools
 
 #endif
 

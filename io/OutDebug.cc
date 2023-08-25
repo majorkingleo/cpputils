@@ -7,6 +7,8 @@
 
 #ifndef DISABLE_CPPUTILS_DETECT_LOCALE
 
+using namespace Tools;
+
 OutDebug::OutDebug(  ColoredOutput::Color color_ )
 : Debug(),
   ColoredOutput(),
