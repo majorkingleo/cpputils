@@ -39,6 +39,11 @@ std::wstring tolower( std::wstring s );
 std::string strip( const std::string& str, const std::string& what = " \t\n\r" );
 std::wstring strip( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
 
+#if __cplusplus >= 201703L
+std::string_view strip_view( const std::string_view & str, const std::string_view & what = " \t\n\r" );
+std::wstring_view strip_view( const std::wstring_view & str, const std::wstring_view & what = L" \t\n\r" );
+#endif
+
 std::string strip_leading( const std::string& str, const std::string& what = " \t\n\r" );
 std::wstring strip_leading( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
 
@@ -56,6 +61,11 @@ std::vector<std::wstring> split_string( std::wstring str, std::wstring seperator
 
 std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep = " \t\n", int max = -1 );
 std::vector<std::wstring> split_and_strip_simple( std::wstring str, const std::wstring & sep = L" \t\n", int max = -1 );
+
+#if __cplusplus >= 201703L
+std::vector<std::string_view> split_and_strip_simple_view( const std::string_view & str, const std::string_view & sep = " \t\n", int max = -1 );
+std::vector<std::wstring_view> split_and_strip_simple_view( const std::wstring_view & str, const std::wstring_view & sep = L" \t\n", int max = -1 );
+#endif
 
 inline bool is_bool( const bool &b ) { return true; }
 template<class T> bool is_bool( const T &t ) { return false; }

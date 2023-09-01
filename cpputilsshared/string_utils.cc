@@ -106,7 +106,8 @@ bool is_int( const std::wstring &s )
 
 namespace {
 
-template<class t_std_string> class TStrip {
+template<class t_std_string,
+         class t_std_string_search = t_std_string> class TStrip {
 public:
 
 	t_std_string strip( const t_std_string& str, const t_std_string& what )
@@ -120,8 +121,9 @@ public:
 		} else {
 
 			typename t_std_string::size_type q = str.find_last_not_of(what);
+            typename t_std_string::size_type len = q - p + 1;
 
-			return t_std_string(str, p, q - p + 1);
+			return t_std_string(&(*str.begin()) + p, len );
 		}
 	}
 };
@@ -136,6 +138,20 @@ std::wstring strip( const std::wstring& str, const std::wstring& what ) {
 	TStrip<std::wstring> tstrip;
 	return tstrip.strip( str, what );
 }
+
+#if __cplusplus >= 201703L
+
+std::string_view strip_view( const std::string_view & str, const std::string_view & what ) {
+  TStrip<std::string_view> tstrip;
+  return tstrip.strip( str, what );
+}
+
+std::wstring_view strip_view( const std::wstring_view & str, const std::wstring_view & what ) {
+  TStrip<std::wstring_view> tstrip;
+  return tstrip.strip( str, what );
+}
+
+#endif
 
 std::string strip_leading( const std::string& str, const std::string& what )
 {
@@ -682,128 +698,90 @@ std::vector<std::wstring> split_safe( const std::wstring &s, const std::wstring 
 	return split_safe_int( s, sep );
 }
 
-std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep , int max )
+template<class t_std_string>
+static std::vector<t_std_string> split_and_strip_simple_int( const t_std_string & input_str, const t_std_string & sep , int max )
 {
-  str = strip( str, sep );
-  
+  TStrip<t_std_string> tstrip;
+  t_std_string str = tstrip.strip( input_str, sep );
+
   std::string::size_type start = 0, last = 0;
   int count = 0;
-  
-  std::vector<std::string> sl;
-  
+
+  std::vector<t_std_string> sl;
+
   if( str.empty() ) {
-	  return sl;
+    return sl;
   }
 
   while( true )
+  {
+    if( max > 0 )
+      count++;
+
+    if( count >= max && max > 0 )
     {
-      if( max > 0 )
-		count++;
-	  
-      if( count >= max && max > 0 )
-		{
-		  sl.push_back( str.substr( last ) );
-		  break;
-		}
-	  
-      start = str.find_first_of( sep, last );
-	  
-      if( start == std::string::npos )
-		{
-		  sl.push_back( str.substr( last ) );
-		  break;
-		}
-	  
-      sl.push_back( str.substr( last, start - last ) );
-	  
-	  for( std::string::size_type pos = start + 1;
-		   pos < str.size(); pos++ )
-		{
-		  bool found = false;
-
-		  for( std::string::size_type i = 0; i < sep.size(); i++ )
-			{
-			  if( str[pos] == sep[i] )
-				{
-				  found = true;
-				  break;				  
-				}
-			}
-
-		  if( found == false )
-			{
-			  last = pos;
-			  break;
-			}
-		}
-
-	  //      last = start + 1;
+      sl.push_back( str.substr( last ) );
+      break;
     }
-  
+
+    start = str.find_first_of( sep, last );
+
+    if( start == t_std_string::npos )
+    {
+      sl.push_back( str.substr( last ) );
+      break;
+    }
+
+    sl.push_back( str.substr( last, start - last ) );
+
+    for( typename t_std_string::size_type pos = start + 1;
+      pos < str.size(); pos++ )
+    {
+      bool found = false;
+
+      for( typename t_std_string::size_type i = 0; i < sep.size(); i++ )
+      {
+        if( str[pos] == sep[i] )
+        {
+          found = true;
+          break;				  
+        }
+      }
+
+      if( found == false )
+      {
+        last = pos;
+        break;
+      }
+    }
+
+    //      last = start + 1;
+  }
+
   return sl;
+}
+
+std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep , int max )
+{
+  return split_and_strip_simple_int<std::string>( str, sep, max );  
 }
 
 std::vector<std::wstring> split_and_strip_simple( std::wstring str, const std::wstring & sep , int max )
 {
-  str = strip( str, sep );
-
-  std::wstring::size_type start = 0, last = 0;
-  int count = 0;
-
-  std::vector<std::wstring> sl;
-
-  if( str.empty() ) {
-	  return sl;
-  }
-
-
-  while( true )
-    {
-      if( max > 0 )
-		count++;
-
-      if( count >= max && max > 0 )
-		{
-		  sl.push_back( str.substr( last ) );
-		  break;
-		}
-
-      start = str.find_first_of( sep, last );
-
-      if( start == std::wstring::npos )
-		{
-		  sl.push_back( str.substr( last ) );
-		  break;
-		}
-
-      sl.push_back( str.substr( last, start - last ) );
-
-	  for( std::wstring::size_type pos = start + 1;
-		   pos < str.size(); pos++ )
-		{
-		  bool found = false;
-
-		  for( std::wstring::size_type i = 0; i < sep.size(); i++ )
-			{
-			  if( str[pos] == sep[i] )
-				{
-				  found = true;
-				  break;
-				}
-			}
-
-		  if( found == false )
-			{
-			  last = pos;
-			  break;
-			}
-		}
-
-	  //      last = start + 1;
-    }
-
-  return sl;
+  return split_and_strip_simple_int<std::wstring>( str, sep, max );
 }
+
+#if __cplusplus >= 201703L
+std::vector<std::string_view> split_and_strip_simple_view( const std::string_view & str, const std::string_view & sep , int max )
+{
+  return split_and_strip_simple_int<std::string_view>( str, sep, max );
+}
+
+std::vector<std::wstring_view> split_and_strip_simple_view( const std::wstring_view & str, const std::wstring_view & sep , int max )
+{
+  return split_and_strip_simple_int<std::wstring_view>( str, sep, max );
+}
+#endif
 
 std::string fill_trailing( std::string s, const std::string fill_sign, unsigned int len )
 {
