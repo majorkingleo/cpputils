@@ -1,13 +1,13 @@
 #ifndef CPPUTILS_IO_DEBUG_H
 #define CPPUTILS_IO_DEBUG_H
 
+#include <string>
+
 #ifdef NDEBUG
-# define DEBUG( out )
+# define CPPDEBUG( out )
 #else
-
-#include "format.h"
-
-#define DEBUG( x ) if( Tools::x_debug ) { Tools::x_debug->add(  __FILE__, __LINE__, __PRETTY_FUNCTION__, x ); }
+# define CPPDEBUG( x ) if( Tools::x_debug ) { Tools::x_debug->add(  __FILE__, __LINE__, __PRETTY_FUNCTION__, x ); }
+#endif
 
 namespace Tools {
 
@@ -24,7 +24,5 @@ class Debug
 extern Debug *x_debug;
 
 }
-
-#endif
 
 #endif
