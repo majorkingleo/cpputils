@@ -13,6 +13,7 @@
 #include <format.h>
 #include <stderr_exception.h>
 #include <CpputilsDebug.h>
+#include <clocale>
 
 #ifndef DISABLE_CPPUTILS_READFILE
 

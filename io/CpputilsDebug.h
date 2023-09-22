@@ -6,7 +6,11 @@
 #ifdef NDEBUG
 # define CPPDEBUG( out )
 #else
-# define CPPDEBUG( x ) if( Tools::x_debug ) { Tools::x_debug->add(  __FILE__, __LINE__, __PRETTY_FUNCTION__, x ); }
+# ifdef _MSC_VER
+#   define CPPDEBUG( x ) if( Tools::x_debug ) { Tools::x_debug->add(  __FILE__, __LINE__, __FUNCSIG__, x ); }
+# else
+#   define CPPDEBUG( x ) if( Tools::x_debug ) { Tools::x_debug->add(  __FILE__, __LINE__, __PRETTY_FUNCTION__, x ); }
+# endif
 #endif
 
 namespace Tools {
