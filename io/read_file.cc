@@ -12,7 +12,7 @@
 #ifndef DISABLE_CPPUTILS_READFILE
 
 /* win-iconv seems to define source pointer as const char * */
-#if defined(__MINGW64__) || defined(__MINGW32__)
+#if defined(__MINGW64__) || defined(__MINGW32__) || defined(_MSC_VER)
 #  define ICONV_CONST
 #endif
 #include <iconv.h>
@@ -1245,7 +1245,7 @@ bool ReadFile::read_file( const std::string & name, std::wstring & content )
 
 	error = "cannot convert file";
 
-	DEBUG( "cannot convert file" );
+	CPPDEBUG( "cannot convert file" );
 
 	return false;
 }

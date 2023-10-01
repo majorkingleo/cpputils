@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <DetectLocale.h>
 
 #ifndef DISABLE_CPPUTILS_DETECT_LOCALE
