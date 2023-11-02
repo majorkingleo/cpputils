@@ -1,6 +1,7 @@
 /*
  * @author Copyright (c) 2023 Martin Oberzalek
  *		   Copyright (c) 2023 Anton Paar GmbH
+ *
  */
 
 #ifndef CPPUTILS_CPPUTILSSHARED_STATIC_LIST_H_
@@ -9,9 +10,17 @@
 #include "static_vector.h"
 #include <list>
 #include <optional>
+#include <algorithm>
 
 namespace Tools {
 
+/**
+ * A list class that uses no heap.
+ * The maximum capacity is defined at compile time. At difference to
+ * static_vector all iterators staying valid on list manipulation.
+ * Same behavior as std::list iterators.
+ *
+ */
 template <typename T,std::size_t N>
 class static_list
 {
@@ -58,11 +67,12 @@ public:
 
 		iterator( const iterator & other ) = default;
 
+	protected:
 		iterator( static_list<T,N> *parent_, typename static_list<T,N>::DATA_INDEX::iterator pos_ )
 		: pos( pos_ ),
 		  parent( parent_ ),
 		  manipulation_count( parent->get_manipulation_count() ),
-		  pointer_to_optional( *pos ),
+		  pointer_to_optional( parent->get_index().end() == pos ? nullptr : *pos ),
 		  is_end( parent->get_index().end() == pos )
 		{
 
@@ -72,7 +82,7 @@ public:
 				  typename static_list<T,N>::DATA_INDEX::const_iterator pos_ )
 		: parent( parent_ ),
 		  manipulation_count( parent->get_manipulation_count() ),
-		  pointer_to_optional( *pos_ )
+		  pointer_to_optional( parent->get_index().cend() == pos_ ? nullptr : *pos_ )
 		{
 			typename static_list<T,N>::DATA_INDEX::iterator it = parent->get_index().begin();
 			typename static_list<T,N>::DATA_INDEX::const_iterator cit = parent->get_index().cbegin();
@@ -86,6 +96,7 @@ public:
 			is_end = parent->get_index().end() == pos;
 		}
 
+	public:
 		bool operator!=( const iterator & other_it ) const {
 			check( *this );
 			check( other_it );
@@ -141,13 +152,13 @@ public:
 
 		iterator operator+(int count) const {
 			iterator ret(*this);
-			ret.pos += count;
+			ret += count;
 			return ret;
 		}
 
 		iterator operator-(int count) const {
 			iterator ret(*this);
-			ret.pos -= count;
+			ret -= count;
 			return ret;
 		}
 
@@ -244,21 +255,24 @@ public:
 
 		const_iterator( const const_iterator & other ) = default;
 
+	protected:
 		const_iterator( const static_list<T,N> *parent_, typename static_list<T,N>::DATA_INDEX::iterator pos_ )
 		: pos( pos_ ),
 		  parent( parent_ ),
 		  manipulation_count( data->get_manipulation_count() ),
-		  pointer_to_optional( *pos )
+		  pointer_to_optional( parent->get_index().cend() == pos ? nullptr : *pos  ),
+		  is_end( parent->get_index().end() == pos )
 		{}
 
 		const_iterator( const static_list<T,N> *parent_, typename static_list<T,N>::DATA_INDEX::const_iterator pos_ )
 		: pos( pos_ ),
 		  parent( parent_ ),
 		  manipulation_count( parent->get_manipulation_count() ),
-		  pointer_to_optional( *pos ),
+		  pointer_to_optional( parent->get_index().cend() == pos ? nullptr : *pos  ),
 		  is_end( parent->get_index().end() == pos )
 		{}
 
+	public:
 		const_iterator( const iterator & other )
 		: pos( other.pos ),
 		  parent( other.parent ),
@@ -344,13 +358,13 @@ public:
 
 		const_iterator operator+(int count) const {
 			iterator ret(*this);
-			ret.pos += count;
+			ret += count;
 			return ret;
 		}
 
 		const_iterator operator-(int count) const {
 			iterator ret(*this);
-			ret.pos -= count;
+			ret -= count;
 			return ret;
 		}
 
@@ -410,11 +424,12 @@ public:
 
 		reverse_iterator( const reverse_iterator & other ) = default;
 
+	protected:
 		reverse_iterator( static_list<T,N> *parent_, typename static_list<T,N>::DATA_INDEX::iterator pos_ )
 		: pos( pos_ ),
 		  parent( parent_ ),
 		  manipulation_count( parent->get_manipulation_count() ),
-		  pointer_to_optional( *pos ),
+		  pointer_to_optional( parent->get_index().end() == pos ? nullptr : *pos ),
 		  is_end( parent->get_index().end() == pos )
 		{
 
@@ -424,7 +439,7 @@ public:
 				  typename static_list<T,N>::DATA_INDEX::const_iterator pos_ )
 		: parent( parent_ ),
 		  manipulation_count( parent->get_manipulation_count() ),
-		  pointer_to_optional( *pos_ )
+		  pointer_to_optional( parent->get_index().end() == pos_ ? nullptr : *pos_ )
 		{
 			typename static_list<T,N>::DATA_INDEX::iterator it = parent->get_index().begin();
 			typename static_list<T,N>::DATA_INDEX::const_iterator cit = parent->get_index().cbegin();
@@ -438,6 +453,7 @@ public:
 			is_end = parent->get_index().end() == pos;
 		}
 
+	public:
 		bool operator!=( const iterator & other_it ) const {
 			check( *this );
 			check( other_it );
@@ -472,7 +488,20 @@ public:
 
 		reverse_iterator & operator++() {
 			iterator::check(*this);
-			++pos;
+
+			// don't step beyond the end
+			if( is_end ) {
+				return *this;
+			}
+
+			if( pos == parent->get_index().begin() ) {
+				is_end = true;
+				pos = parent->get_index().end();
+				pointer_to_optional = nullptr;
+				return *this;
+			}
+
+			--pos;
 			pointer_to_optional = *pos;
 			return *this;
 		}
@@ -493,13 +522,13 @@ public:
 
 		reverse_iterator operator+(int count) const {
 			reverse_iterator ret(*this);
-			ret.pos += count;
+			ret += count;
 			return ret;
 		}
 
 		reverse_iterator operator-(int count) const {
 			reverse_iterator ret(*this);
-			ret.pos -= count;
+			ret -= count;
 			return ret;
 		}
 
@@ -519,9 +548,23 @@ public:
 
 		reverse_iterator & operator--() {
 			iterator::check(*this);
-			--pos;
+
+			if( is_end ) {
+				pos = parent->get_index().begin();
+				pointer_to_optional = *pos;
+				is_end = false;
+				return *this;
+			}
+
+			++pos;
+
+			if( pos == parent->get_index().end() ) {
+				pointer_to_optional = nullptr;
+				is_end = false;
+				return *this;
+			}
+
 			pointer_to_optional = *pos;
-			is_end = pos == parent->get_index().end();
 			return *this;
 		}
 
@@ -538,8 +581,179 @@ public:
 		friend class static_list<T,N>;
 	};
 
-	//typedef typename std::reverse_iterator<iterator> reverse_iterator;
-	typedef typename std::reverse_iterator<const_iterator> const_reverse_iterator;
+	class const_reverse_iterator
+	{
+	public:
+		typedef typename static_list<T,N>::value_type value_type;
+		typedef typename static_list<T,N>::reference reference;
+		typedef typename static_list<T,N>::const_reference const_reference;
+		typedef typename static_list<T,N>::size_type size_type;
+		typedef typename static_list<T,N>::difference_type difference_type;
+
+	private:
+		mutable typename static_list<T,N>::DATA_INDEX::iterator pos;
+		const static_list<T,N> *parent = nullptr;
+		mutable size_type manipulation_count = 0;
+		typename static_list<T,N>::DATA_INDEX::value_type pointer_to_optional;
+		bool is_end = false;
+
+	public:
+
+		const_reverse_iterator() = default;
+
+		const_reverse_iterator( const const_reverse_iterator & other ) = default;
+
+	protected:
+		const_reverse_iterator( const static_list<T,N> *parent_, typename static_list<T,N>::DATA_INDEX::iterator pos_ )
+		: pos( pos_ ),
+		  parent( parent_ ),
+		  manipulation_count( parent->get_manipulation_count() ),
+		  pointer_to_optional( parent->get_index().end() == pos ? nullptr : *pos ),
+		  is_end( parent->get_index().end() == pos )
+		{
+
+		}
+
+		const_reverse_iterator( const static_list<T,N> *parent_,
+				  typename static_list<T,N>::DATA_INDEX::const_iterator pos_ )
+		: parent( parent_ ),
+		  manipulation_count( parent->get_manipulation_count() ),
+		  pointer_to_optional( parent->get_index().end() == pos_ ? nullptr : *pos_ )
+		{
+			typename static_list<T,N>::DATA_INDEX::iterator it = parent->get_index().begin();
+			typename static_list<T,N>::DATA_INDEX::const_iterator cit = parent->get_index().cbegin();
+
+			while( it != parent->get_index().end() && cit != pos_ ) {
+				++it;
+				++cit;
+			}
+
+			pos = it;
+			is_end = parent->get_index().end() == pos;
+		}
+
+	public:
+		bool operator!=( const iterator & other_it ) const {
+			check( *this );
+			check( other_it );
+
+			if( pos == other_it.pos ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		bool operator==( const iterator & other_it ) const {
+			check( *this );
+			check( other_it );
+
+			if( pos != other_it.pos ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		const T & operator*() const {
+			iterator::check( *this );
+			return (*pos)->value();
+		}
+
+		const_reverse_iterator & operator++() {
+			iterator::check(*this);
+
+			// don't step beyond the end
+			if( is_end ) {
+				return *this;
+			}
+
+			if( pos == parent->get_index().begin() ) {
+				is_end = true;
+				pos = parent->get_index().end();
+				pointer_to_optional = nullptr;
+				return *this;
+			}
+
+			--pos;
+			pointer_to_optional = *pos;
+			return *this;
+		}
+
+		const_reverse_iterator operator++(int) {
+			const_reverse_iterator res(*this);
+			++(*this);
+			return res;
+		}
+
+		const_reverse_iterator & operator+=(int count) {
+			iterator::check(*this);
+			pos += count;
+			pointer_to_optional = *pos;
+			is_end = pos == parent->get_index().end();
+			return *this;
+		}
+
+		const_reverse_iterator operator+(int count) const {
+			const_reverse_iterator ret(*this);
+			ret.pos += count;
+			return ret;
+		}
+
+		const_reverse_iterator operator-(int count) const {
+			const_reverse_iterator ret(*this);
+			ret.pos -= count;
+			return ret;
+		}
+
+		const_reverse_iterator & operator-=(int count) {
+			iterator::check(*this);
+			pos -= count;
+			pointer_to_optional = *pos;
+			return *this;
+		}
+
+
+		const_reverse_iterator operator--(int) {
+			const_reverse_iterator res(*this);
+			--(*this);
+			return res;
+		}
+
+		const_reverse_iterator & operator--() {
+			iterator::check(*this);
+
+			if( is_end ) {
+				pos = parent->get_index().begin();
+				pointer_to_optional = *pos;
+				is_end = false;
+				return *this;
+			}
+
+			++pos;
+
+			if( pos == parent->get_index().end() ) {
+				pointer_to_optional = nullptr;
+				is_end = false;
+				return *this;
+			}
+
+			pointer_to_optional = *pos;
+			return *this;
+		}
+
+		T* operator->() {
+			iterator::check( *this );
+			return &(*pos)->value();
+		}
+
+		typename static_list<T,N>::DATA_INDEX::iterator get_it() const {
+			iterator::check(*this);
+			return pos;
+		}
+
+		friend class static_list<T,N>;
+	};
 
 public:
 	static_list()
@@ -675,23 +889,26 @@ public:
 	}
 
 	const_reverse_iterator rbegin() const {
-		return const_reverse_iterator(iterator(this,index.end()));
+		return const_reverse_iterator(iterator(this,--index.end()));
 	}
 
 	const_reverse_iterator crbegin() const {
-		return const_reverse_iterator(iterator(this,index.end()));
+		return const_reverse_iterator(iterator(this,--index.end()));
 	}
 
 	reverse_iterator rend() {
+		// special behavior for this iterator, point to the end (means same as std::list::crend() )
 		return reverse_iterator(this,index.end());
 	}
 
 	const_reverse_iterator rend() const {
-		return const_reverse_iterator(iterator(this,index.begin()));
+		// special behavior for this iterator, point to the end (means same as std::list::crend() )
+		return const_reverse_iterator(iterator(this,index.end()));
 	}
 
 	const_reverse_iterator crend() const {
-		return const_reverse_iterator(iterator(this,index.begin()));
+		// special behavior for this iterator, point to the end (means same as std::list::crend() )
+		return const_reverse_iterator(iterator(this,index.end()));
 	}
 
 	void assign( size_type count, const T & value ) {
@@ -853,7 +1070,6 @@ public:
 
 		iterator it = iterator(this,first.get_it());
 		while( it != last && it != end() ) {
-			CPPDEBUG( format( "it:" ) );
 			it = erase(it);
 		}
 
@@ -1008,6 +1224,143 @@ public:
 		while( size() < count ) {
 			push_back( value );
 		}
+	}
+
+	/**
+	 * Reverses the order of the elements in the container.
+	 * No references or iterators become invalidated.
+	 */
+	void reverse() noexcept {
+		std::reverse(index.begin(), index.end());
+		++manipulation_count;
+	}
+
+	/**
+	 * Removes all elements satisfying specific criteria.
+	 * Invalidates only the iterators and references to the removed elements.
+	 * Removes all elements that are equal to value (using operator==).
+	 */
+	size_type remove( const T& value ) {
+		size_type count = 0;
+
+		auto it_end = end();
+		for( iterator it = begin(); it != it_end; ) {
+			if( *it == value ) {
+				it = erase(it);
+				++count;
+			} else {
+				++it;
+			}
+		}
+
+		return count;
+	}
+
+	/**
+	 * Removes all elements satisfying specific criteria.
+	 * Invalidates only the iterators and references to the removed elements.
+	 * Removes all elements for which predicate p returns true.
+	 */
+	template< class UnaryPredicate >
+	size_type remove_if( UnaryPredicate p ) {
+		size_type count = 0;
+
+		auto it_end = end();
+		for( iterator it = begin(); it != it_end; ) {
+			if( p(*it) ) {
+				it = erase(it);
+				++count;
+			} else {
+				++it;
+			}
+		}
+
+		return count;
+	}
+
+protected:
+	template<class ForwardIt, class Compare>
+	static void selection_sort(ForwardIt begin, ForwardIt end, Compare comp)
+	{
+		for (ForwardIt it = begin; it != end; ++it) {
+			std::iter_swap(it, std::min_element(it, end, comp ));
+		}
+	}
+
+public:
+	/**
+	 * Sorts the elements and preserves the order of equivalent elements.
+	 * No references or iterators become invalidated.
+	 */
+	void sort() {
+		selection_sort( begin(), end(), std::less<T>() );
+	}
+
+	template< class Compare >
+	void sort( Compare comp ) {
+		selection_sort( begin(), end(), comp );
+	}
+
+	/**
+	 * Removes all consecutive duplicate elements from the container.
+	 * Only the first element in each group of equal elements is left.
+	 * Invalidates only the iterators and references to the removed elements.
+	 * Uses p to compare the elements.
+	 * return: The number of elements removed.
+	 */
+	template< class BinaryPredicate >
+	size_type unique( BinaryPredicate p ) {
+
+		size_type count = 0;
+		auto it_end = end();
+		for( auto it = begin(), last = it_end; it != it_end; ) {
+
+			if( last == it_end ) {
+				last = it;
+				 ++it;
+				continue;
+			}
+
+			if( p( *last, *it ) ) {
+				it = erase(it);
+				++count;
+				continue;
+			}
+
+			last = it;
+			++it;
+		}
+
+		return count;
+	}
+
+	/**
+	 * Removes all consecutive duplicate elements from the container.
+	 * Only the first element in each group of equal elements is left.
+	 * Invalidates only the iterators and references to the removed elements.
+	 * Uses operator== to compare the elements.
+	 * return: The number of elements removed.
+	 */
+	size_type unique() {
+		return unique( std::equal_to<T>() );
+	}
+
+public:
+	// non standard access operators
+	T & operator[]( size_t index ) {
+		return static_list<T,N>::get_index()[index]->value();
+	}
+
+	const T & operator[]( size_t index ) const {
+		return static_list<T,N>::get_index()[index]->value();
+	}
+
+	T & at( size_t index ) {
+		return static_list<T,N>::get_index().at(index)->value();
+	}
+
+	const T & at( size_t index ) const {
+		return static_list<T,N>::get_index().at(index)->value();
 	}
 
 protected:
