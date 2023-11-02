@@ -1376,7 +1376,7 @@ protected:
 		++manipulation_count;
 	}
 
-	DATA_INDEX::value_type push_at_free_pos( const T & v ) {
+	typename DATA_INDEX::value_type push_at_free_pos( const T & v ) {
 		for( auto & d : data ) {
 			if( !d.has_value() ) {
 				d = v;
@@ -1386,7 +1386,7 @@ protected:
 		throw std::out_of_range("max capacity reached");
 	}
 
-	DATA_INDEX::value_type push_at_free_pos( T && v ) {
+    typename DATA_INDEX::value_type push_at_free_pos( T && v ) {
 		for( auto & d : data ) {
 			if( !d.has_value() ) {
 				d = std::move(v);
@@ -1397,7 +1397,7 @@ protected:
 	}
 
 	template< class... Args >
-	DATA_INDEX::value_type emplace_at_free_pos( Args&&... args ) {
+    typename DATA_INDEX::value_type emplace_at_free_pos( Args&&... args ) {
 		for( auto & d : data ) {
 			if( !d.has_value() ) {
 				d.emplace(args...);
