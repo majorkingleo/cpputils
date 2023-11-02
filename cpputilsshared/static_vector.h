@@ -12,6 +12,12 @@
 
 namespace Tools {
 
+/**
+ * A vector class that uses no heap.
+ * The maximum capacity is defined at compile time.
+ * Same behavior as std::vector.
+ *
+ */
 template <typename T,std::size_t N>
 class static_vector : public std::pmr::vector<T>
 {
