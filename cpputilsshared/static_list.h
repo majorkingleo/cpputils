@@ -11,6 +11,7 @@
 #include <list>
 #include <optional>
 #include <algorithm>
+#include <stdexcept>
 
 namespace Tools {
 
@@ -44,6 +45,7 @@ protected:
 	size_type manipulation_count = 0;
 
 public:
+	class const_iterator;
 
 	class iterator
 	{
@@ -107,6 +109,8 @@ public:
 
 			return true;
 		}
+
+		bool operator!=( const const_iterator & other_it ) const;
 
 		bool operator==( const iterator & other_it ) const {
 			check( *this );
@@ -1437,6 +1441,18 @@ protected:
 		return index;
 	}
 };
+
+template <typename T,std::size_t N>
+bool static_list<T,N>::iterator::operator!=( const const_iterator & other_it ) const {
+	check( *this );
+	check( other_it );
+
+	if( pos == other_it.pos ) {
+		return false;
+	}
+
+	return true;
+}
 
 } // namespace Tools
 

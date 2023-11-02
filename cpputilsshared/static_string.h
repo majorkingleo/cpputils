@@ -9,6 +9,7 @@
 #include <array>
 #include <string>
 #include <memory_resource>
+#include <stdexcept>
 
 namespace Tools {
 
