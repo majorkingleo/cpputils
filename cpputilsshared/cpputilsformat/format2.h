@@ -58,7 +58,11 @@ namespace Tools {
       virtual std::string doFormat( const Format::CFormat & cf ) = 0;
       virtual int get_int() {
         if( !isInt() ) {
+#if __cpp_exceptions > 0
             throw BaseException( "expecting int arg" );
+#else
+            std::abort();
+#endif
         }
         return 0;
       }

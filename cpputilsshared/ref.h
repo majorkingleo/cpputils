@@ -197,8 +197,13 @@ template <class V> class Ref
   /** throws BadRef if there is no object to point to */
   pointer operator->() 
     {
-      if( !rep )
-	throw BadRef();
+      if( !rep ) {
+#if __cpp_exceptions > 0
+    	  throw BadRef();
+#else
+    	  std::abort();
+#endif
+      }
       
       return (rep->obj);
     }

@@ -72,8 +72,13 @@ namespace utf8
     template <typename octet_iterator>
     octet_iterator append(uint32_t cp, octet_iterator result)
     {
-        if (!utf8::internal::is_code_point_valid(cp))
+        if (!utf8::internal::is_code_point_valid(cp)) {
+#if __cpp_exceptions > 0
             throw invalid_code_point(cp);
+#else
+            std::abort();
+#endif
+        }
 
         if (cp < 0x80)                        // one octet
             *(result++) = static_cast<uint8_t>(cp);
@@ -144,13 +149,25 @@ namespace utf8
             case internal::UTF8_OK :
                 break;
             case internal::NOT_ENOUGH_ROOM :
+#if __cpp_exceptions > 0
                 throw not_enough_room();
+#else
+                std::abort();
+#endif
             case internal::INVALID_LEAD :
             case internal::INCOMPLETE_SEQUENCE :
             case internal::OVERLONG_SEQUENCE :
+#if __cpp_exceptions > 0
                 throw invalid_utf8(*it);
+#else
+                std::abort();
+#endif
             case internal::INVALID_CODE_POINT :
+#if __cpp_exceptions > 0
                 throw invalid_code_point(cp);
+#else
+                std::abort();
+#endif
         }
         return cp;
     }
@@ -210,18 +227,33 @@ namespace utf8
             if (utf8::internal::is_lead_surrogate(cp)) {
                 if (start != end) {
                     uint32_t trail_surrogate = utf8::internal::mask16(*start++);
-                    if (utf8::internal::is_trail_surrogate(trail_surrogate))
+                    if (utf8::internal::is_trail_surrogate(trail_surrogate)) {
                         cp = (cp << 10) + trail_surrogate + internal::SURROGATE_OFFSET;
-                    else
+                    } else {
+#if __cpp_exceptions > 0
                         throw invalid_utf16(static_cast<uint16_t>(trail_surrogate));
+#else
+                        std::abort();
+#endif
+                    }
                 }
-                else
+                else {
+#if __cpp_exceptions > 0
                     throw invalid_utf16(static_cast<uint16_t>(cp));
+#else
+                    std::abort();
+#endif
+                }
 
             }
             // Lone trail surrogate
-            else if (utf8::internal::is_trail_surrogate(cp))
+            else if (utf8::internal::is_trail_surrogate(cp)) {
+#if __cpp_exceptions > 0
                 throw invalid_utf16(static_cast<uint16_t>(cp));
+#else
+                std::abort();
+#endif
+            }
 
             result = utf8::append(cp, result);
         }
@@ -279,8 +311,13 @@ namespace utf8
                          const octet_iterator& rangeend) :
                it(octet_it), range_start(rangestart), range_end(rangeend)
       {
-          if (it < range_start || it > range_end)
+          if (it < range_start || it > range_end) {
+#if __cpp_exceptions > 0
               throw std::out_of_range("Invalid utf-8 iterator position");
+#else
+              std::abort();
+#endif
+          }
       }
       // the default "big three" are OK
       octet_iterator base () const { return it; }
@@ -291,8 +328,13 @@ namespace utf8
       }
       bool operator == (const iterator& rhs) const
       {
-          if (range_start != rhs.range_start || range_end != rhs.range_end)
+          if (range_start != rhs.range_start || range_end != rhs.range_end) {
+#if __cpp_exceptions > 0
               throw std::logic_error("Comparing utf-8 iterators defined with different ranges");
+#else
+              std::abort();
+#endif
+          }
           return (it == rhs.it);
       }
       bool operator != (const iterator& rhs) const

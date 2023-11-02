@@ -221,7 +221,11 @@ public:
 				}
 			}
 
+#if __cpp_exceptions > 0
 			throw std::out_of_range("index not found");
+#else
+			std::abort();
+#endif
 		}
 
 		 typename static_list<T,N>::DATA_INDEX::iterator get_it() const {
@@ -1383,7 +1387,11 @@ protected:
 				return &d;
 			}
 		}
+#if __cpp_exceptions > 0
 		throw std::out_of_range("max capacity reached");
+#else
+		std::abort();
+#endif
 	}
 
     typename DATA_INDEX::value_type push_at_free_pos( T && v ) {
@@ -1393,7 +1401,11 @@ protected:
 				return &d;
 			}
 		}
+#if __cpp_exceptions > 0
 		throw std::out_of_range("max capacity reached");
+#else
+		std::abort();
+#endif
 	}
 
 	template< class... Args >
@@ -1404,7 +1416,11 @@ protected:
 				return &d;
 			}
 		}
+#if __cpp_exceptions > 0
 		throw std::out_of_range("max capacity reached");
+#else
+		std::abort();
+#endif
 	}
 
 	// internal functions

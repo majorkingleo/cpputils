@@ -47,26 +47,46 @@ namespace Tools {
 
     int WFormat2::get_int_arg( int num )
     {
-      if( static_cast<unsigned int>(num) > num_of_args - 1 )
+      if( static_cast<unsigned int>(num) > num_of_args - 1 ) {
+#if __cpp_exceptions > 0
         throw BaseException( "The arg you wan't to use is out of range" );
+#else
+        std::abort();
+#endif
+      }
 
-      if( num < 0 )
+      if( num < 0 ) {
+#if __cpp_exceptions > 0
         throw BaseException( "negativ number for arg number not allowed" );
+#else
+        std::abort();
+#endif
+      }
 
       if( args[num]->isInt())
         {
           return args[num]->get_int();
         }
-      else
+      else {
+#if __cpp_exceptions > 0
         throw BaseException( "expecting int arg" );
+#else
+        std::abort();
+#endif
+      }
 
       return 0; // should never be reached
     }
 
     std::wstring WFormat2::use_arg( unsigned int i, const Tools::WFormat2::CWFormat &cf )
     {
-      if( i > num_of_args )
+      if( i > num_of_args ) {
+#if __cpp_exceptions > 0
         throw BaseException( "out of arg range" );
+#else
+        std::abort();
+#endif
+      }
 
       std::wstring s = args[i]->doFormat(cf);
 

@@ -106,7 +106,11 @@ std::wstring Utf8Util::utf8toWString( const std::string & text )
 	} else if( sizeof( wchar_t ) == sizeof( int32_t ) ) {
 		return toWcharString32( text );
 	} else {
+#if __cpp_exceptions > 0
 		throw STDERR_EXCEPTION( "unknown wchar size" );
+#else
+		std::abort();
+#endif
 	}
 }
 
@@ -118,7 +122,11 @@ std::wstring Utf8Util::utf8toWString( const std::u8string & text )
 	} else if( sizeof( wchar_t ) == sizeof( int32_t ) ) {
 		return toWcharString32( text );
 	} else {
+#if __cpp_exceptions > 0
 		throw STDERR_EXCEPTION( "unknown wchar size" );
+#else
+		std::abort();
+#endif
 	}
 }
 #endif
@@ -160,7 +168,11 @@ std::string Utf8Util::wStringToUtf8( const std::wstring & text )
 	} else if( sizeof( wchar_t ) == sizeof( int32_t ) ) {
 		return utf32toString( text );
 	} else {
+#if __cpp_exceptions > 0
 		throw STDERR_EXCEPTION( "unknown wchar size" );
+#else
+		std::abort();
+#endif
 	}
 }
 

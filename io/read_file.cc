@@ -1255,7 +1255,9 @@ std::string ReadFile::convert( const std::string & s, const std::string & from, 
 	std::string result;
 
 	if( !convert( s, from, to, result ) ) {
+#if __cpp_exceptions > 0
 		throw STDERR_EXCEPTION( format( "cannot convert from '%s' to '%s' error: %s", from, to, error ) );
+#endif
 	}
 
 	return result;

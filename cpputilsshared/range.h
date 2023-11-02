@@ -42,8 +42,13 @@ public:
 	: EClass(),
 	  value( value_ )
 	{
-	    if( value <= EClass::FIRST__ || value >= EClass::LAST__ )
-		throw( Error( "EnumRange: Out of range!" ) );
+	    if( value <= EClass::FIRST__ || value >= EClass::LAST__ ) {
+#if __cpp_exceptions > 0
+	    	throw( Error( "EnumRange: Out of range!" ) );
+#else
+	    	std::abort();
+#endif
+	    }
 	}    
 
     EnumRange(  const EnumRange<EClass>& er ) 
@@ -51,7 +56,11 @@ public:
 	  value( er.value )
 	{
 	    if( value <= EClass::FIRST__ || value >= EClass::LAST__ ) {
+#if __cpp_exceptions > 0
 			throw( Error( "EnumRange: Out of range!" ) );
+#else
+			std::abort();
+#endif
 		}
 
 		Copy cp;
@@ -62,22 +71,37 @@ public:
     EnumRange() : EClass(), value( INVALID__ ) {}
 
     ETYPE operator()() const {
-	if( value == INVALID__ )
+	if( value == INVALID__ ) {
+#if __cpp_exceptions > 0
 	    throw( Error( "EnumRange: Uninitialized value!" ) );
+#else
+	    std::abort();
+#endif
+	}
 
 	return value;
     }
 
     operator ETYPE () const {
-	if( value == INVALID__ )
+	if( value == INVALID__ ) {
+#if __cpp_exceptions > 0
 	    throw( Error( "EnumRange: Uninitialized value!" ) );
+#else
+	    std::abort();
+#endif
+	}
 
 	return value;
     }
 
     EnumRange<EClass,Copy>& operator=( ETYPE v ) {
-	if( v <= EClass::FIRST__ || v >= EClass::LAST__ )
+	if( v <= EClass::FIRST__ || v >= EClass::LAST__ ) {
+#if __cpp_exceptions > 0
 	    throw( Error( "EnumRange: Out of range!" ) );
+#else
+	    std::abort();
+#endif
+	}
 	value = v;
 	return *this;
     }

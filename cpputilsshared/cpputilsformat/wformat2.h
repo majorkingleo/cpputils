@@ -57,7 +57,11 @@ namespace Tools {
       virtual std::wstring doFormat( const WFormat2::CWFormat & cf ) = 0;
       virtual int get_int() {
         if( !isInt() ) {
+#if __cpp_exceptions > 0
             throw BaseException( "expecting int arg" );
+#else
+            std::abort();
+#endif
         }
         return 0;
       }

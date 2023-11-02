@@ -49,7 +49,11 @@ class CyclicArray : public static_list<T,N>
     	  static_list<T,N>::pop_front();
       }
       else {
+#if __cpp_exceptions > 0
     	throw std::out_of_range("max size reached");
+#else
+    	std:abort();
+#endif
       }
     }
 
