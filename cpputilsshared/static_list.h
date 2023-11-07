@@ -12,6 +12,7 @@
 #include <optional>
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
 
 namespace Tools {
 
@@ -170,6 +171,7 @@ public:
 			check(*this);
 			pos -= count;
 			pointer_to_optional = *pos;
+			is_end = pos == parent->get_index().end();
 			return *this;
 		}
 
@@ -361,6 +363,7 @@ public:
 			iterator::check(*this);
 			pos += count;
 			pointer_to_optional = *pos;
+			is_end = pos == parent->get_index().end();
 			return *this;
 		}
 
@@ -380,6 +383,7 @@ public:
 			iterator::check(*this);
 			pos -= count;
 			pointer_to_optional = *pos;
+			is_end = pos == parent->get_index().end();
 			return *this;
 		}
 
@@ -544,6 +548,7 @@ public:
 			iterator::check(*this);
 			pos -= count;
 			pointer_to_optional = *pos;
+			is_end = pos == parent->get_index().end();
 			return *this;
 		}
 
@@ -1354,10 +1359,16 @@ public:
 	}
 
     /**
-     * swap iterators 
+     * swap iterators
+     * if one of them can be end() too
      */
     void swap( iterator first, iterator second ) {
-      if( second.is_end ) {        
+
+      if( first.is_end ) {
+    	  std::swap( first, second );
+      }
+
+      if( second.is_end ) {
         index.erase(first.get_it());
         index.push_back(first.pointer_to_optional);
 
@@ -1465,6 +1476,23 @@ bool static_list<T,N>::iterator::operator!=( const const_iterator & other_it ) c
 
 	if( pos == other_it.pos ) {
 		return false;
+	}
+
+	return true;
+}
+
+template <typename T,std::size_t N1,std::size_t N2>
+bool operator==( const static_list<T,N1> & a,  const static_list<T,N2> & b )
+{
+	if( a.size() != b.size() ) {
+		return false;
+	}
+
+	auto size = a.size();
+	for( typename static_list<T,N1>::size_type i = 0; i < size; ++i ) {
+		if( a[i] != b[i] ) {
+			return false;
+		}
 	}
 
 	return true;
