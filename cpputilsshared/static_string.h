@@ -117,6 +117,12 @@ public:
 		std::pmr::basic_string<CharT>::assign( t, pos, n );
 	}
 
+    static_basic_string( const std::basic_string<CharT> & s )
+      : static_basic_string()
+    {
+      std::pmr::basic_string<CharT>::assign(s);
+    }
+
 	constexpr size_type capacity() const {
 		return N;
 	}
@@ -190,7 +196,9 @@ public:
 
 template <std::size_t N> class static_string : public static_basic_string<N,char> {};
 template <std::size_t N> class static_wstring : public static_basic_string<N,wchar_t> {};
-template <std::size_t N> class static_u8string : public static_basic_string<N,char8_t> {};
+#if __cpp_char8_t > 0
+template <std::size_t N> class static_u8string : public static_basic_string<N, char8_t> {};
+#endif
 template <std::size_t N> class static_u16string : public static_basic_string<N,char16_t> {};
 template <std::size_t N> class static_u32string : public static_basic_string<N,char32_t> {};
 
