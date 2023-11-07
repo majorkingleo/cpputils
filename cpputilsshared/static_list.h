@@ -1353,6 +1353,22 @@ public:
 		return unique( std::equal_to<T>() );
 	}
 
+    /**
+     * swap iterators 
+     */
+    void swap( iterator first, iterator second ) {
+      if( second.is_end ) {        
+        index.erase(first.get_it());
+        index.push_back(first.pointer_to_optional);
+
+        ++manipulation_count;
+        return;
+      }
+
+      std::iter_swap( first.get_it(), second.get_it() );
+      ++manipulation_count;
+    }
+
 public:
 	// non standard access operators
 	T & operator[]( size_t index ) {
