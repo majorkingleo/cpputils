@@ -47,6 +47,7 @@ protected:
 
 public:
 	class const_iterator;
+    class reverse_iterator;
 
 	class iterator
 	{
