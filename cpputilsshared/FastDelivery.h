@@ -9,6 +9,7 @@
 #include <atomic>
 #include <list>
 #include <array>
+#include <stdexcept>
 
 namespace Tools {
 namespace FastDelivery {
