@@ -4,6 +4,7 @@
 #include <stdio.h>
 //#include <unistd.h>
 #include <DetectLocale.h>
+#include <filesystem>
 
 #ifndef DISABLE_CPPUTILS_DETECT_LOCALE
 
@@ -23,7 +24,10 @@ OutDebug::OutDebug(  ColoredOutput::Color color_ )
 void OutDebug::add( const char *file, unsigned line, const char *function, const std::string & s )
 {
 	if( print_line_and_file_info ) {
-		std::cout << color_output( color, file );
+
+		std::filesystem::path f( file );
+
+		std::cout << color_output( color, f.filename().string() );
 		std::cout << ':' << line
 				  << " ";
 	}
