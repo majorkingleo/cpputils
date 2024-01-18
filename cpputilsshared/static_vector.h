@@ -12,6 +12,10 @@
 
 namespace Tools {
 
+#ifdef __GNUC__
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored  "-Wreorder"  
+#endif
 /**
  * A vector class that uses no heap.
  * The maximum capacity is defined at compile time.
@@ -37,7 +41,7 @@ public:
 
 public:
 	static_vector()
-	: buffer(),
+	: buffer(), // it is madatory to initialize the buffer first
 	  mbr( buffer.data(), buffer.size(), std::pmr::null_memory_resource() ),
 	  std::pmr::vector<T>( &mbr )
 	  {
@@ -119,6 +123,10 @@ public:
 	}
 };
 
+#ifdef __GNUC__
+# pragma GCC diagnostic pop
+#endif
+  
 } // namespace Tools
 
 #endif /* CPPUTILS_CPPUTILSSHARED_STATIC_VECTOR_H_ */
