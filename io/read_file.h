@@ -1,8 +1,6 @@
-/*
- * read_file.h
- *
- *  Created on: 10.02.2022
- *      Author: martin
+/**
+ * read text files with correct encoding
+ * @author Copyright (c) 2022 - 2024 Martin Oberzalek
  */
 
 #ifndef READ_FILE_H_
@@ -40,7 +38,7 @@ public:
 	    return convert( s, "UTF-8", "LATIN1" );
 	}
 
-	const std::string getFileEncoding() const {
+	const std::string & getFileEncoding() const {
 		return encoding;
 	}
 
