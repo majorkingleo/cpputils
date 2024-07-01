@@ -363,54 +363,11 @@ bool XML::read_file( const std::string &file, std::string &s )
       return false;
     }
 
-#ifndef _WIN32	
-#if __GNUC__ > 2
-  in.seekg( 0, std::ios_base::end );
-#else
-  in.seekg( 0, std::ios::end );
-#endif
-
-#ifdef __GNUC__
-  s.resize( in.tellg() );
-#else
-  s.reserve( in.tellg() );
-#endif
-
-#if __GNUC__ > 2
-  in.seekg( 0, std::ios_base::beg );
-#else
-  in.seekg( 0, std::ios::beg );
-#endif
-
-  in.clear();
-
-#ifdef __GNUC__
-  // undefined behavior but works on gnu stdc++ lib
-  // and is the fasted way reading a file
-  in.read( &s[0], s.size() );
-#else
-  // not very nice, but not muchslower than the example above
-  while( !in.eof() )
-    {
-      std::string ss;
-
-      getline( in, ss );
-      
-#ifdef _WIN32	  
-      s += ss + "\r\n";
-#else	  
-      s += ss + '\n';
-#endif	  
-    }
-#endif 
-#else
-  // that's the most beatiful way reading a file
-  // but is very slow on __GNUC__ <= 3 
   std::istreambuf_iterator<char> begin(in);
   std::istreambuf_iterator<char> end;
 
   s = std::string( begin, end );
-#endif  
+
   return true;
 }
 
