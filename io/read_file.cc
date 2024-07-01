@@ -8,6 +8,7 @@
 #include <CpputilsDebug.h>
 #include <xml.h>
 #include <utf8_util.h>
+#include <utf8.h>
 
 #ifndef DISABLE_CPPUTILS_READFILE
 
@@ -1209,6 +1210,16 @@ static const char* ENCODINGS[] = {
 		NULL
 };
 
+static const char* UTF_ENCODINGS[] = {
+		"UTF16LE",
+		"UTF16BE",
+		"UTF16",
+		"UTF32LE",
+		"UTF32BE",
+		"UTF32",
+		NULL
+};
+
 ReadFile::ReadFile()
 : error(),
   encoding()
@@ -1231,16 +1242,34 @@ bool ReadFile::read_file( const std::string & name, std::wstring & content )
 		return true;
 	}
 
-	std::string convertet_file_content;
+	auto convert_encoding = [this]( const char *encodings[], std::string & file_content, std::wstring & content, std::string & encoding )
+	{
+		std::string convertet_file_content;
 
-	for( unsigned i = 0; ENCODINGS[i] != NULL; i++ ) {
-		if( convert( file_content, ENCODINGS[i], "UTF-8", convertet_file_content ) ) {
-			if( Utf8Util::isUtf8( convertet_file_content ) ) {
-				content = Utf8Util::utf8toWString( convertet_file_content );
-				encoding = "LATIN1";
-				return true;
+		for( unsigned i = 0; encodings[i] != NULL; i++ ) {
+			convertet_file_content.clear();
+			if( convert( file_content, encodings[i], "UTF-8", convertet_file_content ) ) {
+				if( Utf8Util::isUtf8( convertet_file_content ) ) {
+					content = Utf8Util::utf8toWString( convertet_file_content );
+					encoding = encodings[i];
+					CPPDEBUG( format( "succeeded converting from '%s'",  encodings[i]));
+					return true;
+				}
 			}
+			CPPDEBUG( format( "failed converting from '%s' error: '%s'",  encodings[i], error));
 		}
+
+		return false;
+	};
+
+	if( file_content.find('\0') != std::string::npos ) {
+		if( convert_encoding( UTF_ENCODINGS, file_content, content, encoding ) ) {
+			return true;
+		}
+	}
+
+	if( convert_encoding( ENCODINGS, file_content, content, encoding ) ) {
+		return true;
 	}
 
 	error = "cannot convert file";
@@ -1263,6 +1292,32 @@ std::string ReadFile::convert( const std::string & s, const std::string & from, 
 	return result;
 }
 
+namespace {
+
+	class IconvAutoClose
+	{
+		iconv_t h;
+
+	public:
+		IconvAutoClose( iconv_t h )
+		: h( h )
+		{}
+
+		IconvAutoClose & operator=( const IconvAutoClose & ) = delete;
+		IconvAutoClose( const IconvAutoClose & ) = delete;
+
+		~IconvAutoClose()
+		{
+			iconv_close( h );
+		}
+
+		operator iconv_t() {
+			return h;
+		}
+	};
+
+}
+
 bool ReadFile::convert( const std::string & s, const std::string & from, const std::string & to, std::string & result )
 {
     std::string ret;
@@ -1270,7 +1325,7 @@ bool ReadFile::convert( const std::string & s, const std::string & from, const s
     int extra_bufsize = 50;
     bool cont = false;
 
-    iconv_t h = iconv_open( to.c_str(), from.c_str() );
+    IconvAutoClose h = iconv_open( to.c_str(), from.c_str() );
 
     if( h == (iconv_t)-1 ) {
         return false;
@@ -1280,14 +1335,17 @@ bool ReadFile::convert( const std::string & s, const std::string & from, const s
       {
         cont = false;
 
-        char *out_buffer = new char[s.size()+extra_bufsize];
-        char *in_buffer = new char[s.size()+1];
+        std::vector<char> v_out(s.size()+extra_bufsize,0);
+        std::vector<char> v_in(s.size()+1,0);
+
+        char *out_buffer = v_out.data();
+        char *in_buffer = v_in.data();;
 
         memcpy( in_buffer, s.c_str(), s.size() );
 
         in_buffer[s.size()]='\0';
 
-        size_t size, in_left=s.size()+1, out_left=s.size()+extra_bufsize;
+        size_t size, in_left=s.size(), out_left=s.size()+extra_bufsize;
         char *in;
         char *out;
 
@@ -1308,16 +1366,12 @@ bool ReadFile::convert( const std::string & s, const std::string & from, const s
         	error = format( "EILSEQ: %s", strerror(errno));
             return false;
           } else if( errno == EINVAL ) {
-            error = format( "EINVAL: %s", strerror(errno));
+            error = format( "EINVAL: %s at byte: %u", strerror(errno), static_cast<unsigned>(in - in_buffer));
             return false;
           }
 
-        delete[] out_buffer;
-        delete[] in_buffer;
-
       } while( cont == true );
 
-    iconv_close( h );
 
     result = ret;
 
