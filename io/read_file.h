@@ -15,8 +15,8 @@
 class ReadFile
 {
 	std::string error;
-
 	std::string encoding;
+	bool has_bom = false;
 
 public:
 	ReadFile();
@@ -40,6 +40,11 @@ public:
 
 	const std::string & getFileEncoding() const {
 		return encoding;
+	}
+
+	/** indicates if a byte order mark (BOM) was detected and cut off */
+	bool hasBom() const {
+		return has_bom;
 	}
 
 };

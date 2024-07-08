@@ -1237,6 +1237,12 @@ bool ReadFile::read_file( const std::string & name, std::wstring & content )
 	}
 
 	if( Utf8Util::isUtf8( file_content ) ) {
+
+		if( utf8::starts_with_bom( file_content ) ) {
+			file_content = file_content.substr(std::size(utf8::bom));
+			has_bom = true;
+		}
+
 		content = Utf8Util::utf8toWString( file_content );
 		encoding = "UTF-8";
 		return true;
