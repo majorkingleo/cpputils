@@ -9,6 +9,8 @@
 #include <xml.h>
 #include <utf8_util.h>
 #include <utf8.h>
+#include <span>
+#include <stdint.h>
 
 #ifndef DISABLE_CPPUTILS_READFILE
 
@@ -1227,6 +1229,60 @@ ReadFile::ReadFile()
 
 }
 
+struct BOM
+{
+public:
+	const char * encoding;
+	const std::span<uint8_t> bom;
+
+private:
+	std::array<uint8_t,4> bom_data;
+
+public:
+	BOM( const char *encoding_, const std::initializer_list<uint8_t> & bom_il_data )
+	: encoding( encoding_),
+	  bom( { bom_data.data(), bom_il_data.size() } )
+	{
+		if( bom_il_data.size() > bom_data.size() ) {
+#if __cpp_exceptions > 0
+			throw std::out_of_range("BOM to large");
+#else
+			std::assert(bom_il_data.size() < bom_data.size());
+#endif
+		}
+
+		std::copy( bom_il_data.begin(), bom_il_data.end(), bom_data.data() );
+	}
+
+	bool hasBom( const std::string_view & s ) const
+	{
+		// no string content at all
+		if( s.size() <= bom.size() ) {
+			return false;
+		}
+
+		auto b_it = bom.begin();
+		auto s_it = s.begin();
+
+		for( ; b_it != bom.end(); b_it++, s_it++ ) {
+			if( *b_it != static_cast<uint8_t>(*s_it) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+};
+
+static std::array<BOM,5> BOM_LIST = {
+		BOM( "UTF8",    { 0xEF, 0xBB, 0xBF} ),
+		BOM( "UTF16LE", { 0xFF, 0xFE } ),
+		BOM( "UTF16BE", { 0xFE, 0xFF } ),
+		BOM( "UTF32BE", { 0x00, 0x00, 0xFE, 0xFF } ),
+		BOM( "UTF32LE", { 0xFF, 0xFE, 0x00, 0x00} ),
+};
+
+
 bool ReadFile::read_file( const std::string & name, std::wstring & content )
 {
 	std::string file_content;
@@ -1267,6 +1323,21 @@ bool ReadFile::read_file( const std::string & name, std::wstring & content )
 
 		return false;
 	};
+
+	for( BOM & bom : BOM_LIST ) {
+		CPPDEBUG( format( "testing BOM: %s", bom.encoding ) );
+		if( bom.hasBom( file_content ) ) {
+
+			// cut bom
+			file_content = file_content.substr( bom.bom.size() );
+
+			CPPDEBUG( format( format("detected BOM: %s", bom.encoding ) ) );
+			const char *encodings[] = { bom.encoding, nullptr };
+			if( convert_encoding( encodings, file_content, content, encoding ) ) {
+				return true;
+			}
+		}
+	}
 
 	if( file_content.find('\0') != std::string::npos ) {
 		if( convert_encoding( UTF_ENCODINGS, file_content, content, encoding ) ) {
