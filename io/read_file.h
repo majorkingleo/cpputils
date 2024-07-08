@@ -11,12 +11,56 @@
 #ifndef DISABLE_CPPUTILS_READFILE
 
 #include <string>
+#include <optional>
+#include <array>
+#include <span>
+#include <stdint.h>
 
 class ReadFile
 {
+public:
+	struct BOM
+	{
+	private:
+		const char * encoding;
+		std::span<uint8_t> bom;
+		std::array<uint8_t,4> bom_data;
+
+	public:
+		BOM( const char *encoding_, const std::initializer_list<uint8_t> & bom_il_data );
+		BOM( const BOM & other );
+
+		BOM & operator=( const BOM & other ) {
+			encoding = other.encoding;
+			bom_data = other.bom_data;
+			bom = { bom_data.data(), other.bom.size() };
+			return *this;
+		}
+
+		bool hasBom( const std::string_view & s ) const;
+
+		const char *getEncoding() const {
+			return encoding;
+		}
+
+		const std::span<uint8_t> & getBom() const {
+			return bom;
+		}
+	};
+
+	static std::array<const ReadFile::BOM*,5> BOM_LIST;
+
+	static const BOM BOM_UTF8;;
+	static const BOM BOM_UTF16LE;
+	static const BOM BOM_UTF16BE;
+	static const BOM BOM_UTF32LE;
+	static const BOM BOM_UTF32BE;
+
+protected:
+
 	std::string error;
 	std::string encoding;
-	bool has_bom = false;
+	std::optional<BOM> bom;
 
 public:
 	ReadFile();
@@ -44,9 +88,12 @@ public:
 
 	/** indicates if a byte order mark (BOM) was detected and cut off */
 	bool hasBom() const {
-		return has_bom;
+		return bom.has_value();
 	}
 
+	const std::optional<BOM> & getBom() const {
+		return bom;
+	}
 };
 
 extern ReadFile READ_FILE;
