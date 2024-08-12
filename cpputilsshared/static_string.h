@@ -44,7 +44,7 @@ public:
 	  mbr( buffer.data(), buffer.size(), std::pmr::null_memory_resource() ),
 	  std::pmr::basic_string<CharT>( &mbr )
 	  {
-		std::pmr::basic_string<CharT>::reserve(N+1);
+		//std::pmr::basic_string<CharT>::reserve(N+1);
 	  }
 
 	static_basic_string( const static_basic_string & other )
