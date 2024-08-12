@@ -22,7 +22,7 @@ namespace Tools {
 template <std::size_t N,typename CharT>
 class static_basic_string : public std::pmr::basic_string<CharT>
 {
-	alignas(CharT) std::array<std::byte,sizeof(CharT)*(N+1)> buffer;
+	alignas(CharT) std::array<std::byte,sizeof(CharT)*(N+11)> buffer;
 	std::pmr::monotonic_buffer_resource mbr{ buffer.data(), buffer.size(), std::pmr::null_memory_resource() };
 
 public:
@@ -44,7 +44,7 @@ public:
 	  mbr( buffer.data(), buffer.size(), std::pmr::null_memory_resource() ),
 	  std::pmr::basic_string<CharT>( &mbr )
 	  {
-		//std::pmr::basic_string<CharT>::reserve(N+1);
+		//std::pmr::basic_string<CharT>::reserve(N+11);
 	  }
 
 	static_basic_string( const static_basic_string & other )
