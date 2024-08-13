@@ -169,6 +169,15 @@ public:
 		data.resize(count);
 	}
 
+	void resize( size_type count, CharT ch ) {
+		if( count > N ) {
+			out_of_range( count );
+			count = N;
+		}
+
+		data.resize(count, ch );
+	}
+
 	const_pointer c_str() const {
 		data[data.size()] = '\0';
 		return data.data();
@@ -686,6 +695,184 @@ public:
 
 		std::memcpy( dest, data.data() + pos, count );
 		return count;
+	}
+
+	void swap( static_basic_string& other ) {
+		data.swap(other.data);
+	}
+
+	size_type find( const std::basic_string<CharT>& str, size_type pos = 0 ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.find( str, pos );
+	}
+
+	size_type find( const CharT* s, size_type pos, size_type count ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.find( s, pos, count );
+	}
+
+	size_type find( const CharT* s, size_type pos = 0 ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.find( s, pos );
+	}
+
+	size_type find( CharT ch, size_type pos = 0 ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.find( ch, pos );
+	}
+
+	size_type find( const std::basic_string_view<CharT>& str, size_type pos = 0 ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.find( str, pos );
+	}
+
+	size_type rfind( const std::basic_string<CharT>& str, size_type pos = npos ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.rfind( str, pos );
+	}
+
+
+
+	size_type rfind( const CharT* s, size_type pos, size_type count ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.rfind( s, pos, count );
+	}
+
+	size_type rfind( const CharT* s, size_type pos = npos ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.rfind( s, pos );
+	}
+
+	size_type rfind( CharT ch, size_type pos = npos ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.rfind( ch, pos );
+	}
+
+	size_type rfind( const std::basic_string_view<CharT>& str, size_type pos = npos ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.rfind( str, pos );
+	}
+
+	int compare( const std::basic_string<CharT>& str ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare(str);
+	}
+
+	int compare( const std::basic_string_view<CharT>& str ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare(str);
+	}
+
+	template<std::size_t N2,typename other_out_of_range_functor>
+	int compare( const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare(str);
+	}
+
+	int compare( size_type pos1, size_type count1,
+	             const std::basic_string<CharT>& str,
+	             size_type pos2, size_type count2 ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare( pos1, count1, str, pos2, count2 = npos );
+	}
+
+	template<std::size_t N2,typename other_out_of_range_functor>
+	int compare( size_type pos1, size_type count1,
+		             const static_basic_string<N2,CharT,other_out_of_range_functor>& str,
+		             size_type pos2, size_type count2 ) const {
+			std::basic_string_view<CharT> sv(*this);
+			return sv.compare( pos1, count1, str, pos2, count2 = npos );
+	}
+
+	int compare( const CharT* s ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare( s );
+	}
+
+	int compare( size_type pos1, size_type count1,
+	             const CharT* s ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare( pos1, count1, s );
+	}
+
+	int compare( size_type pos1, size_type count1,
+	             const CharT* s, size_type count2 ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare( pos1, count1, s, count2 );
+	}
+
+
+	int compare( size_type pos1, size_type count1,
+	             const std::basic_string_view<CharT>& t ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare( pos1, count1, t );
+	}
+
+	int compare( size_type pos1, size_type count1,
+	             const std::basic_string_view<CharT>& t,
+	             size_type pos2, size_type count2 = npos) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.compare( pos1, count1, t, pos2, count2 );
+	}
+
+	constexpr bool
+	    starts_with( std::basic_string_view<CharT> sv ) const noexcept {
+		std::basic_string_view<CharT> me(*this);
+		return me.starts_with( sv );
+	}
+
+	constexpr bool
+	    starts_with( CharT ch ) const noexcept {
+		std::basic_string_view<CharT> me(*this);
+		return me.starts_with( ch );
+	}
+
+	constexpr bool
+	    starts_with( const CharT* s ) const {
+		std::basic_string_view<CharT> me(*this);
+		return me.starts_with( s );
+	}
+
+	constexpr bool
+	    ends_with( std::basic_string_view<CharT> sv ) const noexcept {
+		std::basic_string_view<CharT> me(*this);
+		return me.ends_with( sv );
+	}
+
+	constexpr bool
+	    ends_with( CharT ch ) const noexcept {
+		std::basic_string_view<CharT> me(*this);
+		return me.ends_with( ch );
+	}
+
+	constexpr bool
+	    ends_with( const CharT* s ) const {
+		std::basic_string_view<CharT> me(*this);
+		return me.ends_with( s );
+	}
+
+//#if __cpp_lib_string_contains >= 202011L
+	constexpr bool
+	    contains( std::basic_string_view<CharT> sv ) const noexcept {
+		std::basic_string_view<CharT> me(*this);
+		return me.contains( sv );
+	}
+
+	constexpr bool
+	    contains( CharT ch ) const noexcept {
+		std::basic_string_view<CharT> me(*this);
+		return me.contains( ch );
+	}
+
+	constexpr bool
+	    contains( const CharT* s ) const {
+		std::basic_string_view<CharT> me(*this);
+		return me.contains( s );
+	}
+//#endif
+
+	static_basic_string substr( size_type pos = 0, size_type count = npos ) const {
+		return static_basic_string( std::basic_string_view<CharT>(*this).substr(pos,count) );
 	}
 };
 
