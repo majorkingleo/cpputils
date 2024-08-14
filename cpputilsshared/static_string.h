@@ -12,6 +12,7 @@
 #include <stdexcept>
 #include <functional>
 #include <cstring>
+#include <ostream>
 
 #include <CpputilsDebug.h>
 #include <format.h>
@@ -884,6 +885,232 @@ template <std::size_t N> class static_u8string : public static_basic_string<N, c
 template <std::size_t N> class static_u16string : public static_basic_string<N,char16_t> {};
 template <std::size_t N> class static_u32string : public static_basic_string<N,char32_t> {};
 
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1,std::size_t N2, typename out_of_range_functor2>
+bool operator==( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const static_basic_string<N2,CharT,out_of_range_functor2>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	std::basic_string_view<CharT> b(rhs);
+	return a == b;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator==( const CharT* lhs,
+                 const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs == b;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator==( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+				 const CharT* rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a == rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator==( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+				 const std::basic_string_view<CharT> & rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a == rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator==( const std::basic_string_view<CharT> & lhs,
+				 const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs == b;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1,std::size_t N2, typename out_of_range_functor2>
+bool operator<( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const static_basic_string<N2,CharT,out_of_range_functor2>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	std::basic_string_view<CharT> b(rhs);
+	return a < b;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const std::basic_string_view<CharT>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a < rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const std::basic_string<CharT>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a < rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<(  const std::basic_string<CharT>& lhs,
+				const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs < b;
+}
+
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const CharT * rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a < rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<( const CharT * lhs,
+		        const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs < b;
+}
+
+
+
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1,std::size_t N2, typename out_of_range_functor2>
+bool operator<=( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const static_basic_string<N2,CharT,out_of_range_functor2>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	std::basic_string_view<CharT> b(rhs);
+	return a <= b;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<=( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const std::basic_string_view<CharT>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a <= rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<=( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const std::basic_string<CharT>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a <= rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<=(  const std::basic_string<CharT>& lhs,
+				const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs <= b;
+}
+
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<=( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const CharT * rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a <= rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator<=( const CharT * lhs,
+		        const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs <= b;
+}
+
+
+
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1,std::size_t N2, typename out_of_range_functor2>
+bool operator>( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const static_basic_string<N2,CharT,out_of_range_functor2>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	std::basic_string_view<CharT> b(rhs);
+	return a > b;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const std::basic_string_view<CharT>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a > rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const std::basic_string<CharT>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a > rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>(  const std::basic_string<CharT>& lhs,
+				const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs > b;
+}
+
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const CharT * rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a > rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>( const CharT * lhs,
+		        const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs > b;
+}
+
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1,std::size_t N2, typename out_of_range_functor2>
+bool operator>=( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const static_basic_string<N2,CharT,out_of_range_functor2>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	std::basic_string_view<CharT> b(rhs);
+	return a >= b;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>=( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const std::basic_string_view<CharT>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a >= rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>=( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const std::basic_string<CharT>& rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a >= rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>=(  const std::basic_string<CharT>& lhs,
+				const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs >= b;
+}
+
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>=( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
+                 const CharT * rhs ) {
+	std::basic_string_view<CharT> a(lhs);
+	return a >= rhs;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator>=( const CharT * lhs,
+		        const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs >= b;
+}
+
+template< std::size_t N1, class CharT, typename out_of_range_functor1 >
+std::basic_ostream<CharT>&
+    operator<<( std::basic_ostream<CharT>& out, const static_basic_string<N1,CharT,out_of_range_functor1>& str ) {
+	std::basic_string_view<CharT> s(str);
+	return out << s;
+}
 
 } // namespace Tools
 
