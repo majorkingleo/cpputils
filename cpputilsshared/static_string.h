@@ -261,7 +261,6 @@ public:
 		return *this;
 	}
 
-	template<std::size_t N2>
 	static_basic_string& assign( const std::basic_string<CharT>& str,
 	                      size_type pos, size_type count = npos ) {
 
@@ -269,6 +268,15 @@ public:
 		assign(sv);
 		return *this;
 	}
+
+	static_basic_string& assign( const std::basic_string_view<CharT>& str,
+	                      size_type pos, size_type count = npos ) {
+
+		std::basic_string_view<CharT> sv = str.substr( pos, count == npos ? npos : pos + count );
+		assign(sv);
+		return *this;
+	}
+
 
 	static_basic_string& assign( const CharT* s, size_type count ) {
 		resize(count);
@@ -877,13 +885,37 @@ public:
 	}
 };
 
-template <std::size_t N> class static_string : public static_basic_string<N,char> {};
-template <std::size_t N> class static_wstring : public static_basic_string<N,wchar_t> {};
+template <std::size_t N> class static_string : public static_basic_string<N,char> {
+	// forward constructors
+	using base = static_basic_string<N,char>;
+	using base::base;
+};
+
+template <std::size_t N> class static_wstring : public static_basic_string<N,wchar_t> {
+	// forward constructors
+	using base = static_basic_string<N,wchar_t>;
+	using base::base;
+};
+
 #if __cpp_char8_t > 0
-template <std::size_t N> class static_u8string : public static_basic_string<N, char8_t> {};
+template <std::size_t N> class static_u8string : public static_basic_string<N, char8_t> {
+	// forward constructors
+	using base = static_basic_string<N,char8_t>;
+	using base::base;
+};
 #endif
-template <std::size_t N> class static_u16string : public static_basic_string<N,char16_t> {};
-template <std::size_t N> class static_u32string : public static_basic_string<N,char32_t> {};
+
+template <std::size_t N> class static_u16string : public static_basic_string<N,char16_t> {
+	// forward constructors
+	using base = static_basic_string<N,char16_t>;
+	using base::base;
+};
+
+template <std::size_t N> class static_u32string : public static_basic_string<N,char32_t> {
+	// forward constructors
+	using base = static_basic_string<N,char32_t>;
+	using base::base;
+};
 
 
 template<std::size_t N1,typename CharT, typename out_of_range_functor1,std::size_t N2, typename out_of_range_functor2>
