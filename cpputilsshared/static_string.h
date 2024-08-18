@@ -189,13 +189,20 @@ public:
 		return *this;
 	}
 
+	template<std::size_t N2,typename other_out_of_range_functor>
+	static_basic_string& operator=( const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) {
+		assign(str);
+		return *this;
+	}
+
 	static_basic_string& operator=( const CharT* s ) {
 		assign(s);
 		return *this;
 	}
 
 	static_basic_string& operator=( CharT ch ) {
-		assign(ch);
+		clear();
+		resize(1,ch);
 		return *this;
 	}
 
@@ -886,35 +893,45 @@ public:
 };
 
 template <std::size_t N> class static_string : public static_basic_string<N,char> {
+public:
 	// forward constructors
 	using base = static_basic_string<N,char>;
 	using base::base;
+	using base::operator=;
 };
 
 template <std::size_t N> class static_wstring : public static_basic_string<N,wchar_t> {
+public:
 	// forward constructors
 	using base = static_basic_string<N,wchar_t>;
 	using base::base;
+	using base::operator=;
 };
 
 #if __cpp_char8_t > 0
 template <std::size_t N> class static_u8string : public static_basic_string<N, char8_t> {
+public:
 	// forward constructors
 	using base = static_basic_string<N,char8_t>;
 	using base::base;
+	using base::operator=;
 };
 #endif
 
 template <std::size_t N> class static_u16string : public static_basic_string<N,char16_t> {
+public:
 	// forward constructors
 	using base = static_basic_string<N,char16_t>;
 	using base::base;
+	using base::operator=;
 };
 
 template <std::size_t N> class static_u32string : public static_basic_string<N,char32_t> {
+public:
 	// forward constructors
 	using base = static_basic_string<N,char32_t>;
 	using base::base;
+	using base::operator=;
 };
 
 
