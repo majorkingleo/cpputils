@@ -867,7 +867,7 @@ public:
 		return me.ends_with( s );
 	}
 
-//#if __cpp_lib_string_contains >= 202011L
+#if __cpp_lib_string_contains >= 202011L
 	constexpr bool
 	    contains( std::basic_string_view<CharT> sv ) const noexcept {
 		std::basic_string_view<CharT> me(*this);
@@ -885,7 +885,7 @@ public:
 		std::basic_string_view<CharT> me(*this);
 		return me.contains( s );
 	}
-//#endif
+#endif
 
 	static_basic_string substr( size_type pos = 0, size_type count = npos ) const {
 		return static_basic_string( std::basic_string_view<CharT>(*this).substr(pos,count) );
