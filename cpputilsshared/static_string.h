@@ -281,7 +281,7 @@ public:
 	static_basic_string& assign( const std::basic_string_view<CharT>& str,
 	                      size_type pos, size_type count = npos ) {
 
-		std::basic_string_view<CharT> sv = str.substr( pos, count == npos ? npos : pos + count );
+		std::basic_string_view<CharT> sv = str.substr( pos, count );
 		assign(sv);
 		return *this;
 	}
