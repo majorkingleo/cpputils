@@ -259,11 +259,12 @@ public:
 		return *this;
 	}
 
-	template<std::size_t N2>
-	static_basic_string& assign( const static_basic_string<N2,CharT>& str,
+	template<std::size_t N2,typename other_out_of_range_functor>
+	static_basic_string& assign( const static_basic_string<N2,CharT,other_out_of_range_functor>& str,
 	                      size_type pos, size_type count = npos ) {
 
-		std::basic_string_view<CharT> sv( str.begin() + pos, count );
+		std::basic_string_view<CharT> sv( str.begin(), str.end() );
+		sv = sv.substr( pos, count );
 		assign(sv);
 		return *this;
 	}
@@ -271,7 +272,8 @@ public:
 	static_basic_string& assign( const std::basic_string<CharT>& str,
 	                      size_type pos, size_type count = npos ) {
 
-		std::basic_string_view<CharT> sv( str.begin() + pos, count );
+		std::basic_string_view<CharT> sv( str.begin(), str.end() );
+		sv = sv.substr( pos, count );
 		assign(sv);
 		return *this;
 	}
