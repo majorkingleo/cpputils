@@ -317,8 +317,6 @@ public:
 
 	static_basic_string& assign( std::initializer_list<CharT> ilist ) {
 
-		CPPDEBUG( "assign4" );
-
 		data.clear();
 		resize(ilist.size());
 
