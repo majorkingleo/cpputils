@@ -887,6 +887,24 @@ public:
 		std::basic_string_view<CharT> me(*this);
 		return me.contains( s );
 	}
+#else
+	constexpr bool
+	    contains( std::basic_string_view<CharT> sv ) const noexcept {
+		std::basic_string_view<CharT> me(*this);
+		return me.find( sv ) != std::string::npos;
+	}
+
+	constexpr bool
+	    contains( CharT ch ) const noexcept {
+		std::basic_string_view<CharT> me(*this);
+		return me.find( ch ) != std::string::npos;
+	}
+
+	constexpr bool
+	    contains( const CharT* s ) const {
+		std::basic_string_view<CharT> me(*this);
+		return me.find( s ) != std::string::npos;
+	}
 #endif
 
 	static_basic_string substr( size_type pos = 0, size_type count = npos ) const {
