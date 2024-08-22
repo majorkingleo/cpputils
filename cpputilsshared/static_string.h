@@ -385,12 +385,29 @@ public:
 		return data.end();
 	}
 
+	const_iterator cend() const {
+		return data.cend();
+	}
+
+	const_reverse_iterator crend() const {
+		return data.crend();
+	}
+
+	reverse_iterator rend() {
+		return data.rend();
+	}
+
+
 	reverse_iterator rbegin() {
 		return data.rbegin();
 	}
 
 	const_reverse_iterator rbegin() const {
 		return data.rbegin();
+	}
+
+	const_reverse_iterator crbegin() const {
+		return data.crbegin();
 	}
 
 	bool empty() const {
@@ -411,8 +428,73 @@ public:
 		data.clear();
 	}
 
+	// Inserts count copies of character ch at the position index.
 	static_basic_string& insert( size_type index, size_type count, CharT ch ) {
-		data.insert(index,count,ch);
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+
+		if( size() + count > N ) {
+			out_of_range( N - size() + count );
+
+			size_type pos = index + count;
+			if( pos >= N ) {
+				count = N - index;
+				resize(index);
+			} else {
+				const size_t new_size = N - count;
+				resize(new_size);
+			}
+		}
+
+		data.insert(it,count,ch);
+		return *this;
+	}
+
+	static_basic_string& insert( size_type index, const CharT* s ) {
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+		std::basic_string_view sv(s);
+
+		fit_string( index, sv );
+
+		data.insert(it,sv.begin(), sv.end());
+		return *this;
+	}
+
+
+	static_basic_string& insert( size_type index, const CharT* s, size_type count ) {
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+		std::basic_string_view<CharT> sv(s,count);
+
+		fit_string( index, sv );
+
+		data.insert(it,sv.begin(), sv.end());
+		return *this;
+	}
+
+	static_basic_string& insert( size_type index, const std::basic_string<CharT>& str ) {
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+		data.insert(it,str.begin(), str.end());
+		return *this;
+	}
+
+	template<std::size_t N2, typename other_out_of_range_functor>
+	static_basic_string& insert( size_type index, const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) {
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+		data.insert(it,str.begin(), str.end());
 		return *this;
 	}
 
@@ -907,6 +989,23 @@ public:
 
 	static_basic_string substr( size_type pos = 0, size_type count = npos ) const {
 		return static_basic_string( std::basic_string_view<CharT>(*this).substr(pos,count) );
+	}
+
+private:
+	void fit_string( size_type index, std::basic_string_view<CharT> & sv) {
+		if( size() + sv.size() > N ) {
+			out_of_range( N - size() + sv.size() );
+
+			size_type pos = index + sv.size();
+
+			if( pos >= N ) {
+				sv = sv.substr( 0, N - index );
+				resize(index);
+			} else {
+				const size_t new_size = N - sv.size();
+				resize(new_size);
+			}
+		}
 	}
 };
 
