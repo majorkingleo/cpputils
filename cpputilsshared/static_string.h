@@ -435,18 +435,7 @@ public:
 			++it;
 		}
 
-		if( size() + count > N ) {
-			out_of_range( N - size() + count );
-
-			size_type pos = index + count;
-			if( pos >= N ) {
-				count = N - index;
-				resize(index);
-			} else {
-				const size_t new_size = N - count;
-				resize(new_size);
-			}
-		}
+		fit_string( index, count );
 
 		data.insert(it,count,ch);
 		return *this;
@@ -484,7 +473,12 @@ public:
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
-		data.insert(it,str.begin(), str.end());
+
+		std::basic_string_view<CharT> sv(str);
+
+		fit_string( index, sv );
+
+		data.insert(it,sv.begin(), sv.end());
 		return *this;
 	}
 
@@ -494,7 +488,107 @@ public:
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
-		data.insert(it,str.begin(), str.end());
+
+		std::basic_string_view<CharT> sv(str);
+
+		fit_string( index, sv );
+
+		data.insert(it,sv.begin(), sv.end());
+		return *this;
+	}
+
+	static_basic_string& insert( size_type index, const std::basic_string<CharT>& str,
+	                      size_type s_index, size_type count = npos ) {
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+
+		std::basic_string_view<CharT> sv(str);
+		sv = sv.substr(s_index,count);
+
+		fit_string( index, sv );
+
+		data.insert(it,sv.begin(), sv.end());
+		return *this;
+	}
+
+	template<std::size_t N2, typename other_out_of_range_functor>
+	static_basic_string& insert( size_type index, const static_basic_string<N2,CharT,other_out_of_range_functor>& str,
+	                      size_type s_index, size_type count = npos ) {
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+
+		std::basic_string_view<CharT> sv(str);
+		sv = sv.substr(s_index,count);
+
+		fit_string( index, sv );
+
+		data.insert(it,sv.begin(), sv.end());
+		return *this;
+	}
+
+	iterator insert( const_iterator pos, CharT ch ) {
+		size_type index = std::distance(cbegin(),pos);
+		size_type count = 1;
+		fit_string( index, count );
+
+		return data.insert(pos,count,ch);
+	}
+
+	iterator insert( const_iterator pos, size_type count, CharT ch ) {
+		size_type index = std::distance(cbegin(),pos);
+		fit_string( index, count );
+
+		return data.insert(pos,count,ch);
+	}
+
+	template< class InputIt >
+	iterator insert( const_iterator pos, InputIt first, InputIt last ) {
+		size_type index = std::distance(cbegin(),pos);
+		std::basic_string_view<CharT> sv(first,last);
+
+		fit_string( index, sv );
+		return data.insert(pos,sv.begin(),sv.end());
+	}
+
+	iterator insert( const_iterator pos, std::initializer_list<CharT> ilist ) {
+		size_type index = std::distance(cbegin(),pos);
+		std::basic_string_view<CharT> sv(ilist);
+
+		fit_string( index, sv );
+		return data.insert(pos,sv.begin(),sv.end());
+	}
+
+	static_basic_string& insert( size_type index, const std::basic_string_view<CharT>& t ) {
+
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+
+		std::basic_string_view<CharT> sv(t);
+		fit_string( index, sv );
+
+		data.insert(it,sv.begin(),sv.end());
+
+		return *this;
+	}
+
+	static_basic_string& insert( size_type index, const std::basic_string_view<CharT>& t,
+			 size_type t_index, size_type count = npos ) {
+
+		auto it = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++it;
+		}
+
+		std::basic_string_view<CharT> sv(t.substr(t_index,count));
+		fit_string( index, sv );
+		data.insert(it,sv.begin(),sv.end());
+
 		return *this;
 	}
 
@@ -993,16 +1087,25 @@ public:
 
 private:
 	void fit_string( size_type index, std::basic_string_view<CharT> & sv) {
-		if( size() + sv.size() > N ) {
-			out_of_range( N - size() + sv.size() );
 
-			size_type pos = index + sv.size();
+		size_type sv_size = sv.size();
+		fit_string( index, sv_size );
 
+		if( sv_size != sv.size() ) {
+			sv = sv.substr( 0, sv_size );
+		}
+	}
+
+	void fit_string( size_type index, size_type & count ) {
+		if( size() + count > N ) {
+			out_of_range( N - size() + count );
+
+			size_type pos = index + count;
 			if( pos >= N ) {
-				sv = sv.substr( 0, N - index );
+				count = N - index;
 				resize(index);
 			} else {
-				const size_t new_size = N - sv.size();
+				const size_t new_size = N - count;
 				resize(new_size);
 			}
 		}
