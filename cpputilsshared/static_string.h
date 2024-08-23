@@ -556,7 +556,7 @@ public:
 
 	iterator insert( const_iterator pos, std::initializer_list<CharT> ilist ) {
 		size_type index = std::distance(cbegin(),pos);
-		std::basic_string_view<CharT> sv(ilist);
+		std::basic_string_view<CharT> sv(ilist.begin(), ilist.end());
 
 		fit_string( index, sv );
 		return data.insert(pos,sv.begin(),sv.end());
@@ -593,20 +593,27 @@ public:
 	}
 
 	static_basic_string& erase( size_type index = 0, size_type count = npos ) {
-		data.erase(index,count);
-		return *this;
-	}
+		auto first = data.begin();
+		for( size_type i = 0; i < index; ++i ) {
+			++first;
+		}
 
-	iterator erase( iterator position ) {
-		return data.erase( position );
+		auto last = first;
+
+		if( count == npos ) {
+			last = data.end();
+		} else {
+			for( size_type i = 0; i < count; ++i ) {
+				++last;
+			}
+		}
+
+		data.erase(first,last);
+		return *this;
 	}
 
 	iterator erase( const_iterator position ) {
 		return data.erase(position);
-	}
-
-	iterator erase( iterator first, iterator last ) {
-		return data.erase( first, last );
 	}
 
 	iterator erase( const_iterator first, const_iterator last ) {
@@ -666,21 +673,7 @@ public:
 	}
 
 	static_basic_string& append( const std::basic_string_view<CharT>& str ) {
-
-		std::size_t len_to_copy = str.size();
-		if( len_to_copy + size() > N ) {
-			out_of_range( (len_to_copy + size()) - N );
-			len_to_copy = size() - N;
-		}
-
-		const std::size_t pos_to_start = size();
-		resize(size() + len_to_copy);
-
-		auto it = str.begin();
-		for( size_type i = pos_to_start; i < data.size(), it != str.end(); i++, ++it ) {
-			data[i] = *it;
-		}
-
+		insert(end(),str.begin(),str.end());
 		return *this;
 	}
 
@@ -1186,6 +1179,13 @@ bool operator==( const static_basic_string<N1,CharT,out_of_range_functor1>& lhs,
 
 template<std::size_t N1,typename CharT, typename out_of_range_functor1>
 bool operator==( const std::basic_string_view<CharT> & lhs,
+				 const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
+	std::basic_string_view<CharT> b(rhs);
+	return lhs == b;
+}
+
+template<std::size_t N1,typename CharT, typename out_of_range_functor1>
+bool operator==( const std::basic_string<CharT> & lhs,
 				 const static_basic_string<N1,CharT,out_of_range_functor1>& rhs ) {
 	std::basic_string_view<CharT> b(rhs);
 	return lhs == b;
