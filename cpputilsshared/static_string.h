@@ -635,12 +635,8 @@ public:
 	}
 
 	static_basic_string& append( size_type count, CharT ch ) {
-
-		if( count + data.size() > N) {
-			out_of_range( (count + data.size()) - N );
-			count = N - data.size();
-		}
-		data.append(count,ch);
+		fit_string(size()-1,count);
+		data.insert(data.end(),count,ch);
 		return *this;
 	}
 
