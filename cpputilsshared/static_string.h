@@ -635,7 +635,7 @@ public:
 	}
 
 	static_basic_string& append( size_type count, CharT ch ) {
-		fit_string(size()-1,count);
+		fit_string(size(),count);
 		data.insert(data.end(),count,ch);
 		return *this;
 	}
@@ -680,22 +680,7 @@ public:
 
 	template< class InputIt >
 	static_basic_string& append( InputIt first, InputIt last ) {
-
-		std::size_t len_to_copy = std::distance(first, last);
-
-		if( len_to_copy + size() > N ) {
-			out_of_range( (len_to_copy + size()) - N );
-			len_to_copy = size() - N;
-		}
-
-		const std::size_t pos_to_start = size();
-		resize(size() + len_to_copy);
-
-		auto it = first;
-		for( size_type i = pos_to_start; i < data.size(); i++, ++it ) {
-			data[i] = *it;
-		}
-		return *this;
+		return append( std::basic_string_view<CharT>( first, last ) );
 	}
 
 	static_basic_string& append( std::initializer_list<CharT> ilist ) {
