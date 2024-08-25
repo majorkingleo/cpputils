@@ -939,22 +939,22 @@ public:
 	template<std::size_t N2,typename other_out_of_range_functor>
 	int compare( const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) const {
 		std::basic_string_view<CharT> sv(*this);
-		return sv.compare(str);
+		return sv.compare(std::basic_string_view<CharT>(str));
 	}
 
 	int compare( size_type pos1, size_type count1,
 	             const std::basic_string<CharT>& str,
-	             size_type pos2, size_type count2 ) const {
+	             size_type pos2, size_type count2 = npos ) const {
 		std::basic_string_view<CharT> sv(*this);
-		return sv.compare( pos1, count1, str, pos2, count2 = npos );
+		return sv.compare( pos1, count1, str, pos2, count2 );
 	}
 
 	template<std::size_t N2,typename other_out_of_range_functor>
 	int compare( size_type pos1, size_type count1,
 		             const static_basic_string<N2,CharT,other_out_of_range_functor>& str,
-		             size_type pos2, size_type count2 ) const {
+		             size_type pos2, size_type count2 = npos ) const {
 			std::basic_string_view<CharT> sv(*this);
-			return sv.compare( pos1, count1, str, pos2, count2 = npos );
+			return sv.compare( pos1, count1, std::basic_string_view<CharT>(str), pos2, count2 );
 	}
 
 	int compare( const CharT* s ) const {
