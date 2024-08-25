@@ -826,7 +826,7 @@ public:
 
 	static_basic_string& replace( const_iterator first, const_iterator last,
 	                       std::initializer_list<CharT> ilist ) {
-		return replace( first, last, std::basic_string_view<CharT>(ilist) );
+		return replace( first, last, std::basic_string_view<CharT>(ilist.begin(),ilist.end()) );
 	}
 
 	static_basic_string& replace( const_iterator first, const_iterator last,
