@@ -715,16 +715,7 @@ public:
 
 	static_basic_string& replace( size_type pos, size_type count,
 	                       const std::basic_string<CharT>& str ) {
-		auto it_start = begin() + pos;
-		auto it_end = begin() + std::min(pos + count, size());
-
-		static_basic_string left_over( it_end, end() );
-
-		resize( std::distance( begin(), it_start ) );
-		append( str );
-		append( left_over );
-
-		return *this;
+		return replace( pos, count, std::basic_string_view<CharT>(str) );
 	}
 
 	static_basic_string& replace( size_type pos, size_type count,
@@ -744,24 +735,17 @@ public:
 	template<std::size_t N2, typename other_out_of_range_functor>
 	static_basic_string& replace( size_type pos, size_type count,
 	                       const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) {
-		auto it_start = begin() + pos;
-		auto it_end = begin() + std::min(pos + count, size());
 
-		static_basic_string left_over( it_end, end() );
-
-		resize( std::distance( begin(), it_start ) );
-		append( str );
-		append( left_over );
-
+		return replace( pos, count, std::basic_string_view<CharT>(str) );
 		return *this;
 	}
 
 	static_basic_string& replace( const_iterator first, const_iterator last,
 	                       const std::basic_string<CharT>& str ) {
 
-		static_basic_string left_over( last, end() );
+		static_basic_string left_over( last, cend() );
 
-		resize( std::distance( begin(), first ) );
+		resize( std::distance( cbegin(), first ) );
 		append( str );
 		append( left_over );
 
@@ -772,9 +756,9 @@ public:
 	static_basic_string& replace( const_iterator first, const_iterator last,
 							const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) {
 
-		static_basic_string left_over( last, end() );
+		static_basic_string left_over( last, cend() );
 
-		resize( std::distance( begin(), first ) );
+		resize( std::distance( cbegin(), first ) );
 		append( str );
 		append( left_over );
 
@@ -845,6 +829,17 @@ public:
 		return replace( first, last, std::basic_string_view<CharT>(ilist) );
 	}
 
+	static_basic_string& replace( const_iterator first, const_iterator last,
+								  const std::basic_string_view<CharT> & t ) {
+
+		static_basic_string left_over( last, cend() );
+
+		resize( std::distance( cbegin(), first ) );
+		append( t );
+		append( left_over );
+
+		return *this;
+	}
 
 	size_type copy( CharT* dest, size_type count, size_type pos = 0 ) const {
 		if( count == npos ) {
