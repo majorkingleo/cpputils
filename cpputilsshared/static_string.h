@@ -842,11 +842,11 @@ public:
 	}
 
 	size_type copy( CharT* dest, size_type count, size_type pos = 0 ) const {
-		if( count == npos ) {
+		if( count == npos || pos + count > size() ) {
 			count = size() - pos;
 		}
 
-		if( pos > size ) {
+		if( pos > size() ) {
 #if __cpp_exceptions > 0
 			throw std::out_of_range( "invalid index");
 #else
