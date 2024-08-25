@@ -867,6 +867,12 @@ public:
 		return sv.find( str, pos );
 	}
 
+	template<std::size_t N2, typename other_out_of_range_functor>
+	size_type find( const static_basic_string<N2,CharT,other_out_of_range_functor>& str, size_type pos = 0 ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.find( str, pos );
+	}
+
 	size_type find( const CharT* s, size_type pos, size_type count ) const {
 		std::basic_string_view<CharT> sv(*this);
 		return sv.find( s, pos, count );
