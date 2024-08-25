@@ -893,12 +893,18 @@ public:
 		return sv.find( str, pos );
 	}
 
+
+
 	size_type rfind( const std::basic_string<CharT>& str, size_type pos = npos ) const {
 		std::basic_string_view<CharT> sv(*this);
 		return sv.rfind( str, pos );
 	}
 
-
+	template<std::size_t N2, typename other_out_of_range_functor>
+	size_type rfind(const static_basic_string<N2,CharT,other_out_of_range_functor>& str, size_type pos = npos ) const {
+		std::basic_string_view<CharT> sv(*this);
+		return sv.rfind( str, pos );
+	}
 
 	size_type rfind( const CharT* s, size_type pos, size_type count ) const {
 		std::basic_string_view<CharT> sv(*this);
