@@ -9,6 +9,8 @@
 #include <xml.h>
 #include <utf8_util.h>
 #include <utf8.h>
+#include <span>
+#include <stdint.h>
 
 #ifndef DISABLE_CPPUTILS_READFILE
 
@@ -1220,6 +1222,63 @@ static const char* UTF_ENCODINGS[] = {
 		NULL
 };
 
+const ReadFile::BOM ReadFile::BOM_UTF8( "UTF8", { 0xEF, 0xBB, 0xBF} );
+const ReadFile::BOM ReadFile::BOM_UTF16LE( "UTF16LE", { 0xFF, 0xFE } );
+const ReadFile::BOM ReadFile::BOM_UTF16BE( "UTF16BE", { 0xFE, 0xFF } );
+const ReadFile::BOM ReadFile::BOM_UTF32BE( "UTF32BE", { 0x00, 0x00, 0xFE, 0xFF } );
+const ReadFile::BOM ReadFile::BOM_UTF32LE( "UTF32LE", { 0xFF, 0xFE, 0x00, 0x00} );
+
+std::array<const ReadFile::BOM*,5> ReadFile::BOM_LIST = {
+		&BOM_UTF8,
+		&BOM_UTF16LE,
+		&BOM_UTF16BE,
+		&BOM_UTF32LE,
+		&BOM_UTF32BE
+};
+
+
+ReadFile::BOM::BOM( const char *encoding_, const std::initializer_list<uint8_t> & bom_il_data )
+: encoding( encoding_),
+  bom( { bom_data.data(), bom_il_data.size() } )
+{
+	if( bom_il_data.size() > bom_data.size() ) {
+#if __cpp_exceptions > 0
+		throw std::out_of_range("BOM to large");
+#else
+		std::assert(bom_il_data.size() < bom_data.size());
+#endif
+	}
+
+	std::copy( bom_il_data.begin(), bom_il_data.end(), bom_data.data() );
+}
+
+ReadFile::BOM::BOM( const BOM & other )
+: encoding( other.encoding ),
+  bom( { bom_data.data(), other.bom.size() } )
+{
+	bom_data = other.bom_data;
+}
+
+bool ReadFile::BOM::hasBom( const std::string_view & s ) const
+{
+	// no string content at all
+	if( s.size() <= bom.size() ) {
+		return false;
+	}
+
+	auto b_it = bom.begin();
+	auto s_it = s.begin();
+
+	for( ; b_it != bom.end(); b_it++, s_it++ ) {
+		if( *b_it != static_cast<uint8_t>(*s_it) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
 ReadFile::ReadFile()
 : error(),
   encoding()
@@ -1237,6 +1296,12 @@ bool ReadFile::read_file( const std::string & name, std::wstring & content )
 	}
 
 	if( Utf8Util::isUtf8( file_content ) ) {
+
+		if( utf8::starts_with_bom( file_content ) ) {
+			file_content = file_content.substr(std::size(utf8::bom));
+			bom = BOM_UTF8;
+		}
+
 		content = Utf8Util::utf8toWString( file_content );
 		encoding = "UTF-8";
 		return true;
@@ -1261,6 +1326,21 @@ bool ReadFile::read_file( const std::string & name, std::wstring & content )
 
 		return false;
 	};
+
+	for( const BOM *bom : BOM_LIST ) {
+		CPPDEBUG( format( "testing BOM: %s", bom->getEncoding() ) );
+		if( bom->hasBom( file_content ) ) {
+
+			// cut bom
+			file_content = file_content.substr( bom->getBom().size() );
+
+			CPPDEBUG( format( format("detected BOM: %s", bom->getEncoding() ) ) );
+			const char *encodings[] = { bom->getEncoding(), nullptr };
+			if( convert_encoding( encodings, file_content, content, encoding ) ) {
+				return true;
+			}
+		}
+	}
 
 	if( file_content.find('\0') != std::string::npos ) {
 		if( convert_encoding( UTF_ENCODINGS, file_content, content, encoding ) ) {
