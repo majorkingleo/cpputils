@@ -121,6 +121,20 @@ public:
 	constexpr size_t capacity() const {
 		return N;
 	}
+
+	void swap( static_vector & other ) {
+
+		const size_type size_me = std::pmr::vector<T>::size();
+		const size_type size_other = other.size();
+
+		// no bounds check, capacity is the same
+		for( size_t i = 0; i < std::max( size_me, size_other ); ++i ) {
+			std::swap((*this)[i],other[i]);
+		}
+
+		std::pmr::vector<T>::resize(size_other);
+		other.resize(size_me);
+	}
 };
 
 #ifdef __GNUC__
