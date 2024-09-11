@@ -1,6 +1,6 @@
 /**
- * Classes for typesave versions of sprintf() that are returning a std::wstring
- * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ * Classes for type safe versions of sprintf() that are returning a std::wstring
+ * @author Copyright (c) 2001 - 2024 Martin Oberzalek
  */
 
 #include "wformat2.h"

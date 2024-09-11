@@ -1,6 +1,6 @@
 /**
- * Classes for typesave versions of sprintf() that are returning a std::string
- * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ * Classes for type safe versions of sprintf() that are returning a std::string
+ * @author Copyright (c) 2001 - 2024 Martin Oberzalek
  *
  * C++-11 version with variadic templates
  *
