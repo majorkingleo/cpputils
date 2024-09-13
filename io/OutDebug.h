@@ -25,8 +25,13 @@ public:
 		print_line_and_file_info = print_line_and_file_info_;
 	}
 
+#ifdef __cpp_lib_string_view
+	void add( const char *file, unsigned line, const char *function, const std::string_view & s ) override;
+	void add( const char *file, unsigned line, const char *function, const std::wstring_view & s ) override;
+#else
 	void add( const char *file, unsigned line, const char *function, const std::string & s ) override;
 	void add( const char *file, unsigned line, const char *function, const std::wstring & s ) override;
+#endif
 };
 
 } // namespace Tools

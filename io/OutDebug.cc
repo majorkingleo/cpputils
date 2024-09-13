@@ -20,8 +20,13 @@ OutDebug::OutDebug(  ColoredOutput::Color color_ )
 
 }
 
+#ifdef __cpp_lib_string_view
+using string_type_t = std::string_view;
+#else
+using string_type_t = std::string;
+#endif
 
-void OutDebug::add( const char *file, unsigned line, const char *function, const std::string & s )
+void OutDebug::add( const char *file, unsigned line, const char *function, const string_type_t & s )
 {
 	if( print_line_and_file_info ) {
 
@@ -39,10 +44,16 @@ void OutDebug::add( const char *file, unsigned line, const char *function, const
 
 	std::cout << s << '\n';
 }
-
+#ifdef __cpp_lib_string_view
+void OutDebug::add( const char *file, unsigned line, const char *function, const std::wstring_view & s )
+{
+	add( file, line, function, DetectLocale::w2out(std::wstring(s)) );
+}
+#else
 void OutDebug::add( const char *file, unsigned line, const char *function, const std::wstring & s )
 {
-	add( file, line, function,  DetectLocale::w2out(s) );
+	add( file, line, function, DetectLocale::w2out(s) );
 }
+#endif
 
 #endif
