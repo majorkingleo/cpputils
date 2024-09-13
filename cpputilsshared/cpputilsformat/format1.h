@@ -1,6 +1,6 @@
 /**
- * Classes for typesave versions of sprintf() that are returning a std::string
- * @author Copyright (c) 2001 - 2022 Martin Oberzalek
+ * Classes for type safe versions of sprintf() that are returning a std::string
+ * @author Copyright (c) 2001 - 2024 Martin Oberzalek
  *
  * Examples:
  *    std::cout << format( "Hello %s, I have $05d$ in my pocket", "world", 5 ) << std::endl;
