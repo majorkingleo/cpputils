@@ -26,7 +26,7 @@ class StderrException : public std::exception
   StderrException( const char* e, const std::string & source_file_ = std::string(), unsigned source_line_ = 0 )
   : std::exception(),
     err( e ),
-	combined_error(format( "%s:%d %s", get_file_name(source_file_.c_str()), source_line_, err )),
+	combined_error( Tools::format( "%s:%d %s", get_file_name(source_file_.c_str()), source_line_, err )),
 	source_file(source_file_),
 	source_line(source_line_)
   {
@@ -36,7 +36,7 @@ class StderrException : public std::exception
   StderrException( const std::string & e, const std::string & source_file_ = std::string(), unsigned source_line_ = 0 )
   : std::exception(),
     err( e ),
-	combined_error(format( "%s:%d %s", get_file_name(source_file_.c_str()), source_line_, err )),
+	combined_error( Tools::format( "%s:%d %s", get_file_name(source_file_.c_str()), source_line_, err )),
 	source_file(source_file_),
 	source_line(source_line_)
   {

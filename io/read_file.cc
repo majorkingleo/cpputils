@@ -1321,7 +1321,7 @@ bool ReadFile::read_file( const std::string & name, std::wstring & content )
 					return true;
 				}
 			}
-			CPPDEBUG( format( "failed converting from '%s' error: '%s'",  encodings[i], error));
+			CPPDEBUG( Tools::format( "failed converting from '%s' error: '%s'",  encodings[i], error));
 		}
 
 		return false;
@@ -1334,7 +1334,7 @@ bool ReadFile::read_file( const std::string & name, std::wstring & content )
 			// cut bom
 			file_content = file_content.substr( bom->getBom().size() );
 
-			CPPDEBUG( format( format("detected BOM: %s", bom->getEncoding() ) ) );
+			CPPDEBUG( Tools::format("detected BOM: %s", bom->getEncoding() ) );
 			const char *encodings[] = { bom->getEncoding(), nullptr };
 			if( convert_encoding( encodings, file_content, content, encoding ) ) {
 				return true;
@@ -1365,7 +1365,7 @@ std::string ReadFile::convert( const std::string & s, const std::string & from, 
 
 	if( !convert( s, from, to, result ) ) {
 #if __cpp_exceptions > 0
-		throw STDERR_EXCEPTION( format( "cannot convert from '%s' to '%s' error: %s", from, to, error ) );
+		throw STDERR_EXCEPTION( Tools::format( "cannot convert from '%s' to '%s' error: %s", from, to, error ) );
 #endif
 	}
 

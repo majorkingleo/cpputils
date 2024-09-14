@@ -126,7 +126,7 @@ std::wstring DetectLocale::inputString2wString( const std::string & str )
 	}
 
 #if __cpp_exceptions > 0
-	throw STDERR_EXCEPTION( format( "cannot convert %s to utf8 detected input encoding: %s", str, input_encoding ) );
+	throw STDERR_EXCEPTION( Tools::format( "cannot convert %s to utf8 detected input encoding: %s", str, input_encoding ) );
 #else
 	std::abort();
 #endif
