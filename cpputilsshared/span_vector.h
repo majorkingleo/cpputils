@@ -323,7 +323,7 @@ public:
 	iterator insert( const_iterator pos, const T& value ) {
 		if( pos == cend() ) {
 			push_back( value );
-			return &buffer[len-1];
+			return iterator(this,len-1);
 		}
 
 		if( len + 1 > capacity() ) {
@@ -339,7 +339,7 @@ public:
 		buffer[start] = value;
 		len++;
 
-		return &buffer[start];
+		return iterator(this,start);
 	}
 
 	iterator insert( const_iterator pos, T&& value ) {
@@ -366,49 +366,68 @@ public:
 
 	iterator insert( const_iterator pos,
 	                 size_type count, const T& value ) {
-		if( pos == cend() || empty() ) {
-			const size_type start = len > 0 ? 0 : len-1;
+		if( empty() ) {
 			for( size_type i = 0; i < count; ++i ) {
 				push_back( value );
 			}
-			return &buffer[start];
+			return iterator(this,0);
 		}
+
+		if( pos == cend() ) {
+			const size_type start = len > 0 ? len : 0;
+			for( size_type i = 0; i < count; ++i ) {
+				push_back( value );
+			}
+			return iterator(this,start);
+		}
+
 
 		if( len + count > capacity() ) {
 			throw std::length_error("capacity exceeded");;
 		}
 
 		const size_type start = std::distance( cbegin(), pos );
-
-		if( count < len ) {
+		/*
+		// don't go into negativ i
+		if( start < count ) {
 			for( size_type i = 0; i < count; ++i ) {
 				insert( pos, value );
 			}
-
-			return &buffer[start];
+			return iterator(this,start);
 		}
-
-		for( size_type i = len + count; i > 0 && i > start; --i ) {
+		 */
+		for( size_type i = len + count -1;
+				i > 0 &&
+				i > start &&
+				i - count >= start;
+				--i ) {
 			std::swap(buffer[i], buffer[i-count]);
 		}
 
-		for( size_type i = start; i < len + count; ++i ) {
+		for( size_type i = start; i < start + count; ++i ) {
 			buffer[i] = value;
 		}
 
 		len += count;
 
-		return &buffer[start];
+		return iterator(this,start);
 	}
 
 	template< class InputIt >
-	iterator insert( const_iterator pos, InputIt first, InputIt last ) {
-		if( pos == cend() || empty() ) {
-			const size_type start = len > 0 ? 0 : len-1;
+	iterator insert( const_iterator pos, InputIt first, InputIt last, typename std::iterator_traits<InputIt>::iterator_category* = nullptr ) {
+		if( empty() ) {
 			for( auto it = first; it != last; ++it ) {
 				push_back( *it );
 			}
-			return &buffer[start];
+			return iterator(this,0);
+		}
+
+		if( pos == cend() ) {
+			const size_type start = len > 0 ? len : 0;
+			for( auto it = first; it != last; ++it ) {
+				push_back( *it );
+			}
+			return iterator(this,start);
 		}
 
 		const size_type count = std::distance( first, last );
@@ -418,16 +437,20 @@ public:
 		}
 
 		const size_type start = std::distance( cbegin(), pos );
-
-		if( count < len ) {
+		/*
+		if( start < count ) {
 			for( auto it = first, p = pos; it != last; ++it, ++p ) {
 				insert( p, *it );
 			}
 
-			return &buffer[start];
+			return iterator(this,start);
 		}
-
-		for( size_type i = len + count; i > 0 && i > start; --i ) {
+		*/
+		for( size_type i = len + count -1;
+						i > 0 &&
+						i > start &&
+						i - count >= start;
+						--i ) {
 			std::swap(buffer[i], buffer[i-count]);
 		}
 
@@ -436,7 +459,9 @@ public:
 			buffer[i] = *it;
 		}
 
-		return &buffer[start];
+		len += count;
+
+		return iterator(this,start);
 	}
 
 	iterator insert( const_iterator pos, std::initializer_list<T> ilist ) {
