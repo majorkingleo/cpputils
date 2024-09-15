@@ -188,7 +188,7 @@ public:
 			throw std::out_of_range("pos exceeds vector limit");
 		}
 
-		return buffer.at[pos];
+		return buffer[pos];
 	}
 
 	reference operator[]( size_type pos ) {
