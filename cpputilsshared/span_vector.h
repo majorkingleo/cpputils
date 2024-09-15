@@ -31,6 +31,8 @@ public:
 		using difference_type = std::span<T>::difference_type;
 		using reference = std::span<T>::reference;
 		using const_reference = std::span<T>::const_reference;
+		// using iterator_category = std::random_access_iterator_tag;
+		using iterator_category = std::input_iterator_tag;
 
 	protected:
 		span_vector *parent;
@@ -44,6 +46,28 @@ public:
 		 bool operator!=(iterator other) const { return !(*this == other); }
 
 		 reference operator*() const { return parent->operator[](pos); }
+
+		 iterator& operator+=( difference_type amount ) {
+			 pos += amount;
+			 return *this;
+		 }
+
+		 iterator& operator-=( difference_type amount ) {
+			 pos -= amount;
+			 return *this;
+		 }
+
+		 iterator operator+( difference_type amount ) const {
+			 return iterator(parent,pos+amount);
+		 }
+
+		 iterator operator-( difference_type amount ) const {
+			 return iterator(parent,pos-amount);
+		 }
+
+		 size_type get_pos() {
+			 return pos;
+		 }
 	};
 
 	class const_iterator : public iterator
@@ -303,7 +327,7 @@ public:
 		}
 
 		if( len + 1 > capacity() ) {
-			throw std::length_error();
+			throw std::length_error("capacity exceeded");
 		}
 
 		size_type start = std::distance( cbegin(), pos );
@@ -321,11 +345,11 @@ public:
 	iterator insert( const_iterator pos, T&& value ) {
 		if( pos == cend() || empty() ) {
 			push_back( value );
-			return &buffer[len-1];
+			return iterator(this,len-1);
 		}
 
 		if( len + 1 > capacity() ) {
-			throw std::length_error();
+			throw std::length_error("capacity exceeded");
 		}
 
 		size_type start = std::distance( cbegin(), pos );
@@ -337,7 +361,7 @@ public:
 		buffer[start] = std::move(value);
 		len++;
 
-		return &buffer[start];
+		return iterator(this,start);
 	}
 
 	iterator insert( const_iterator pos,
@@ -351,7 +375,7 @@ public:
 		}
 
 		if( len + count > capacity() ) {
-			throw std::length_error();
+			throw std::length_error("capacity exceeded");;
 		}
 
 		const size_type start = std::distance( cbegin(), pos );
@@ -390,7 +414,7 @@ public:
 		const size_type count = std::distance( first, last );
 
 		if( len + count > capacity() ) {
-			throw std::length_error();
+			throw std::length_error("capacity exceeded");
 		}
 
 		const size_type start = std::distance( cbegin(), pos );
@@ -472,7 +496,7 @@ public:
 
 	void push_back( const T& value ) {
 		if( len + 1 >= max_size() ) {
-			throw std::length_error();
+			throw std::length_error("capacity exceeded");
 		}
 
 		buffer[len] = value;
@@ -481,7 +505,7 @@ public:
 
 	void push_back( T&& value ) {
 		if( len + 1 >= max_size() ) {
-			throw std::length_error();
+			throw std::length_error("capacity exceeded");
 		}
 
 		buffer[len] = std::move(value);
@@ -531,6 +555,24 @@ bool operator==( const span_vector<T> & v1, const span_vector<T> & v2 ) {
 
 	return true;
 }
+/*
+template<class T>
+typename span_vector<T>::iterator::difference_type operator-( const typename span_vector<T>::iterator & a,
+													 const typename span_vector<T>::iterator & b )
+{
+	using diff_t = span_vector<T>::iterator::difference_type;
 
-
+	return static_cast<diff_t>(a.get_pos()) - static_cast<diff_t>(b.get_pos());
+}
+*/
 } // namespace Tools;
+/*
+template<class T>
+typename Tools::span_vector<T>::iterator operator+( const typename Tools::span_vector<T>::iterator & a,
+													int amount )
+{
+	typename Tools::span_vector<T>::iterator b = a;
+	b += amount;
+	return b;
+}
+*/
