@@ -13,6 +13,7 @@
 #include <functional>
 #include <cstring>
 #include <ostream>
+#include <optional>
 
 #include <CpputilsDebug.h>
 #include <format.h>
@@ -45,10 +46,13 @@ public:
  * Same behavior as std::string.
  *
  */
-template <std::size_t N,typename CharT, typename out_of_range_functor = static_string_out_of_range_cut>
+template <std::size_t N,
+          typename CharT,
+		  typename out_of_range_functor = static_string_out_of_range_cut,
+		  typename container_t = Tools::static_vector<CharT,N+1>>
 class static_basic_string
 {
-	mutable Tools::static_vector<CharT,N+1> data;
+	mutable container_t data;
 	out_of_range_functor out_of_range;
 
 public:
@@ -57,11 +61,11 @@ public:
 	typedef typename std::basic_string<CharT>::reference reference;
 	typedef typename std::basic_string<CharT>::const_reference const_reference;
 	typedef typename std::basic_string<CharT>::size_type size_type;
-	typedef typename static_vector<CharT,N+1>::difference_type difference_type;
-	typedef typename static_vector<CharT,N+1>::iterator iterator;
-	typedef typename static_vector<CharT,N+1>::const_iterator const_iterator;
-	typedef typename static_vector<CharT,N+1>::reverse_iterator reverse_iterator;
-	typedef typename static_vector<CharT,N+1>::const_reverse_iterator const_reverse_iterator;
+	typedef typename container_t::difference_type difference_type;
+	typedef typename container_t::iterator iterator;
+	typedef typename container_t::const_iterator const_iterator;
+	typedef typename container_t::reverse_iterator reverse_iterator;
+	typedef typename container_t::const_reverse_iterator const_reverse_iterator;
 	typedef typename std::basic_string<CharT>::pointer pointer;
 	typedef typename std::basic_string<CharT>::const_pointer const_pointer;
 
@@ -72,6 +76,12 @@ public:
 	: data()
 	  {
 	  }
+
+	explicit static_basic_string( const container_t & container )
+	: data( container )
+	{
+	}
+
 
 	static_basic_string( const static_basic_string & other )
 	: static_basic_string()
