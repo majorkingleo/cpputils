@@ -494,7 +494,7 @@ public:
 			return end();
 		}
 
-		return &buffer[start];
+		return iterator(this,start);
 	}
 
 	iterator erase( const_iterator first, const_iterator last ) {
@@ -516,7 +516,9 @@ public:
 			std::swap(buffer[i], buffer[i+count]);
 		}
 
-		return &buffer[start];
+		len -= count;
+
+		return iterator(this,start);
 	}
 
 	void push_back( const T& value ) {
