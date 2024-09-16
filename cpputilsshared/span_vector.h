@@ -551,7 +551,7 @@ public:
 
 	void resize( size_type count, const value_type& value ) {
 		if( count > max_size() ) {
-			throw std::length_error();
+			throw std::length_error("capacity exceeded");
 		}
 
 		for( size_type i = len; i < count; ++i ) {
