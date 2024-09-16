@@ -1,6 +1,13 @@
 /*
  * @author Copyright (c) 2024 Martin Oberzalek
  *
+ * Kind of adapter that can be plugged onto a span and provides std::vector interface.
+ * You can do write operation on the span, if it does not exceed the spans boundaries.
+ *
+ * This container does not take ownership of the underlying span.
+ * On construction you have to assign a span with a miximum size, and and initional size.
+ * Objects that are in the span won't be constructed, or deleted. The ownership stays at the spawn.
+ *
  */
 #pragma once
 
@@ -387,15 +394,7 @@ public:
 		}
 
 		const size_type start = std::distance( cbegin(), pos );
-		/*
-		// don't go into negativ i
-		if( start < count ) {
-			for( size_type i = 0; i < count; ++i ) {
-				insert( pos, value );
-			}
-			return iterator(this,start);
-		}
-		 */
+
 		for( size_type i = len + count -1;
 				i > 0 &&
 				i > start &&
@@ -437,15 +436,7 @@ public:
 		}
 
 		const size_type start = std::distance( cbegin(), pos );
-		/*
-		if( start < count ) {
-			for( auto it = first, p = pos; it != last; ++it, ++p ) {
-				insert( p, *it );
-			}
 
-			return iterator(this,start);
-		}
-		*/
 		for( size_type i = len + count -1;
 						i > 0 &&
 						i > start &&
@@ -568,13 +559,15 @@ public:
 	}
 };
 
+} // namespace Tools;
+
 template <class T>
-bool operator==( const span_vector<T> & v1, const span_vector<T> & v2 ) {
+bool operator==( const Tools::span_vector<T> & v1, const Tools::span_vector<T> & v2 ) {
 	if( v1.size() != v2.size() ) {
 		return false;
 	}
 
-	for( typename span_vector<T>::size_type i = 0; i < v1.size(); ++i ) {
+	for( typename Tools::span_vector<T>::size_type i = 0; i < v1.size(); ++i ) {
 		if( v1[i] != v2[i] ) {
 			return false;
 		}
@@ -582,24 +575,4 @@ bool operator==( const span_vector<T> & v1, const span_vector<T> & v2 ) {
 
 	return true;
 }
-/*
-template<class T>
-typename span_vector<T>::iterator::difference_type operator-( const typename span_vector<T>::iterator & a,
-													 const typename span_vector<T>::iterator & b )
-{
-	using diff_t = span_vector<T>::iterator::difference_type;
 
-	return static_cast<diff_t>(a.get_pos()) - static_cast<diff_t>(b.get_pos());
-}
-*/
-} // namespace Tools;
-/*
-template<class T>
-typename Tools::span_vector<T>::iterator operator+( const typename Tools::span_vector<T>::iterator & a,
-													int amount )
-{
-	typename Tools::span_vector<T>::iterator b = a;
-	b += amount;
-	return b;
-}
-*/
