@@ -29,6 +29,7 @@ public:
 	using pointer = value_type*;
 	using const_pointer = const value_type*;
 
+	class const_iterator;
 
 	class iterator
 	{
@@ -38,8 +39,8 @@ public:
 		using difference_type = std::span<T>::difference_type;
 		using reference = std::span<T>::reference;
 		using const_reference = std::span<T>::const_reference;
-		// using iterator_category = std::random_access_iterator_tag;
-		using iterator_category = std::input_iterator_tag;
+		using iterator_category = std::random_access_iterator_tag;
+		//using iterator_category = std::input_iterator_tag;
 
 	protected:
 		span_vector *parent;
@@ -70,6 +71,10 @@ public:
 
 		 iterator operator-( difference_type amount ) const {
 			 return iterator(parent,pos-amount);
+		 }
+
+		 difference_type operator-( const_iterator it ) const {
+			 return static_cast<difference_type>(pos)-static_cast<difference_type>(it.pos);
 		 }
 
 		 size_type get_pos() {
