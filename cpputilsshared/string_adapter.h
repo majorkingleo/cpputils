@@ -646,7 +646,7 @@ public:
 
 		const size_type start = std::distance( begin(), it_start );
 		const size_type len = size();
-		difference_type diff = str.size() - count;
+		const difference_type diff = str.size() - count;
 
 		// make more space
 		if( diff > 0) {
@@ -664,7 +664,7 @@ public:
 		} else {
 
 			// reduce space
-			for( difference_type i = pos + count - 1; i < len; ++i ) {
+			for( difference_type i = pos + count - 1; i < static_cast<difference_type>(len); ++i ) {
 				data[i] = std::move(data[i+1]);
 			}
 
