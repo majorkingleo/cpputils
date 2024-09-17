@@ -633,6 +633,10 @@ public:
 
 	basic_string_adapter& replace( size_type pos, size_type count,
 	                       const std::basic_string_view<CharT>& str ) {
+
+		CPPDEBUG( format( "'%s' replace at pos: %d count: %d with: '%s' size: %d",
+				std::string_view(*this), pos, count, str, size() ) );
+
 		auto it_start = begin() + pos;
 		auto it_end = begin() + std::min(pos + count, size());
 
@@ -664,15 +668,15 @@ public:
 		} else {
 
 			// reduce space
-			for( difference_type i = pos + count - 1; i < static_cast<difference_type>(len); ++i ) {
-				data[i] = std::move(data[i+1]);
+			for( difference_type i = pos + count - 1; i < static_cast<difference_type>(len) -1; ++i ) {
+				data[i] = data[i+1];
 			}
-
 		}
 
-		size_type idx = 0;
-		for( auto it = it_start; it != it_end; ++it, ++idx ) {
-			*it = str[idx];
+		const size_type len_to_copy = str.size();
+
+		for( size_type i = pos, idx = 0; i < len_to_copy; ++i, ++idx ) {
+			data[i] = str[idx];
 		}
 
 		if( diff < 0 ) {
