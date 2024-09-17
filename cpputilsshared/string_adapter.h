@@ -635,7 +635,7 @@ public:
 	                       const std::basic_string_view<CharT>& str ) {
 		auto it_start = begin() + pos;
 		auto it_end = begin() + std::min(pos + count, size());
-		/*
+
 		if( str.size() == count ) {
 			size_type idx = 0;
 			for( auto it = it_start; it != it_end; ++it ) {
@@ -643,13 +643,15 @@ public:
 			}
 			return *this;
 		}
-		*/
+
 		const size_type start = std::distance( begin(), it_start );
 		const size_type len = size();
-		/*
+		difference_type diff = str.size() - count;
+
 		// make more space
-		if( str.size() > count ) {
-			size_type enlarge = str.size() - count;
+		if( diff > 0) {
+			size_type enlarge = diff;
+			resize( len + enlarge );
 
 			for( size_type i = len + enlarge -1;
 					i > 0 &&
@@ -658,32 +660,24 @@ public:
 					--i ) {
 				std::swap(data[i], data[i-count]);
 			}
+
 		} else {
-		*/
+
 			// reduce space
-			difference_type diff = str.size() - count;
-
-			if( diff > 0 ) {
-				resize( len + diff );
+			for( difference_type i = pos + count - 1; i < len; ++i ) {
+				data[i] = std::move(data[i+1]);
 			}
 
-			for( difference_type i = len + diff -1;
-					i > 0 &&
-					i > start &&
-					i - diff >= start;
-					--i ) {
-				std::swap(data[i], data[i-diff]);
-			}
-		//}
+		}
 
-			size_type idx = 0;
-			for( auto it = it_start; it != it_end; ++it ) {
-				*it = str[idx];
-			}
+		size_type idx = 0;
+		for( auto it = it_start; it != it_end; ++it, ++idx ) {
+			*it = str[idx];
+		}
 
-			if( diff < 0 ) {
-				resize( len + diff );
-			}
+		if( diff < 0 ) {
+			resize( len + diff );
+		}
 
 		return *this;
 	}
