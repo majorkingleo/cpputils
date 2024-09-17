@@ -100,6 +100,75 @@ public:
 		const_reference operator*() const { return base::parent->operator[](base::pos); }
 	};
 
+	class reverse_iterator
+	{
+	public:
+		using value_type = std::span<T>::value_type;
+		using size_type = std::span<T>::size_type;
+		using difference_type = std::span<T>::difference_type;
+		using reference = std::span<T>::reference;
+		using const_reference = std::span<T>::const_reference;
+		using iterator_category = std::random_access_iterator_tag;
+		//using iterator_category = std::input_iterator_tag;
+
+	protected:
+		span_vector *parent;
+		difference_type pos;
+	public:
+		explicit reverse_iterator(span_vector *parent_ = nullptr, size_type pos_ = 0) : parent( parent_), pos( pos_ ) {}
+		iterator& operator++() { pos--; return *this; }
+		iterator operator++(int) { iterator retval = *this; --(*this); return retval; }
+
+		 bool operator==(iterator other) const { return pos == other.pos; }
+		 bool operator!=(iterator other) const { return !(*this == other); }
+
+		 reference operator*() const { return parent->operator[](pos); }
+
+		 iterator& operator+=( difference_type amount ) {
+			 pos -= amount;
+			 return *this;
+		 }
+
+		 iterator& operator-=( difference_type amount ) {
+			 pos += amount;
+			 return *this;
+		 }
+
+		 iterator operator+( difference_type amount ) const {
+			 return iterator(parent,pos-amount);
+		 }
+
+		 iterator operator-( difference_type amount ) const {
+			 return iterator(parent,pos+amount);
+		 }
+
+		 difference_type operator-( const_iterator it ) const {
+			 return static_cast<difference_type>(pos)-static_cast<difference_type>(it.pos);
+		 }
+
+		 size_type get_pos() {
+			 return pos;
+		 }
+	};
+
+	class const_reverse_iterator : public reverse_iterator
+	{
+	public:
+		using base = reverse_iterator;
+		using base::base;
+		using base::operator=;
+
+		explicit const_reverse_iterator(const span_vector *parent_ = nullptr, size_type pos_ = 0)
+		: reverse_iterator( const_cast<span_vector *>(parent_), pos_ )
+		{}
+
+		const_reverse_iterator( const iterator & other )
+		: iterator( other )
+		{}
+
+		const_reference operator*() const { return base::parent->operator[](base::pos); }
+	};
+
 protected:
 	std::span<T> buffer;
 	std::size_t len;
