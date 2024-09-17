@@ -634,9 +634,6 @@ public:
 	basic_string_adapter& replace( size_type pos, size_type count,
 	                       const std::basic_string_view<CharT>& str ) {
 
-		CPPDEBUG( format( "'%s' replace at pos: %d count: %d with: '%s' size: %d",
-				std::string_view(*this), pos, count, str, size() ) );
-
 		auto it_start = begin() + pos;
 		auto it_end = begin() + std::min(pos + count, size());
 
