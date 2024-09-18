@@ -22,9 +22,9 @@ namespace Tools {
 
       enum Base
       {
-        OCT,
-        DEC,
-        HEX
+        OCT = 8,
+        DEC = 10,
+        HEX = 16
       };
 
       enum Floating
