@@ -450,4 +450,47 @@ std::string_view FormatBase::substitude( const std::string_view & str_orig,
   return str;
 }
 
+template <class BaseArgType, class CastTo>
+std::span<char> RealArgCastFromInt<BaseArgType,CastTo>::doFormat( const std::span<char> & formating_buffer,
+																  const Tools::Format::CFormat & cf )
+{
+	Tools::span_vector<char> vbuffer(formating_buffer);
+	Tools::basic_string_adapter<char> s( vbuffer );
+
+	if( cf.character_representation ) {
+		s += static_cast<CastTo>(arg);
+		return { s.data(), s.size() };
+	}
+
+	s.resize(s.capacity());
+
+	std::to_chars_result res = std::to_chars( s.data(), s.data() + s.size() -1, arg, cf.base );
+
+	if( res.ec != std::errc() ) {
+		return { s.data(), s.size() };
+	}
+
+	s.resize( res.ptr - s.data() );
+
+	if( cf.setupper ) {
+		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
+	}
+
+	if( cf.width > s.size() ) {
+		s.insert(0, cf.width - s.size(), cf.zero ? '0' : ' ' );
+	}
+
+	return { s.data(), s.size() };
+}
+
 } // namespace Tools::StaticFormat
+
+
+static Tools::StaticFormat::RealArgCastFromInt<int,char>            dummy1(0);
+static Tools::StaticFormat::RealArgCastFromInt<unsigned int,char>   dummy2(0);
+static Tools::StaticFormat::RealArgCastFromInt<short,char>          dummy3(0);
+static Tools::StaticFormat::RealArgCastFromInt<unsigned short,char> dummy4(0);
+static Tools::StaticFormat::RealArgCastFromInt<long,char>           dummy5(0);
+static Tools::StaticFormat::RealArgCastFromInt<unsigned long,char>  dummy6(0);
+
+

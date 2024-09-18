@@ -225,7 +225,8 @@ namespace Tools {
           arg(arg_)
         {}
 
-          std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override
+          std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override;
+#if 0
           {
         	  Tools::span_vector<char> vbuffer(formating_buffer);
         	  Tools::basic_string_adapter<char> s( vbuffer );
@@ -242,7 +243,7 @@ namespace Tools {
 
             return { s.data(), s.size() };
           }
-
+#endif
           int get_int() override {
             BaseArg::get_int();
             return arg;
