@@ -23,10 +23,11 @@
 #include <variant>
 #include <static_vector.h>
 #include <static_string.h>
+#include <span_vector.h>
+#include <string_adapter.h>
 #include <cformat.h>
 #include <type_traits>
 #include <charconv>
-#include <span>
 
 namespace Tools {
 
@@ -44,7 +45,6 @@ namespace Tools {
       virtual const char* what() const throw() { return err; }
     };
 
-    template<std::size_t N_SIZE>
     class BaseArg
     {
       bool _is_int;
@@ -60,7 +60,7 @@ namespace Tools {
       bool isInt() { return _is_int; }
       bool isString() { return _is_string; }
 
-      virtual Tools::static_string<N_SIZE> doFormat( const Format::CFormat & cf ) = 0;
+      virtual std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) = 0;
       virtual int get_int() {
         if( !isInt() ) {
 #if __cpp_exceptions > 0
@@ -91,25 +91,30 @@ namespace Tools {
     };
 
     template<typename Arg, std::size_t N_SIZE>
-    class RealArg : public BaseArg<N_SIZE>
+    class RealArg : public BaseArg
     {
       const Arg arg;
     public:
 
       RealArg() : arg(nullptr) {}
       RealArg( const Arg & arg_ )
-		: BaseArg<N_SIZE>( BaseArg<N_SIZE>::is_int( arg_ ), BaseArg<N_SIZE>::is_string( arg_ ) ),
+		: BaseArg( BaseArg::is_int( arg_ ), BaseArg::is_string( arg_ ) ),
 		  arg(arg_)
 		{
 		}
 
-      Tools::static_string<N_SIZE> doFormat( const Format::CFormat & cf ) override
+      std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override
       {
-        return x2s( arg, cf );;
+    	Tools::span_vector<char> vbuffer(formating_buffer);
+    	Tools::basic_string_adapter<char> s( vbuffer );
+
+        s = x2s( arg, cf );
+
+        return { s.data(), s.size() };
       }
 
       int get_int() override {
-        BaseArg<N_SIZE>::get_int();
+        BaseArg::get_int();
         return get_int(arg);
       }
 
@@ -164,17 +169,20 @@ namespace Tools {
     };
 */
     template <std::size_t N_SIZE, class BaseArgType, class CastTo>
-    class RealArgCastFromChar : public BaseArg<N_SIZE>
+    class RealArgCastFromChar : public BaseArg
         {
           const BaseArgType arg;
         public:
           RealArgCastFromChar( const BaseArgType & arg_ )
-        : BaseArg<N_SIZE>( false, false ),
+        : BaseArg( false, false ),
           arg(arg_)
         {}
 
-          Tools::static_string<N_SIZE> doFormat( const Format::CFormat & cf ) override
+          std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override
           {
+        	span_vector<char> vbuffer(formating_buffer);
+        	basic_string_adapter<char> s( vbuffer );
+
             std::stringstream str;
             str << cf;
 
@@ -183,7 +191,9 @@ namespace Tools {
             else
               str << arg;
 
-            return str.str();
+            s = str.str();
+
+            return { s.data(), s.size() };
           }
         };
 
@@ -206,17 +216,20 @@ namespace Tools {
     };
 
     template <std::size_t N_SIZE, class BaseArgType, class CastTo>
-    class RealArgCastFromInt : public BaseArg<N_SIZE>
+    class RealArgCastFromInt : public BaseArg
         {
           const BaseArgType arg;
         public:
           RealArgCastFromInt( const BaseArgType & arg_ )
-        : BaseArg<N_SIZE>( true, false ),
+        : BaseArg( true, false ),
           arg(arg_)
         {}
 
-          Tools::static_string<N_SIZE> doFormat( const Format::CFormat & cf ) override
+          std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override
           {
+        	  Tools::span_vector<char> vbuffer(formating_buffer);
+        	  Tools::basic_string_adapter<char> s( vbuffer );
+
             std::stringstream str;
             str << cf;
 
@@ -225,11 +238,13 @@ namespace Tools {
             else
               str << arg;
 
-            return str.str();
+            s = str.str();
+
+            return { s.data(), s.size() };
           }
 
           int get_int() override {
-            BaseArg<N_SIZE>::get_int();
+            BaseArg::get_int();
             return arg;
           }
         };
@@ -497,7 +512,15 @@ std::string_view Format<N_ARGS,N_SIZE,VECTOR_LIKE>::use_arg( unsigned int i, con
   }
 
   std::visit( [this,&cf]( auto & real_arg ){
-	  use_arg_buffer = real_arg.doFormat(cf);
+
+	  // enlarge size to full size
+	  use_arg_buffer.resize(use_arg_buffer.capacity());
+
+	  auto span_out = real_arg.doFormat( use_arg_buffer, cf);
+
+	  // reduce it
+	  use_arg_buffer.resize(span_out.size());
+
   }, args[i] );
 
   return use_arg_buffer;
