@@ -176,7 +176,7 @@ protected:
 public:
 	span_vector() = delete;
 
-	span_vector( std::span<T> & buffer_, std::size_t initial_size_ = 0 )
+	span_vector( const std::span<T> & buffer_, std::size_t initial_size_ = 0 )
 	: buffer( buffer_ ),
 	  len( initial_size_ )
 	{}
