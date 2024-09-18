@@ -30,7 +30,7 @@ template <typename CharT,
 		  typename out_of_range_functor = static_string_out_of_range_cut>
 class basic_string_adapter
 {
-	mutable container_t data;
+	mutable container_t buffer;
 	out_of_range_functor out_of_range;
 
 public:
@@ -51,21 +51,21 @@ public:
 
 public:
 	basic_string_adapter()
-	: data()
+	: buffer()
 	  {
 	  }
 
 	explicit basic_string_adapter( const container_t & container )
-	: data( container )
+	: buffer( container )
 	{
 	}
 
 	constexpr size_type capacity() const {
-		return data.capacity()-1;
+		return buffer.capacity()-1;
 	}
 
 	size_type max_size() const noexcept {
-		return data.capacity()-1;
+		return buffer.capacity()-1;
 	}
 
 	void reserve( size_type new_cap = 0 ) {
@@ -80,7 +80,7 @@ public:
 			count = capacity();
 		}
 
-		data.resize(count);
+		buffer.resize(count);
 	}
 
 	void resize( size_type count, CharT ch ) {
@@ -89,12 +89,20 @@ public:
 			count = capacity();
 		}
 
-		data.resize(count, ch );
+		buffer.resize(count, ch );
 	}
 
 	const_pointer c_str() const {
-		data[data.size()] = '\0';
-		return data.data();
+		buffer[buffer.size()] = '\0';
+		return buffer.data();
+	}
+
+	pointer data() {
+		return buffer.data();
+	}
+
+	const_pointer data() const {
+		return buffer.data();
 	}
 
 	basic_string_adapter& operator=( const basic_string_adapter& str ) {
@@ -135,14 +143,14 @@ public:
 	}
 
 	operator std::basic_string<CharT> () {
-		return std::basic_string<CharT>(data.begin(),data.end());
+		return std::basic_string<CharT>(buffer.begin(),buffer.end());
 	}
 
 	basic_string_adapter& assign( size_type count, CharT ch ) {
 		resize(count);
 
-		for( size_type i = 0; i < data.size(); i++ ) {
-			data[i] = ch;
+		for( size_type i = 0; i < buffer.size(); i++ ) {
+			buffer[i] = ch;
 		}
 		return *this;
 	}
@@ -150,24 +158,24 @@ public:
 	template<std::size_t N2,typename other_out_of_range_functor>
 	basic_string_adapter& assign( const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) {
 		resize(str.size());
-		for( size_type i = 0; i < data.size(); i++ ) {
-			data[i] = str[i];
+		for( size_type i = 0; i < buffer.size(); i++ ) {
+			buffer[i] = str[i];
 		}
 		return *this;
 	}
 
 	basic_string_adapter& assign( const std::basic_string<CharT> & str ) {
 		resize(str.size());
-		for( size_type i = 0; i < data.size(); i++ ) {
-			data[i] = str[i];
+		for( size_type i = 0; i < buffer.size(); i++ ) {
+			buffer[i] = str[i];
 		}
 		return *this;
 	}
 
 	basic_string_adapter& assign( const std::basic_string_view<CharT> & str ) {
 		resize(str.size());
-		for( size_type i = 0; i < data.size(); i++ ) {
-			data[i] = str[i];
+		for( size_type i = 0; i < buffer.size(); i++ ) {
+			buffer[i] = str[i];
 		}
 		return *this;
 	}
@@ -202,8 +210,8 @@ public:
 
 	basic_string_adapter& assign( const CharT* s, size_type count ) {
 		resize(count);
-		for( size_type i = 0; i < data.size(); i++ ) {
-			data[i] = s[i];
+		for( size_type i = 0; i < buffer.size(); i++ ) {
+			buffer[i] = s[i];
 		}
 		return *this;
 	}
@@ -217,12 +225,12 @@ public:
 	template< class InputIt >
 	basic_string_adapter& assign( InputIt first, InputIt last ) {
 
-		data.clear();
+		buffer.clear();
 		resize( std::distance(first,last) );
 
 		size_type i = 0;
 		for( auto it = first; it != last && i < size(); ++it, ++i ) {
-			data[i] = *it;
+			buffer[i] = *it;
 		}
 
 		return *this;
@@ -230,132 +238,132 @@ public:
 
 	basic_string_adapter& assign( std::initializer_list<CharT> ilist ) {
 
-		data.clear();
+		buffer.clear();
 		resize(ilist.size());
 
 		size_type i = 0;
 		for( auto it = ilist.begin(); it != ilist.end() && i < size(); ++it, ++i ) {
-			data[i] = *it;
+			buffer[i] = *it;
 		}
 
 		return *this;
 	}
 
 	CharT& at( size_type pos ) {
-		return data.at(pos);
+		return buffer.at(pos);
 	}
 
 	const CharT& at( size_type pos ) const {
-		return data.at(pos);
+		return buffer.at(pos);
 	}
 
 	CharT& operator[]( size_type pos ) {
-		return data[pos];
+		return buffer[pos];
 	}
 
 	const CharT& operator[]( size_type pos ) const {
-		return data[pos];
+		return buffer[pos];
 	}
 
 	CharT& front() {
-		return data[0];
+		return buffer[0];
 	}
 
 	const CharT& front() const {
-		return data[0];
+		return buffer[0];
 	}
 
 	CharT& back() {
-		return data[size() - 1];
+		return buffer[size() - 1];
 	}
 
 	const CharT& back() const {
-		return data[size() - 1];
+		return buffer[size() - 1];
 	}
 
 
 	operator std::basic_string_view<CharT>() const noexcept {
-		return std::basic_string_view<CharT>(data.data(),data.size());
+		return std::basic_string_view<CharT>(buffer.data(),buffer.size());
 	}
 
 	iterator begin() {
-		return data.begin();
+		return buffer.begin();
 	}
 
 	const_iterator begin() const {
-		return data.begin();
+		return buffer.begin();
 	}
 
 	const_iterator cbegin() const noexcept {
-		return data.cbegin();
+		return buffer.cbegin();
 	}
 
 	iterator end() {
-		return data.end();
+		return buffer.end();
 	}
 
 	const_iterator end() const {
-		return data.end();
+		return buffer.end();
 	}
 
 	const_iterator cend() const {
-		return data.cend();
+		return buffer.cend();
 	}
 
 	const_reverse_iterator crend() const {
-		return data.crend();
+		return buffer.crend();
 	}
 
 	reverse_iterator rend() {
-		return data.rend();
+		return buffer.rend();
 	}
 
 
 	reverse_iterator rbegin() {
-		return data.rbegin();
+		return buffer.rbegin();
 	}
 
 	const_reverse_iterator rbegin() const {
-		return data.rbegin();
+		return buffer.rbegin();
 	}
 
 	const_reverse_iterator crbegin() const {
-		return data.crbegin();
+		return buffer.crbegin();
 	}
 
 	bool empty() const {
-		return data.empty();
+		return buffer.empty();
 	}
 
 	size_type size() const {
-		return data.size();
+		return buffer.size();
 	}
 
 	size_type length() const {
-		return data.size();
+		return buffer.size();
 	}
 
 	void shrink_to_fit() {}
 
 	void clear() {
-		data.clear();
+		buffer.clear();
 	}
 
 	// Inserts count copies of character ch at the position index.
 	basic_string_adapter& insert( size_type index, size_type count, CharT ch ) {
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
 
 		fit_string( index, count );
 
-		data.insert(it,count,ch);
+		buffer.insert(it,count,ch);
 		return *this;
 	}
 
 	basic_string_adapter& insert( size_type index, const CharT* s ) {
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
@@ -363,13 +371,13 @@ public:
 
 		fit_string( index, sv );
 
-		data.insert(it,sv.begin(), sv.end());
+		buffer.insert(it,sv.begin(), sv.end());
 		return *this;
 	}
 
 
 	basic_string_adapter& insert( size_type index, const CharT* s, size_type count ) {
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
@@ -377,12 +385,12 @@ public:
 
 		fit_string( index, sv );
 
-		data.insert(it,sv.begin(), sv.end());
+		buffer.insert(it,sv.begin(), sv.end());
 		return *this;
 	}
 
 	basic_string_adapter& insert( size_type index, const std::basic_string<CharT>& str ) {
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
@@ -391,13 +399,13 @@ public:
 
 		fit_string( index, sv );
 
-		data.insert(it,sv.begin(), sv.end());
+		buffer.insert(it,sv.begin(), sv.end());
 		return *this;
 	}
 
 	template<std::size_t N2, typename other_out_of_range_functor>
 	basic_string_adapter& insert( size_type index, const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) {
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
@@ -406,13 +414,13 @@ public:
 
 		fit_string( index, sv );
 
-		data.insert(it,sv.begin(), sv.end());
+		buffer.insert(it,sv.begin(), sv.end());
 		return *this;
 	}
 
 	basic_string_adapter& insert( size_type index, const std::basic_string<CharT>& str,
 	                      size_type s_index, size_type count = npos ) {
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
@@ -422,14 +430,14 @@ public:
 
 		fit_string( index, sv );
 
-		data.insert(it,sv.begin(), sv.end());
+		buffer.insert(it,sv.begin(), sv.end());
 		return *this;
 	}
 
 	template<std::size_t N2, typename other_out_of_range_functor>
 	basic_string_adapter& insert( size_type index, const static_basic_string<N2,CharT,other_out_of_range_functor>& str,
 	                      size_type s_index, size_type count = npos ) {
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
@@ -439,7 +447,7 @@ public:
 
 		fit_string( index, sv );
 
-		data.insert(it,sv.begin(), sv.end());
+		buffer.insert(it,sv.begin(), sv.end());
 		return *this;
 	}
 
@@ -448,14 +456,14 @@ public:
 		size_type count = 1;
 		fit_string( index, count );
 
-		return data.insert(pos,count,ch);
+		return buffer.insert(pos,count,ch);
 	}
 
 	iterator insert( const_iterator pos, size_type count, CharT ch ) {
 		size_type index = std::distance(cbegin(),pos);
 		fit_string( index, count );
 
-		return data.insert(pos,count,ch);
+		return buffer.insert(pos,count,ch);
 	}
 
 	template< class InputIt >
@@ -464,7 +472,7 @@ public:
 		std::basic_string_view<CharT> sv(first,last);
 
 		fit_string( index, sv );
-		return data.insert(pos,sv.begin(),sv.end());
+		return buffer.insert(pos,sv.begin(),sv.end());
 	}
 
 	iterator insert( const_iterator pos, std::initializer_list<CharT> ilist ) {
@@ -472,12 +480,12 @@ public:
 		std::basic_string_view<CharT> sv(ilist.begin(), ilist.end());
 
 		fit_string( index, sv );
-		return data.insert(pos,sv.begin(),sv.end());
+		return buffer.insert(pos,sv.begin(),sv.end());
 	}
 
 	basic_string_adapter& insert( size_type index, const std::basic_string_view<CharT>& t ) {
 
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
@@ -485,7 +493,7 @@ public:
 		std::basic_string_view<CharT> sv(t);
 		fit_string( index, sv );
 
-		data.insert(it,sv.begin(),sv.end());
+		buffer.insert(it,sv.begin(),sv.end());
 
 		return *this;
 	}
@@ -493,20 +501,20 @@ public:
 	basic_string_adapter& insert( size_type index, const std::basic_string_view<CharT>& t,
 			 size_type t_index, size_type count = npos ) {
 
-		auto it = data.begin();
+		auto it = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++it;
 		}
 
 		std::basic_string_view<CharT> sv(t.substr(t_index,count));
 		fit_string( index, sv );
-		data.insert(it,sv.begin(),sv.end());
+		buffer.insert(it,sv.begin(),sv.end());
 
 		return *this;
 	}
 
 	basic_string_adapter& erase( size_type index = 0, size_type count = npos ) {
-		auto first = data.begin();
+		auto first = buffer.begin();
 		for( size_type i = 0; i < index; ++i ) {
 			++first;
 		}
@@ -514,42 +522,42 @@ public:
 		auto last = first;
 
 		if( count == npos ) {
-			last = data.end();
+			last = buffer.end();
 		} else {
 			for( size_type i = 0; i < count; ++i ) {
 				++last;
 			}
 		}
 
-		data.erase(first,last);
+		buffer.erase(first,last);
 		return *this;
 	}
 
 	iterator erase( const_iterator position ) {
-		return data.erase(position);
+		return buffer.erase(position);
 	}
 
 	iterator erase( const_iterator first, const_iterator last ) {
-		return data.erase( first, last );
+		return buffer.erase( first, last );
 	}
 
 	void push_back( CharT ch ) {
 
-		if( data.size() == capacity() ) {
+		if( buffer.size() == capacity() ) {
 			out_of_range(1);
 			return;
 		}
 
-		data.push_back( ch );
+		buffer.push_back( ch );
 	}
 
 	void pop_back() {
-		data.pop_back();
+		buffer.pop_back();
 	}
 
 	basic_string_adapter& append( size_type count, CharT ch ) {
 		fit_string(size(),count);
-		data.insert(data.end(),count,ch);
+		buffer.insert(buffer.end(),count,ch);
 		return *this;
 	}
 
@@ -659,21 +667,21 @@ public:
 					i > start &&
 					i - enlarge >= start;
 					--i ) {
-				std::swap(data[i], data[i-count]);
+				std::swap(buffer[i], buffer[i-count]);
 			}
 
 		} else {
 
 			// reduce space
 			for( difference_type i = pos + count - 1; i < static_cast<difference_type>(len) -1; ++i ) {
-				data[i] = data[i+1];
+				buffer[i] = buffer[i+1];
 			}
 		}
 
 		const size_type len_to_copy = str.size();
 
 		for( size_type i = pos, idx = 0; i < len_to_copy; ++i, ++idx ) {
-			data[i] = str[idx];
+			buffer[i] = str[idx];
 		}
 
 		if( diff < 0 ) {
@@ -805,12 +813,12 @@ public:
 #endif
 		}
 
-		std::memcpy( dest, data.data() + pos, count );
+		std::memcpy( dest, buffer.data() + pos, count );
 		return count;
 	}
 
 	void swap( basic_string_adapter& other ) {
-		data.swap(other.data);
+		buffer.swap(other.buffer);
 	}
 
 	size_type find( const std::basic_string<CharT>& str, size_type pos = 0 ) const {
@@ -1016,6 +1024,7 @@ public:
 	std::basic_string_view<CharT> substr( size_type pos = 0, size_type count = npos ) const {
 		return std::basic_string_view<CharT>(*this).substr(pos,count);
 	}
+
 
 private:
 	void fit_string( size_type index, std::basic_string_view<CharT> & sv) {
