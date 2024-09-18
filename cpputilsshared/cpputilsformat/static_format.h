@@ -90,7 +90,7 @@ namespace Tools {
       bool is_string( const char* ) const { return true; }
     };
 
-    template<typename Arg, std::size_t N_SIZE>
+    template<typename Arg>
     class RealArg : public BaseArg
     {
       const Arg arg;
@@ -168,7 +168,7 @@ namespace Tools {
       }
     };
 */
-    template <std::size_t N_SIZE, class BaseArgType, class CastTo>
+    template <class BaseArgType, class CastTo>
     class RealArgCastFromChar : public BaseArg
         {
           const BaseArgType arg;
@@ -197,25 +197,25 @@ namespace Tools {
           }
         };
 
-    template <std::size_t N_SIZE>
-    class RealArg<unsigned char,N_SIZE> : public RealArgCastFromChar<N_SIZE,unsigned char,int>
+    template<>
+    class RealArg<unsigned char> : public RealArgCastFromChar<unsigned char,int>
     {
     public:
       RealArg( const unsigned char & arg_ )
-        : RealArgCastFromChar<N_SIZE,unsigned char,int>( arg_ )
+        : RealArgCastFromChar<unsigned char,int>( arg_ )
        {}
     };
 
-    template <std::size_t N_SIZE>
-    class RealArg<char,N_SIZE> : public RealArgCastFromChar<N_SIZE,char,int>
+    template<>
+    class RealArg<char> : public RealArgCastFromChar<char,int>
     {
     public:
       RealArg( const char & arg_ )
-        : RealArgCastFromChar<N_SIZE,char,int>( arg_ )
+        : RealArgCastFromChar<char,int>( arg_ )
        {}
     };
 
-    template <std::size_t N_SIZE, class BaseArgType, class CastTo>
+    template <class BaseArgType, class CastTo>
     class RealArgCastFromInt : public BaseArg
         {
           const BaseArgType arg;
@@ -249,22 +249,22 @@ namespace Tools {
           }
         };
 
-    template <std::size_t N_SIZE>
-    class RealArg<int,N_SIZE> : public RealArgCastFromInt<N_SIZE,int,char>
+    template<>
+    class RealArg<int> : public RealArgCastFromInt<int,char>
     {
     public:
       RealArg( const int & arg_ )
-        : RealArgCastFromInt<N_SIZE,int,char>( arg_ )
+        : RealArgCastFromInt<int,char>( arg_ )
        {}
     };
 
-#define INT_REAL_ARG_CAST( type )\
-    template <std::size_t N_SIZE> \
-    class RealArg<type,N_SIZE> : public RealArgCastFromInt<N_SIZE,type,char>\
+#define INT_REAL_ARG_CAST( type ) \
+	template<> \
+    class RealArg<type> : public RealArgCastFromInt<type,char>\
     {\
     public:\
       RealArg( const type & arg_ )\
-        : RealArgCastFromInt<N_SIZE,type,char>( arg_ )\
+        : RealArgCastFromInt<type,char>( arg_ )\
        {}\
     }
 
@@ -276,18 +276,18 @@ namespace Tools {
 
 #undef INT_REAL_ARG_CAST
 
-    template<std::size_t N_SIZE,typename VECTOR_LIKE, typename Arg> void add_argsx(  VECTOR_LIKE & v_args, Arg & arg )
+    template<typename VECTOR_LIKE, typename Arg> void add_argsx(  VECTOR_LIKE & v_args, Arg & arg )
     {
-      v_args.push_back( RealArg<Arg,N_SIZE>(arg) );
+      v_args.push_back( RealArg<Arg>(arg) );
     }
 
-    template<std::size_t N_SIZE, typename VECTOR_LIKE, typename A, typename... Arg> void add_args( VECTOR_LIKE & v_args, A & a, Arg&... arg )
+    template<typename VECTOR_LIKE, typename A, typename... Arg> void add_args( VECTOR_LIKE & v_args, A & a, Arg&... arg )
     {
-      add_argsx<N_SIZE>( v_args, a );
-      add_args<N_SIZE>( v_args, arg... );
+      add_argsx( v_args, a );
+      add_args( v_args, arg... );
     }
 
-    template<std::size_t N_SIZE,typename VECTOR_LIKE>
+    template<typename VECTOR_LIKE>
     inline void add_args( VECTOR_LIKE & v_args )
     {
 
@@ -402,25 +402,25 @@ namespace Tools {
 		// https://stackoverflow.com/a/62089731/20079418
 
 		// end of recursive call: tuple is forwared using `type`
-		template <std::size_t N_SIZE, typename T, typename... Ts>
+		template <typename T, typename... Ts>
 		struct unique_impl {using type = std::remove_reference<T>::type;};
 
 		// recursive call: 1. Consumes the first type of the variadic arguments,
 		//                    if not repeated add it to the tuple.
 		//                 2. Call this again with the rest of arguments
-		template <std::size_t N_SIZE, template<class...> class Tuple, typename... Ts, typename U, typename... Us>
-		struct unique_impl<N_SIZE, Tuple<Ts...>,  U, Us...>
-			: std::conditional_t<(std::is_same_v<RealArg<U,N_SIZE>, Ts> || ...) // but pack the type in RealArg class
-							   , unique_impl<N_SIZE,Tuple<Ts...>, Us...>
-							   , unique_impl<N_SIZE,Tuple<Ts..., RealArg<U,N_SIZE>>, Us...>> {}; // but pack the type in RealArg class
+		template <template<class...> class Tuple, typename... Ts, typename U, typename... Us>
+		struct unique_impl<Tuple<Ts...>,  U, Us...>
+			: std::conditional_t<(std::is_same_v<RealArg<U>, Ts> || ...) // but pack the type in RealArg class
+							   , unique_impl<Tuple<Ts...>, Us...>
+							   , unique_impl<Tuple<Ts..., RealArg<U>>, Us...>> {}; // but pack the type in RealArg class
 
 		// forward definition
-		template <std::size_t N_SIZE,class Tuple>
+		template <class Tuple>
 		struct unique_tuple;
 
 		// class specialization so that tuple arguments can be extracted from type
-		template <std::size_t N_SIZE, template<class...>class Tuple, typename... Ts>
-		struct unique_tuple<N_SIZE,Tuple<Ts...>> : public unique_impl<N_SIZE,Tuple<>, Ts...> {};
+		template <template<class...>class Tuple, typename... Ts>
+		struct unique_tuple<Tuple<Ts...>> : public unique_impl<Tuple<>, Ts...> {};
 
     } // namespace pack_real_args_impl
 
@@ -434,14 +434,14 @@ namespace Tools {
 	using namespace StaticFormat;
 
 	constexpr auto N_ARGS = sizeof...(Args);
-	using variant = pack_real_args_impl::unique_tuple<N_SIZE,std::variant<Args...>>::type;
+	using variant = pack_real_args_impl::unique_tuple<std::variant<Args...>>::type;
 	using vector = Tools::static_vector<variant,N_ARGS>;
 
     vector v_args;
 
     // std::cout << " v_args member size: %d " << sizeof(variant) << std::endl;
 
-    StaticFormat::add_args<N_SIZE>( v_args, args... );
+    StaticFormat::add_args( v_args, args... );
 
     StaticFormat::Format<N_ARGS,N_SIZE,vector> f2( format, v_args );
 
