@@ -501,10 +501,57 @@ Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::F
 	return out;
 }
 
-Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const char * const s )
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const char * s )
 {
 	out.buffer += s;
 
 	return out;
 }
 
+namespace {
+
+template<class T>
+void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T & value )
+{
+	// enlarge buffer
+	out.buffer.resize(out.buffer.capacity());
+
+	std::chars_format fmt = std::chars_format::general;
+
+	if( out.cf.base == Tools::Format::CFormat::HEX ) {
+		fmt = std::chars_format::hex;
+	}
+
+	switch( out.cf.floating ) {
+		case Tools::Format::CFormat::FIXED: fmt |= std::chars_format::fixed; break;
+		case Tools::Format::CFormat::SCIENTIFIC: fmt |= std::chars_format::scientific; break;
+	}
+
+	std::to_chars_result res;
+
+	res = std::to_chars( out.buffer.data(), out.buffer.data() + out.buffer.size() -1, value, fmt );
+
+	if( res.ec != std::errc() ) {
+		out.buffer.clear();
+		return;
+	}
+
+	out.buffer.resize( res.ptr - out.buffer.data() );
+/*
+	if( cf.setupper ) {
+		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
+	}
+
+	if( cf.width > s.size() ) {
+		s.insert(0, cf.width - s.size(), cf.zero ? '0' : ' ' );
+	}
+	*/
+}
+
+} // namespace
+
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const double & value )
+{
+	format_double( out, value );
+	return out;
+}

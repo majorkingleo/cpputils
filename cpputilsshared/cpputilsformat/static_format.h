@@ -42,7 +42,8 @@ namespace Tools::StaticFormat {
 } // namespace Tools::StaticFormat
 
 Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const std::string_view & s );
-Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const char * const s );
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const char * s );
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const double & value );
 
 namespace Tools {
 
@@ -205,24 +206,7 @@ namespace Tools {
         {}
 
           std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override;
-#if 0
-          {
-        	  Tools::span_vector<char> vbuffer(formating_buffer);
-        	  Tools::basic_string_adapter<char> s( vbuffer );
 
-            std::stringstream str;
-            str << cf;
-
-            if( cf.character_representation )
-              str << static_cast<CastTo>(arg);
-            else
-              str << arg;
-
-            s = str.str();
-
-            return { s.data(), s.size() };
-          }
-#endif
           int get_int() override {
             BaseArg::get_int();
             return arg;
@@ -237,6 +221,7 @@ namespace Tools {
         : RealArgCastFromInt<int,char>( arg_ )
        {}
     };
+
 
 #define INT_REAL_ARG_CAST( type ) \
 	template<> \
@@ -507,7 +492,5 @@ std::string_view Format<N_ARGS,N_SIZE,VECTOR_LIKE>::use_arg( unsigned int i, con
 }
 
 } // namespace Tools::StaticFormat
-
-
 
 
