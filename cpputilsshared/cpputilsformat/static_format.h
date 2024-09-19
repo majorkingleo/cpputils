@@ -15,10 +15,6 @@
 #if __cplusplus - 0 >= 201103L
 
 #include <string>
-#include <iomanip>
-#include <iostream>
-
-#include <sstream>
 #include <cctype>
 #include <variant>
 #include <static_vector.h>
@@ -28,6 +24,25 @@
 #include <cformat.h>
 #include <type_traits>
 #include <charconv>
+
+
+namespace Tools::StaticFormat {
+
+	template <class CharT>
+	class FormatingAdapter
+	{
+	public:
+		Tools::basic_string_adapter<CharT> buffer;
+		const Tools::Format::CFormat cf;
+
+	public:
+
+	};
+
+} // namespace Tools::StaticFormat
+
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const std::string_view & s );
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const char * const s );
 
 namespace Tools {
 
@@ -108,7 +123,8 @@ namespace Tools {
     	Tools::span_vector<char> vbuffer(formating_buffer);
     	Tools::basic_string_adapter<char> s( vbuffer );
 
-        s = x2s( arg, cf );
+    	FormatingAdapter<char> fa{ s, cf };
+        ::operator<<(fa,arg);
 
         return { s.data(), s.size() };
       }
@@ -129,45 +145,8 @@ namespace Tools {
       int get_int( unsigned long long n  ) { return (int)n; }
       int get_int( long n ) { return (int)n; }
       int get_int( unsigned long n ) { return (int)n; }
-
-
-      template <class S> static std::string x2s( S ss, const Format::CFormat &cf )
-      {
-        std::stringstream str;
-        str << cf << ss;
-        return str.str();
-      }
     };
-/*
-    template<std::size_t N_SIZE>
-    class RealArg<const char,N_SIZE> : public BaseArg<N_SIZE>
-    {
-      const char *arg;
-    public:
 
-      RealArg() : arg(nullptr) {}
-      RealArg( const char *arg_ )
-		: BaseArg<N_SIZE>( false, true ),
-		  arg(arg_)
-		{
-		}
-
-      Tools::static_string<N_SIZE> doFormat( const Format::CFormat & cf ) override
-      {
-        return x2s( arg, cf );;
-      }
-
-    private:
-      template<class T> int get_int( const T &t ) { return 0; }
-
-      template <class S> static std::string x2s( S ss, const Format::CFormat &cf )
-      {
-        std::stringstream str;
-        str << cf << ss;
-        return str.str();
-      }
-    };
-*/
     template <class BaseArgType, class CastTo>
     class RealArgCastFromChar : public BaseArg
         {
@@ -527,5 +506,8 @@ std::string_view Format<N_ARGS,N_SIZE,VECTOR_LIKE>::use_arg( unsigned int i, con
   return use_arg_buffer;
 }
 
-
 } // namespace Tools::StaticFormat
+
+
+
+

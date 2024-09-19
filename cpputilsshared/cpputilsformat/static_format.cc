@@ -494,3 +494,17 @@ static Tools::StaticFormat::RealArgCastFromInt<long,char>           dummy5(0);
 static Tools::StaticFormat::RealArgCastFromInt<unsigned long,char>  dummy6(0);
 
 
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const std::string_view & s )
+{
+	out.buffer += s;
+
+	return out;
+}
+
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const char * const s )
+{
+	out.buffer += s;
+
+	return out;
+}
+
