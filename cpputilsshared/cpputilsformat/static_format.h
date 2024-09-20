@@ -32,8 +32,8 @@ namespace Tools::StaticFormat {
 	class FormatingAdapter
 	{
 	public:
-		Tools::basic_string_adapter<CharT> buffer;
-		const Tools::Format::CFormat cf;
+		Tools::basic_string_adapter<CharT> & buffer;
+		const Tools::Format::CFormat & cf;
 
 	public:
 
