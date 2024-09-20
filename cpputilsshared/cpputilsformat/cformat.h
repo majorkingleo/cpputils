@@ -51,7 +51,7 @@ namespace Tools {
       int precision;
       int strlength;
 
-      std::string format;
+      std::string_view format;
 
       bool numerical_representation; // cast a character to int
       bool character_representation; // cast a int to char
@@ -74,7 +74,7 @@ namespace Tools {
         width(0),
         precision(6),
         strlength(0),
-        format(""),
+        format(),
         numerical_representation(false),
         character_representation(false)
     { }
