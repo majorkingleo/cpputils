@@ -588,16 +588,30 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 		case Tools::Format::CFormat::SCIENTIFIC: fmt |= std::chars_format::scientific; break;
 	}
 
-	std::to_chars_result res;
-
-	res = std::to_chars( out.data(), out.data() + out.size() -1, value, fmt );
+	std::to_chars_result res = std::to_chars( out.data(), out.data() + out.size() -1,
+			value,
+			fmt,
+			out.cf.precision );
 
 	if( res.ec != std::errc() ) {
 		out.clear();
 		return;
 	}
 
-	out.resize( res.ptr - out.buffer.data() );
+	std::size_t len_written = res.ptr - out.buffer.data();
+
+	Tools::span_vector<char> vbuffer(out.buffer,len_written);
+	Tools::basic_string_adapter<char> str( vbuffer );
+
+
+	// sprintf( buffer, "%f", 155.1 ) );
+	// default printf precision is 6, so correct it, of less zeros are generated
+	std::string::size_type pos_comma = str.find('.');
+	std::size_t written_precision = str.size() - (pos_comma + 1);
+
+	if( pos_comma && written_precision < out.cf.precision ) {
+		str.insert(str.end(), out.cf.precision - written_precision, '0' );
+	}
 /*
 	if( cf.setupper ) {
 		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
@@ -607,6 +621,8 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 		s.insert(0, cf.width - s.size(), cf.zero ? '0' : ' ' );
 	}
 	*/
+
+	out.resize(str.size());
 }
 
 } // namespace
