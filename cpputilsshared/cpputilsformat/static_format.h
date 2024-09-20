@@ -29,14 +29,26 @@
 namespace Tools::StaticFormat {
 
 	template <class CharT>
-	class FormatingAdapter
+	struct FormatingAdapter
 	{
-	public:
-		Tools::basic_string_adapter<CharT> & buffer;
+		std::span<CharT> buffer;
 		const Tools::Format::CFormat & cf;
 
-	public:
+		CharT* data() {
+			return buffer.data();
+		}
 
+		std::span<CharT>::size_type size() {
+			return buffer.size();
+		}
+
+		void clear() {
+			buffer = {};
+		}
+
+		void resize( std::span<CharT>::size_type new_size ) {
+			buffer = buffer.subspan( new_size );
+		}
 	};
 
 } // namespace Tools::StaticFormat
@@ -121,13 +133,10 @@ namespace Tools {
 
       std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override
       {
-    	Tools::span_vector<char> vbuffer(formating_buffer);
-    	Tools::basic_string_adapter<char> s( vbuffer );
-
-    	FormatingAdapter<char> fa{ s, cf };
+    	FormatingAdapter<char> fa{ formating_buffer, cf };
         ::operator<<(fa,arg);
 
-        return { s.data(), s.size() };
+        return { fa.data(), fa.size() };
       }
 
       int get_int() override {

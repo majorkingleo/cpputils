@@ -455,16 +455,19 @@ namespace {
 template<class T>
 void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & value )
 {
-	auto & s = out.buffer;
 	auto & cf = out.cf;
 
-	std::to_chars_result res = std::to_chars( s.data(), s.data() + s.size() -1, value, cf.base );
+	std::to_chars_result res = std::to_chars( out.data(), out.data() + out.size() -1, value, cf.base );
 
 	if( res.ec != std::errc() ) {
+		out.clear();
 		return;
 	}
 
-	s.resize( res.ptr - s.data() );
+	const std::size_t len_written = res.ptr - out.data();
+
+	Tools::span_vector<char> vbuffer(out.buffer, len_written );
+	Tools::basic_string_adapter<char> s( vbuffer );
 
 	if( cf.setupper ) {
 		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
@@ -473,6 +476,8 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 	if( cf.width > static_cast<int>(s.size()) ) {
 		s.insert(0, cf.width - s.size(), cf.zero ? '0' : ' ' );
 	}
+
+	out.resize( s.size() );
 }
 
 } // namespace
@@ -489,28 +494,24 @@ std::span<char> RealArgCastFromInt<BaseArgType,CastTo>::doFormat( const std::spa
 		return { s.data(), s.size() };
 	}
 
-	s.resize(s.capacity());
-
-	FormatingAdapter<char> fa { s, cf };
+	FormatingAdapter<char> fa { formating_buffer, cf };
 	format_int( fa, arg );
 
-	return { s.data(), s.size() };
+	return fa.buffer;
 }
 
 std::span<char> RealArg<char>::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
 {
-	Tools::span_vector<char> vbuffer(formating_buffer);
-	Tools::basic_string_adapter<char> s( vbuffer );
-
 	if( cf.numerical_representation ) {
 
-		s.resize(s.capacity());
-		FormatingAdapter<char> fa { s, cf };
-
+		FormatingAdapter<char> fa { formating_buffer, cf };
 		format_int( fa, static_cast<int>(arg) );
 
-		return { s.data(), s.size() };
+		return fa.buffer;
 	}
+
+	Tools::span_vector<char> vbuffer(formating_buffer);
+	Tools::basic_string_adapter<char> s( vbuffer );
 
 	s += arg;
 
@@ -519,18 +520,17 @@ std::span<char> RealArg<char>::doFormat( const std::span<char> & formating_buffe
 
 std::span<char> RealArg<unsigned char>::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
 {
-	Tools::span_vector<char> vbuffer(formating_buffer);
-	Tools::basic_string_adapter<char> s( vbuffer );
-
 	if( cf.numerical_representation ) {
 
-		s.resize(s.capacity());
-		FormatingAdapter<char> fa { s, cf };
+		FormatingAdapter<char> fa { formating_buffer, cf };
 
 		format_int( fa, static_cast<unsigned int>(arg) );
 
-		return { s.data(), s.size() };
+		return fa.buffer;
 	}
+
+	Tools::span_vector<char> vbuffer(formating_buffer);
+	Tools::basic_string_adapter<char> s( vbuffer );
 
 	s += arg;
 
@@ -550,14 +550,24 @@ static Tools::StaticFormat::RealArgCastFromInt<unsigned long,char>  dummy6(0);
 
 Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const std::string_view & s )
 {
-	out.buffer += s;
+	Tools::span_vector<char> vbuffer(out.buffer);
+	Tools::basic_string_adapter<char> str( vbuffer );
+
+	str += s;
+
+	out.buffer = { str.data(), str.size() };
 
 	return out;
 }
 
 Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const char * s )
 {
-	out.buffer += s;
+	Tools::span_vector<char> vbuffer(out.buffer);
+	Tools::basic_string_adapter<char> str( vbuffer );
+
+	str += s;
+
+	out.buffer = { str.data(), str.size() };
 
 	return out;
 }
@@ -567,9 +577,6 @@ namespace {
 template<class T>
 void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T & value )
 {
-	// enlarge buffer
-	out.buffer.resize(out.buffer.capacity());
-
 	std::chars_format fmt = std::chars_format::general;
 
 	if( out.cf.base == Tools::Format::CFormat::HEX ) {
@@ -583,14 +590,14 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 
 	std::to_chars_result res;
 
-	res = std::to_chars( out.buffer.data(), out.buffer.data() + out.buffer.size() -1, value, fmt );
+	res = std::to_chars( out.data(), out.data() + out.size() -1, value, fmt );
 
 	if( res.ec != std::errc() ) {
-		out.buffer.clear();
+		out.clear();
 		return;
 	}
 
-	out.buffer.resize( res.ptr - out.buffer.data() );
+	out.resize( res.ptr - out.buffer.data() );
 /*
 	if( cf.setupper ) {
 		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
