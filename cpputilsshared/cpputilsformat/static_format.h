@@ -148,9 +148,10 @@ namespace Tools {
       int get_int( unsigned long n ) { return (int)n; }
     };
 
-    template <class BaseArgType, class CastTo>
+    template <class BaseArgType>
     class RealArgCastFromChar : public BaseArg
         {
+        protected:
           const BaseArgType arg;
         public:
           RealArgCastFromChar( const BaseArgType & arg_ )
@@ -158,41 +159,28 @@ namespace Tools {
           arg(arg_)
         {}
 
-          std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override
-          {
-        	span_vector<char> vbuffer(formating_buffer);
-        	basic_string_adapter<char> s( vbuffer );
-
-            std::stringstream str;
-            str << cf;
-
-            if( cf.numerical_representation )
-              str << static_cast<CastTo>(arg);
-            else
-              str << arg;
-
-            s = str.str();
-
-            return { s.data(), s.size() };
-          }
         };
 
     template<>
-    class RealArg<unsigned char> : public RealArgCastFromChar<unsigned char,int>
+    class RealArg<unsigned char> : public RealArgCastFromChar<unsigned char>
     {
     public:
       RealArg( const unsigned char & arg_ )
-        : RealArgCastFromChar<unsigned char,int>( arg_ )
+        : RealArgCastFromChar<unsigned char>( arg_ )
        {}
+
+      std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override;
     };
 
     template<>
-    class RealArg<char> : public RealArgCastFromChar<char,int>
+    class RealArg<char> : public RealArgCastFromChar<char>
     {
     public:
       RealArg( const char & arg_ )
-        : RealArgCastFromChar<char,int>( arg_ )
+        : RealArgCastFromChar<char>( arg_ )
        {}
+
+      std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override;
     };
 
     template <class BaseArgType, class CastTo>

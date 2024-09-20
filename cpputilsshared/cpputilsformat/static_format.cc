@@ -450,6 +450,33 @@ std::string_view FormatBase::substitude( const std::string_view & str_orig,
   return str;
 }
 
+namespace {
+
+template<class T>
+void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & value )
+{
+	auto & s = out.buffer;
+	auto & cf = out.cf;
+
+	std::to_chars_result res = std::to_chars( s.data(), s.data() + s.size() -1, value, cf.base );
+
+	if( res.ec != std::errc() ) {
+		return;
+	}
+
+	s.resize( res.ptr - s.data() );
+
+	if( cf.setupper ) {
+		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
+	}
+
+	if( cf.width > static_cast<int>(s.size()) ) {
+		s.insert(0, cf.width - s.size(), cf.zero ? '0' : ' ' );
+	}
+}
+
+} // namespace
+
 template <class BaseArgType, class CastTo>
 std::span<char> RealArgCastFromInt<BaseArgType,CastTo>::doFormat( const std::span<char> & formating_buffer,
 																  const Tools::Format::CFormat & cf )
@@ -464,21 +491,48 @@ std::span<char> RealArgCastFromInt<BaseArgType,CastTo>::doFormat( const std::spa
 
 	s.resize(s.capacity());
 
-	std::to_chars_result res = std::to_chars( s.data(), s.data() + s.size() -1, arg, cf.base );
+	FormatingAdapter<char> fa { s, cf };
+	format_int( fa, arg );
 
-	if( res.ec != std::errc() ) {
+	return { s.data(), s.size() };
+}
+
+std::span<char> RealArg<char>::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
+{
+	Tools::span_vector<char> vbuffer(formating_buffer);
+	Tools::basic_string_adapter<char> s( vbuffer );
+
+	if( cf.numerical_representation ) {
+
+		s.resize(s.capacity());
+		FormatingAdapter<char> fa { s, cf };
+
+		format_int( fa, static_cast<int>(arg) );
+
 		return { s.data(), s.size() };
 	}
 
-	s.resize( res.ptr - s.data() );
+	s += arg;
 
-	if( cf.setupper ) {
-		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
+	return { s.data(), s.size() };
+}
+
+std::span<char> RealArg<unsigned char>::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
+{
+	Tools::span_vector<char> vbuffer(formating_buffer);
+	Tools::basic_string_adapter<char> s( vbuffer );
+
+	if( cf.numerical_representation ) {
+
+		s.resize(s.capacity());
+		FormatingAdapter<char> fa { s, cf };
+
+		format_int( fa, static_cast<unsigned int>(arg) );
+
+		return { s.data(), s.size() };
 	}
 
-	if( cf.width > s.size() ) {
-		s.insert(0, cf.width - s.size(), cf.zero ? '0' : ' ' );
-	}
+	s += arg;
 
 	return { s.data(), s.size() };
 }
