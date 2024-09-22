@@ -73,6 +73,22 @@ namespace Tools {
       virtual const char* what() const throw() { return err; }
     };
 
+
+    template<std::size_t N_SIZE>
+    class vector_like : public span_vector<char>
+    {
+    protected:
+    	std::array<char,N_SIZE> buffer;
+
+    public:
+    	vector_like()
+    	: span_vector(),
+    	  buffer()
+    	{
+    		span_vector::operator=(span_vector<char>(buffer));
+    	}
+    };
+
     class BaseArg
     {
       bool _is_int;
@@ -286,6 +302,9 @@ namespace Tools {
     template<std::size_t N_ARGS,std::size_t N_SIZE,typename VECTOR_LIKE>
     class Format : public FormatBase
     {
+    public:
+    	using string_t = Tools::static_basic_string<N_SIZE,char,static_string_out_of_range_cut,vector_like<N_SIZE>>;
+
     private:
       struct Arg
       {
@@ -297,8 +316,8 @@ namespace Tools {
 
       static constexpr unsigned int num_of_args = N_ARGS;
 
-      Tools::static_string<N_SIZE> s;
-      Tools::static_string<N_SIZE> use_arg_buffer;
+      string_t s;
+      string_t use_arg_buffer;
 
     private:
       Format() = delete;
@@ -314,7 +333,7 @@ namespace Tools {
          parse();
       }
 
-      const Tools::static_string<N_SIZE> & get_string() const { return s; }
+      const string_t & get_string() const { return s; }
 
     private:
       void parse() {
@@ -391,7 +410,7 @@ namespace Tools {
 
 namespace Tools {
   template <std::size_t N_SIZE, typename... Args>
-  Tools::static_string<N_SIZE> static_format( const std::string_view & format, Args... args )
+  auto static_format( const std::string_view & format, Args... args )
   {
 	using namespace StaticFormat;
 

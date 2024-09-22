@@ -14,7 +14,7 @@
 #include <cstring>
 #include <ostream>
 #include <optional>
-
+#include <span>
 #include <CpputilsDebug.h>
 #include <format.h>
 
@@ -234,6 +234,11 @@ public:
 	operator std::basic_string<CharT> () {
 		return std::basic_string<CharT>(data.begin(),data.end());
 	}
+
+	operator std::span<CharT> () {
+		return std::span<CharT>(data.data(),data.size());
+	}
+
 
 	static_basic_string& assign( size_type count, CharT ch ) {
 		resize(count);
@@ -1372,9 +1377,9 @@ bool operator>=( const CharT * lhs,
 	return lhs >= b;
 }
 
-template< std::size_t N1, class CharT, typename out_of_range_functor1 >
+template< std::size_t N1, class CharT, typename out_of_range_functor1, typename container_t >
 std::basic_ostream<CharT>&
-    operator<<( std::basic_ostream<CharT>& out, const static_basic_string<N1,CharT,out_of_range_functor1>& str ) {
+    operator<<( std::basic_ostream<CharT>& out, const static_basic_string<N1,CharT,out_of_range_functor1, container_t>& str ) {
 	std::basic_string_view<CharT> s(str);
 	return out << s;
 }

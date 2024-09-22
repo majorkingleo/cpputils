@@ -174,7 +174,10 @@ protected:
 	std::size_t len;
 
 public:
-	span_vector() = delete;
+	explicit span_vector()
+	: buffer(),
+	  len(0)
+	{}
 
 	span_vector( const std::span<T> & buffer_, std::size_t initial_size_ = 0 )
 	: buffer( buffer_ ),
