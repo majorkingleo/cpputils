@@ -189,6 +189,18 @@ public:
 	  len( initial_size_ )
 	{}
 
+	void set( const std::span<T> & buffer_, std::size_t initial_size_ = 0 )
+	{
+		buffer = buffer_;
+		len = initial_size_;
+	}
+
+	void set( T* data_, std::size_t len_, std::size_t initial_size_ = 0 )
+	{
+		buffer = std::span<T>(data_,len_);
+		len = initial_size_;
+	}
+
 	span_vector & operator=( const span_vector & other ) {
 
 		if( capacity() < other.size() ) {

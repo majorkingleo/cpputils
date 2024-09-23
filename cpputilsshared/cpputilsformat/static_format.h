@@ -17,7 +17,6 @@
 #include <string>
 #include <cctype>
 #include <variant>
-#include <static_vector.h>
 #include <static_string.h>
 #include <span_vector.h>
 #include <string_adapter.h>
@@ -85,7 +84,7 @@ namespace Tools {
     	: span_vector(),
     	  buffer()
     	{
-    		span_vector::operator=(span_vector<char>(buffer));
+    		set(buffer);
     	}
     };
 
@@ -254,21 +253,19 @@ namespace Tools {
 
 #undef INT_REAL_ARG_CAST
 
-    template<typename VECTOR_LIKE, typename Arg> void add_argsx(  VECTOR_LIKE & v_args, Arg & arg )
+    template<typename variant, typename Arg> void add_argsx(  std::byte *data, Arg & arg )
     {
-      v_args.push_back( RealArg<Arg>(arg) );
+      new (data) variant( RealArg<Arg>(arg) );
     }
 
-    template<typename VECTOR_LIKE, typename A, typename... Arg> void add_args( VECTOR_LIKE & v_args, A & a, Arg&... arg )
-    {
-      add_argsx( v_args, a );
-      add_args( v_args, arg... );
-    }
+    template<typename variant>
+    inline void add_args( std::byte *data ) {}
 
-    template<typename VECTOR_LIKE>
-    inline void add_args( VECTOR_LIKE & v_args )
-    {
 
+    template<typename variant, typename A, typename... Arg> void add_args( std::byte *data, A & a, Arg&... arg )
+    {
+      add_argsx<variant>( data, a );
+      add_args<variant>( data + sizeof(variant), arg... );
     }
 
     class FormatBase
@@ -416,17 +413,22 @@ namespace Tools {
 
 	constexpr auto N_ARGS = sizeof...(Args);
 	using variant = pack_real_args_impl::unique_tuple<std::variant<Args...>>::type;
-	using vector = Tools::static_vector<variant,N_ARGS>;
 
-    vector v_args;
+	alignas(variant) std::array<std::byte,sizeof(variant)*N_ARGS> data;
+	variant* v_data = reinterpret_cast<variant*>(data.data());
 
-    // std::cout << " v_args member size: %d " << sizeof(variant) << std::endl;
+    StaticFormat::add_args<variant>( data.data(), args... );
 
-    StaticFormat::add_args( v_args, args... );
 
-    StaticFormat::Format<N_ARGS,N_SIZE,vector> f2( format, v_args );
+    std::span<variant> s_args(v_data,N_ARGS);
+    span_vector<variant> v_args( s_args, N_ARGS );
 
-    // std::cout << demangle( typeid(variant).name() ) << std::endl;
+    StaticFormat::Format<N_ARGS,N_SIZE,span_vector<variant>> f2( format, v_args );
+
+	// delete allocated objects
+	for( unsigned i = 0; i < N_ARGS; ++i ) {
+		v_data[i].~variant();
+	}
 
     return f2.get_string();
   }
