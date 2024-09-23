@@ -199,8 +199,8 @@ public:
 		return *this;
 	}
 
-	template<std::size_t N2,typename other_out_of_range_functor>
-	static_basic_string& operator=( const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) {
+	template<std::size_t N2 ,typename other_out_of_range_functor, typename other_container_t>
+	static_basic_string& operator=( const static_basic_string<N2,CharT,other_out_of_range_functor,other_container_t>& str ) {
 		assign(str);
 		return *this;
 	}
@@ -249,8 +249,8 @@ public:
 		return *this;
 	}
 
-	template<std::size_t N2,typename other_out_of_range_functor>
-	static_basic_string& assign( const static_basic_string<N2,CharT,other_out_of_range_functor>& str ) {
+	template<std::size_t N2,typename other_out_of_range_functor, typename other_container_t>
+	static_basic_string& assign( const static_basic_string<N2,CharT,other_out_of_range_functor,other_container_t>& str ) {
 		resize(str.size());
 		for( size_type i = 0; i < data.size(); i++ ) {
 			data[i] = str[i];
