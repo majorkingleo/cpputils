@@ -526,10 +526,10 @@ public:
 
 		const size_type start = std::distance( cbegin(), pos );
 
-		for( size_type i = len + count -1;
+		for( difference_type i = len + count -1;
 						i > 0 &&
 						i > start &&
-						i - count >= start;
+						i - static_cast<difference_type>(count) >= static_cast<difference_type>(start);
 						--i ) {
 			std::swap(buffer[i], buffer[i-count]);
 		}
