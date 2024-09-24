@@ -609,8 +609,15 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 	std::string::size_type pos_comma = str.find('.');
 	std::size_t written_precision = str.size() - (pos_comma + 1);
 
-	if( pos_comma && written_precision < out.cf.precision ) {
+	CPPDEBUG( format( "pos_comma: %d written_precision: %d", pos_comma, written_precision) );
+
+	if( (pos_comma != std::string::npos) && (written_precision < out.cf.precision) ) {
 		str.insert(str.end(), out.cf.precision - written_precision, '0' );
+	}
+
+	/* sprintf( buffer, "%05.f", 3.32 ) */
+	if( out.cf.width > static_cast<int>(str.size()) ) {
+		str.insert(0, out.cf.width - str.size(), out.cf.zero ? '0' : ' ' );
 	}
 /*
 	if( cf.setupper ) {
