@@ -473,8 +473,24 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
 	}
 
+
+	int missing_width = out.cf.width - s.size();
+
+	if( out.cf.base == Tools::Format::CFormat::HEX && out.cf.showbase ) {
+		missing_width -= 2; // minus 0x
+	}
+
 	if( cf.width > static_cast<int>(s.size()) ) {
-		s.insert(0, cf.width - s.size(), cf.zero ? '0' : ' ' );
+		s.insert(0, missing_width, cf.zero ? '0' : ' ' );
+	}
+
+	// prepand 0x in case of hexadezimal output
+	if( out.cf.base == Tools::Format::CFormat::HEX && out.cf.special && out.cf.showbase ) {
+		if( out.cf.setupper ) {
+			s.insert(0, "0X" );
+		} else {
+			s.insert(0, "0x" );
+		}
 	}
 
 	out.resize( s.size() );
@@ -615,9 +631,24 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 		str.insert(str.end(), out.cf.precision - written_precision, '0' );
 	}
 
+	int missing_width = out.cf.width - str.size();
+
+	if( out.cf.base == Tools::Format::CFormat::HEX && out.cf.showbase ) {
+		missing_width -= 2; // minus 0x
+	}
+
 	/* sprintf( buffer, "%05.f", 3.32 ) */
 	if( out.cf.width > static_cast<int>(str.size()) ) {
-		str.insert(0, out.cf.width - str.size(), out.cf.zero ? '0' : ' ' );
+		str.insert(0, missing_width, out.cf.zero ? '0' : ' ' );
+	}
+
+	// prepand 0x in case of hexadezimal output
+	if( out.cf.base == Tools::Format::CFormat::HEX && out.cf.showbase ) {
+		if( out.cf.setupper ) {
+			str.insert(0, "0x" );
+		} else {
+			str.insert(0, "0X" );
+		}
 	}
 /*
 	if( cf.setupper ) {
