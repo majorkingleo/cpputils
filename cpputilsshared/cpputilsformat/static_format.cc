@@ -486,7 +486,7 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 
 	// prepand 0x in case of hexadezimal output
 	if( out.cf.special && out.cf.showbase ) {
-		if( out.cf.zero ) {
+		if( out.cf.zero && out.cf.adjust == Tools::Format::CFormat::RIGHT ) {
 			add_base = true;
  		} else {
 
@@ -508,7 +508,11 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 
 
 	if( cf.width > static_cast<int>(s.size()) ) {
-		s.insert(0, missing_width, cf.zero ? '0' : ' ' );
+		if( out.cf.adjust == Tools::Format::CFormat::RIGHT ) {
+			s.insert(0, missing_width, cf.zero ? '0' : ' ' );
+		} else {
+			s.insert(s.cend(), missing_width, ' ' );
+		}
 	}
 
 	if( out.cf.showbase &&
