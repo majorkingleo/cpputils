@@ -46,7 +46,7 @@ namespace Tools::StaticFormat {
 		}
 
 		void resize( std::span<CharT>::size_type new_size ) {
-			buffer = buffer.subspan( new_size );
+			buffer = buffer.subspan( 0, new_size );
 		}
 	};
 
