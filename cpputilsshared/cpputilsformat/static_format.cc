@@ -49,13 +49,17 @@ std::span<char> FormatBase::parse( std::span<char> & buffer,
       // % digit found
       pos++;
 
-      if( !(pos < len ) || (format[pos] == '%') )
-        {
-          // %% -> %
-          s += format[pos];
+      if( !(pos < len ) ) {
           pos++;
           continue;
-        }
+      }
+      else if( format[pos] == '%' )
+      {
+		  // %% -> %
+		  s += format[pos];
+		  pos++;
+		  continue;
+      }
 
       // format string found
 
