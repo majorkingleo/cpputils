@@ -485,16 +485,24 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 	bool add_base = false;
 
 	// prepand 0x in case of hexadezimal output
-	if( out.cf.base == Tools::Format::CFormat::HEX
-			&& out.cf.special
-			&& out.cf.showbase ) {
+	if( out.cf.special && out.cf.showbase ) {
 		if( out.cf.zero ) {
 			add_base = true;
  		} else {
- 			s.insert(0, "0x" );
+
+ 			if( out.cf.base == Tools::Format::CFormat::HEX ) {
+ 				s.insert(0, "0x" );
+ 			}
+ 			else if( out.cf.base == Tools::Format::CFormat::OCT ) {
+				s.insert(0, "0" );
+			}
  		}
 
-		missing_width -= 2;
+		if( out.cf.base == Tools::Format::CFormat::HEX ) {
+			missing_width -= 2;
+		} else if( out.cf.base == Tools::Format::CFormat::OCT ) {
+			missing_width -= 1;
+		}
 	}
 
 
@@ -503,10 +511,14 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 		s.insert(0, missing_width, cf.zero ? '0' : ' ' );
 	}
 
-	if( out.cf.base == Tools::Format::CFormat::HEX &&
-		out.cf.showbase &&
+	if( out.cf.showbase &&
 		add_base ) {
-		s.insert(0, "0x" );
+
+		if( out.cf.base == Tools::Format::CFormat::HEX ) {
+			s.insert(0, "0x" );
+		} else if( out.cf.base == Tools::Format::CFormat::OCT ) {
+			s.insert(0, "0" );
+		}
 	}
 
 
