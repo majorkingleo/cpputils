@@ -285,7 +285,7 @@ std::span<char> FormatBase::parse( std::span<char> & buffer,
               cf.sign = true;
             cf.floating = CFormat::FIXED;
             if( cf.precision < 0 ) {
-            	// %5.f  => %5.0f
+            	// %5.f  is equal to %5.0f
             	if( had_precision ) {
             		cf.precision = 0;
             	} else {
@@ -481,26 +481,33 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 		s.insert(0, cf.precision - s.size(), '0' );
 	}
 
+	int missing_width = out.cf.width - s.size();
+	bool add_base = false;
+
 	// prepand 0x in case of hexadezimal output
 	if( out.cf.base == Tools::Format::CFormat::HEX
 			&& out.cf.special
-			&& out.cf.showbase
-			/*&& out.cf.adjust == Tools::Format::CFormat::RIGHT */) {
-		s.insert(0, "0x" );
+			&& out.cf.showbase ) {
+		if( out.cf.zero ) {
+			add_base = true;
+ 		} else {
+ 			s.insert(0, "0x" );
+ 		}
+
+		missing_width -= 2;
 	}
 
-	int missing_width = out.cf.width - s.size();
-	/*
-	if( out.cf.base == Tools::Format::CFormat::HEX &&
-		out.cf.showbase ) {
-		missing_width -= 2; // 0x
-	}*/
+
 
 	if( cf.width > static_cast<int>(s.size()) ) {
 		s.insert(0, missing_width, cf.zero ? '0' : ' ' );
 	}
 
-	CPPDEBUG( format( "cf.zero: %d", cf.zero ) );
+	if( out.cf.base == Tools::Format::CFormat::HEX &&
+		out.cf.showbase &&
+		add_base ) {
+		s.insert(0, "0x" );
+	}
 
 
 
