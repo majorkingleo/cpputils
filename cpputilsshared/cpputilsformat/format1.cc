@@ -3,7 +3,7 @@
 
 namespace Tools {
 
-const int Format::CFormat::default_precision = -1;
+const int Format::CFormat::default_precision = 6;
 
 int Format::skip_atoi( std::string s, ST start, ST& pos )
 {

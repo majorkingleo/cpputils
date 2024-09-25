@@ -284,8 +284,13 @@ std::span<char> FormatBase::parse( std::span<char> & buffer,
             if( cf.special )
               cf.sign = true;
             cf.floating = CFormat::FIXED;
-            if( !cf.precision) {
-            	cf.precision = 6;
+            if( cf.precision < 0 ) {
+            	// %5.f  => %5.0f
+            	if( had_precision ) {
+            		cf.precision = 0;
+            	} else {
+            		cf.precision = 6;
+            	}
             }
             break;
 
@@ -614,10 +619,15 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 		case Tools::Format::CFormat::SCIENTIFIC: fmt |= std::chars_format::scientific; break;
 	}
 
+	int precision = out.cf.precision;
+	if( precision < 0 ) {
+		precision = out.cf.default_precision;
+	}
+
 	std::to_chars_result res = std::to_chars( out.data(), out.data() + out.size() -1,
 			value,
 			fmt,
-			out.cf.precision );
+			precision );
 
 	if( res.ec != std::errc() ) {
 		out.clear();
@@ -637,8 +647,8 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 
 	CPPDEBUG( format( "pos_comma: %d written_precision: %d", pos_comma, written_precision) );
 
-	if( (pos_comma != std::string::npos) && (written_precision < out.cf.precision) ) {
-		str.insert(str.end(), out.cf.precision - written_precision, '0' );
+	if( (pos_comma != std::string::npos) && (written_precision < precision) ) {
+		str.insert(str.end(), precision - written_precision, '0' );
 	}
 
 	int missing_width = out.cf.width - str.size();
