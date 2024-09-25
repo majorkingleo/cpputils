@@ -358,6 +358,9 @@ namespace Tools {
                 if( cf.special )
                   cf.sign = true;
                 cf.floating = CWFormat::FIXED;
+                if( !cf.precision) {
+                	cf.precision = 6;
+                }
                 break;
 
               case 's':

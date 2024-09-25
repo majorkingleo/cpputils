@@ -284,6 +284,9 @@ std::span<char> FormatBase::parse( std::span<char> & buffer,
             if( cf.special )
               cf.sign = true;
             cf.floating = CFormat::FIXED;
+            if( !cf.precision) {
+            	cf.precision = 6;
+            }
             break;
 
           case 's':
@@ -349,7 +352,7 @@ std::span<char> FormatBase::parse( std::span<char> & buffer,
 
           // cut string
           if( had_precision && is_string )
-            str = str.substr( 0, cf.precision );
+            str = str.substr( 0, *cf.precision );
 
           // cut null bytes out of the string
           // can happen when std::string.resize() is called
@@ -469,28 +472,35 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 	Tools::span_vector<char> vbuffer(out.buffer, len_written );
 	Tools::basic_string_adapter<char> s( vbuffer );
 
-	if( cf.setupper ) {
-		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
+	if( cf.special && cf.precision > static_cast<int>(s.size()) ) {
+		s.insert(0, *(cf.precision) - s.size(), '0' );
 	}
 
+	// prepand 0x in case of hexadezimal output
+	if( out.cf.base == Tools::Format::CFormat::HEX
+			&& out.cf.special
+			&& out.cf.showbase
+			/*&& out.cf.adjust == Tools::Format::CFormat::RIGHT */) {
+		s.insert(0, "0x" );
+	}
 
 	int missing_width = out.cf.width - s.size();
-
-	if( out.cf.base == Tools::Format::CFormat::HEX && out.cf.showbase ) {
-		missing_width -= 2; // minus 0x
-	}
+	/*
+	if( out.cf.base == Tools::Format::CFormat::HEX &&
+		out.cf.showbase ) {
+		missing_width -= 2; // 0x
+	}*/
 
 	if( cf.width > static_cast<int>(s.size()) ) {
 		s.insert(0, missing_width, cf.zero ? '0' : ' ' );
 	}
 
-	// prepand 0x in case of hexadezimal output
-	if( out.cf.base == Tools::Format::CFormat::HEX && out.cf.special && out.cf.showbase ) {
-		if( out.cf.setupper ) {
-			s.insert(0, "0X" );
-		} else {
-			s.insert(0, "0x" );
-		}
+	CPPDEBUG( format( "cf.zero: %d", cf.zero ) );
+
+
+
+	if( cf.setupper ) {
+		std::transform( s.begin(), s.end(), s.begin(), ::toupper);
 	}
 
 	out.resize( s.size() );
@@ -607,7 +617,7 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 	std::to_chars_result res = std::to_chars( out.data(), out.data() + out.size() -1,
 			value,
 			fmt,
-			out.cf.precision );
+			*(out.cf.precision) );
 
 	if( res.ec != std::errc() ) {
 		out.clear();
@@ -628,7 +638,7 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 	CPPDEBUG( format( "pos_comma: %d written_precision: %d", pos_comma, written_precision) );
 
 	if( (pos_comma != std::string::npos) && (written_precision < out.cf.precision) ) {
-		str.insert(str.end(), out.cf.precision - written_precision, '0' );
+		str.insert(str.end(), *(out.cf.precision) - written_precision, '0' );
 	}
 
 	int missing_width = out.cf.width - str.size();

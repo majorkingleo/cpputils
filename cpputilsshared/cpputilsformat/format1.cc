@@ -120,7 +120,7 @@ void Format::CFormat::set( std::ostream& out )
     out.unsetf( std::ios::showbase );
 
   out << std::setw( width );
-  out << std::setprecision( precision );
+  out << std::setprecision( *precision );
 }
 
 

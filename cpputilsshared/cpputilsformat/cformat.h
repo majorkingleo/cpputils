@@ -7,6 +7,8 @@
 #ifndef _TOOLS_CFORMAT_H
 #define _TOOLS_CFORMAT_H
 
+#include <optional>
+
 namespace Tools {
   namespace Format {
 
@@ -48,7 +50,7 @@ namespace Tools {
       bool showbase;
 
       int width;
-      int precision;
+      std::optional<int> precision;
       int strlength;
 
       std::string_view format;
@@ -72,7 +74,7 @@ namespace Tools {
         floating(FIXED),
         showbase(false),
         width(0),
-        precision(6),
+        precision(),
         strlength(0),
         format(),
         numerical_representation(false),

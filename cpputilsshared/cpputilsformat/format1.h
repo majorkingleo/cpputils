@@ -659,6 +659,9 @@ namespace Tools {
                 if( cf.special )
                   cf.sign = true;
                 cf.floating = CFormat::FIXED;
+                if( !cf.precision) {
+                	cf.precision = 6;
+                }
                 break;
 
               case 's':
@@ -716,7 +719,7 @@ namespace Tools {
 
               // cut string
               if( had_precision && args[upar].is_string )
-                str = str.substr( 0, cf.precision );
+                str = str.substr( 0, *cf.precision );
 
               // cut null bytes out of the string
               // can happen when std::string.resize() is called
