@@ -481,7 +481,7 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 	Tools::span_vector<char> vbuffer(out.buffer, len_written );
 	Tools::basic_string_adapter<char> s( vbuffer );
 
-	if( cf.special && cf.precision > static_cast<int>(s.size()) ) {
+	if( cf.precision > static_cast<int>(s.size()) ) {
 		s.insert(0, cf.precision - s.size(), '0' );
 	}
 
