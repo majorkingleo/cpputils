@@ -50,10 +50,13 @@ namespace Tools {
       bool showbase;
 
       int width;
-      std::optional<int> precision;
+      int precision; // -1 when not set
+      static const int default_precision; // 6, use it if precision is -1
       int strlength;
 
+#if __cplusplus >= 201703L
       std::string_view format;
+#endif
 
       bool numerical_representation; // cast a character to int
       bool character_representation; // cast a int to char
@@ -74,7 +77,7 @@ namespace Tools {
         floating(FIXED),
         showbase(false),
         width(0),
-        precision(),
+        precision(-1),
         strlength(0),
         format(),
         numerical_representation(false),

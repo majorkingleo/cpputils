@@ -352,7 +352,7 @@ std::span<char> FormatBase::parse( std::span<char> & buffer,
 
           // cut string
           if( had_precision && is_string )
-            str = str.substr( 0, *cf.precision );
+            str = str.substr( 0, cf.precision );
 
           // cut null bytes out of the string
           // can happen when std::string.resize() is called
@@ -473,7 +473,7 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 	Tools::basic_string_adapter<char> s( vbuffer );
 
 	if( cf.special && cf.precision > static_cast<int>(s.size()) ) {
-		s.insert(0, *(cf.precision) - s.size(), '0' );
+		s.insert(0, cf.precision - s.size(), '0' );
 	}
 
 	// prepand 0x in case of hexadezimal output
@@ -617,7 +617,7 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 	std::to_chars_result res = std::to_chars( out.data(), out.data() + out.size() -1,
 			value,
 			fmt,
-			*(out.cf.precision) );
+			out.cf.precision );
 
 	if( res.ec != std::errc() ) {
 		out.clear();
@@ -638,7 +638,7 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 	CPPDEBUG( format( "pos_comma: %d written_precision: %d", pos_comma, written_precision) );
 
 	if( (pos_comma != std::string::npos) && (written_precision < out.cf.precision) ) {
-		str.insert(str.end(), *(out.cf.precision) - written_precision, '0' );
+		str.insert(str.end(), out.cf.precision - written_precision, '0' );
 	}
 
 	int missing_width = out.cf.width - str.size();

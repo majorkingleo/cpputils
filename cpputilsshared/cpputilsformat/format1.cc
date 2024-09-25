@@ -3,6 +3,8 @@
 
 namespace Tools {
 
+const int Format::CFormat::default_precision = -1;
+
 int Format::skip_atoi( std::string s, ST start, ST& pos )
 {
   pos = start;
@@ -120,7 +122,7 @@ void Format::CFormat::set( std::ostream& out )
     out.unsetf( std::ios::showbase );
 
   out << std::setw( width );
-  out << std::setprecision( *precision );
+  out << std::setprecision( precision >= 0 ? precision : default_precision );
 }
 
 
