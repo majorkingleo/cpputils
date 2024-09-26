@@ -8,6 +8,8 @@
 #define _TOOLS_CFORMAT_H
 
 #include <optional>
+#include <string>
+#include <ostream>
 
 namespace Tools {
   namespace Format {

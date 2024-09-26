@@ -672,8 +672,6 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 	std::string::size_type pos_comma = str.find('.');
 	std::size_t written_precision = str.size() - (pos_comma + 1);
 
-	CPPDEBUG( format( "pos_comma: %d written_precision: %d", pos_comma, written_precision) );
-
 	if( (pos_comma != std::string::npos) && (written_precision < precision) ) {
 		str.insert(str.end(), precision - written_precision, '0' );
 	}
