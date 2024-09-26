@@ -632,6 +632,23 @@ Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::F
 
 namespace {
 
+template<class FloatType> struct ToInt {};
+
+
+template<> struct ToInt<float>  { using type = uint32_t; };
+template<> struct ToInt<double> { using type = uint64_t; };
+
+template<class T>
+int calc_digits( typename ToInt<T>::type prec, unsigned base )
+{
+	long precision_numbers;
+	for( precision_numbers = 0; prec > 0; prec /= base ) {
+		precision_numbers++;
+	}
+
+	return precision_numbers;
+}
+
 template<class T>
 void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T & value )
 {
@@ -651,10 +668,12 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 		precision = out.cf.default_precision;
 	}
 
+	int digits_before_comma = calc_digits<T>( value > 0 ? value : value * -1, out.cf.base );
+
 	std::to_chars_result res = std::to_chars( out.data(), out.data() + out.size() -1,
 			value,
 			fmt,
-			precision );
+			precision + digits_before_comma );
 
 	if( res.ec != std::errc() ) {
 		out.clear();
