@@ -16,7 +16,7 @@
 
 #include <string>
 #include <iomanip>
-#include <iostream>
+#include <ostream>
 
 #include <sstream>
 #include <cctype>

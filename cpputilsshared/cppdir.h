@@ -17,7 +17,7 @@ extern "C" {
 #include <sys/types.h>
 }
 
-#include <iostream>
+#include <ostream>
 
 #include "range.h"
 

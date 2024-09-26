@@ -7,7 +7,7 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "ref.h"
 

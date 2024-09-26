@@ -9,6 +9,7 @@
 #include <string>
 #include <exception>
 #include <format.h>
+#include <iostream>
 
 #define STDERR_EXCEPTION( what ) \
 	Tools::StderrException( what, __FILE__, __LINE__ )

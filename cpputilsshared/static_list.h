@@ -12,7 +12,7 @@
 #include <optional>
 #include <algorithm>
 #include <stdexcept>
-#include <iostream>
+#include <ostream>
 
 namespace Tools {
 

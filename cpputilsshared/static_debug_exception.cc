@@ -1,5 +1,4 @@
 #include "static_debug_exception.h"
-#include "stderr_exception.h"
 #include <string.h>
 
 using namespace Tools;
