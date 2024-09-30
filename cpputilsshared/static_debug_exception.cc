@@ -31,7 +31,7 @@ StaticDebugException::~StaticDebugException() throw()
 
 std::string_view StaticDebugException::get_file_name( const std::string_view & filename )
 {
-	std::string::size_type p = filename.find_last_not_of( "/\\");
+	std::string::size_type p = filename.find_last_of( "/\\");
 
 	if( p == std::string::npos ) {
 		return filename;
