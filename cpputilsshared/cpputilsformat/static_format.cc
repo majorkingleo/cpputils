@@ -6,6 +6,7 @@
  */
 #include "static_format.h"
 #include <string_adapter.h>
+#include <algorithm>
 
 using namespace Tools;
 
