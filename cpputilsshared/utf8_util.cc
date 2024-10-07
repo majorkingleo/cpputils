@@ -5,6 +5,7 @@
 #include "utf8_util.h"
 #include "utf8.h"
 #include <ctype.h>
+#include <stdint.h>
 
 #if __cplusplus >= 201103
 
