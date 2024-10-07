@@ -179,6 +179,9 @@ public:
 	  len(0)
 	{}
 
+    span_vector(const span_vector& other) = default;
+    span_vector(span_vector&& other) = default;
+
 	span_vector( const std::span<T> & buffer_, std::size_t initial_size_ = 0 )
 	: buffer( buffer_ ),
 	  len( initial_size_ )
@@ -486,7 +489,7 @@ public:
 
 		for( difference_type i = len + count -1;
 				i > 0 &&
-				i > start &&
+				i > static_cast<difference_type>(start) &&
 				i - static_cast<difference_type>(count) >= static_cast<difference_type>(start);
 				--i ) {
 			std::swap(buffer[i], buffer[i-count]);
@@ -528,7 +531,7 @@ public:
 
 		for( difference_type i = len + count -1;
 						i > 0 &&
-						i > start &&
+						i > static_cast<difference_type>(start) &&
 						i - static_cast<difference_type>(count) >= static_cast<difference_type>(start);
 						--i ) {
 			std::swap(buffer[i], buffer[i-count]);

@@ -50,16 +50,18 @@ public:
 	static const size_type npos = std::basic_string<CharT>::npos;
 
 public:
-	basic_string_adapter()
-	: buffer()
-	  {
-	  }
+	basic_string_adapter() = default;
+    
+    explicit basic_string_adapter(const container_t& container) 
+      : buffer(container) 
+    {
+    }
 
-	explicit basic_string_adapter( const container_t & container )
-	: buffer( container )
-	{
-	}
-
+    explicit basic_string_adapter( const container_t && container ) 
+      : buffer(container) 
+    {
+    }
+	
 	constexpr size_type capacity() const {
 		return buffer.capacity()-1;
 	}
