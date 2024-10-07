@@ -692,7 +692,7 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 	std::string::size_type pos_comma = str.find('.');
 	std::size_t written_precision = str.size() - (pos_comma + 1);
 
-	if( (pos_comma != std::string::npos) && (written_precision < precision) ) {
+	if( (pos_comma != std::string::npos) && (static_cast<int>(written_precision) < precision) ) {
 		str.insert(str.end(), precision - written_precision, '0' );
 	}
 
