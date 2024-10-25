@@ -463,6 +463,8 @@ std::string_view FormatBase::substitude( const std::string_view & str_orig,
   return str;
 }
 
+} // namespace
+
 namespace {
 
 template<class T>
@@ -540,6 +542,8 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 }
 
 } // namespace
+
+namespace Tools::StaticFormat {
 
 template <class BaseArgType, class CastTo>
 std::span<char> RealArgCastFromInt<BaseArgType,CastTo>::doFormat( const std::span<char> & formating_buffer,
@@ -733,5 +737,17 @@ void format_double( Tools::StaticFormat::FormatingAdapter<char> & out, const T &
 Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const double & value )
 {
 	format_double( out, value );
+	return out;
+}
+
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const uint64_t & value )
+{
+	format_int( out, value );
+	return out;
+}
+
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const int64_t & value )
+{
+	format_int( out, value );
 	return out;
 }

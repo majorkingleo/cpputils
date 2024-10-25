@@ -56,6 +56,9 @@ Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::F
 Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const char * s );
 Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const double & value );
 
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const uint64_t & value );
+Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const int64_t & value );
+
 namespace Tools {
 
   namespace StaticFormat
