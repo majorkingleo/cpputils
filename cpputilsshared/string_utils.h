@@ -67,6 +67,115 @@ std::vector<std::string_view> split_and_strip_simple_view( const std::string_vie
 std::vector<std::wstring_view> split_and_strip_simple_view( const std::wstring_view & str, const std::wstring_view & sep = L" \t\n", int max = -1 );
 #endif
 
+
+namespace detail {
+
+	/*
+	  Re: Trim Funktion f�r Strings
+	  Von: Hubert Schmid <h.schmid-usenet@gmx.de>
+	  Datum:  Sonntag, 10. Oktober 2004 14:13:35
+	  Gruppen:  de.comp.lang.iso-c++
+	  Message-ID:  <87acuug49c.fsf@dent.z42.de>
+	*/
+	template<class t_std_string,
+			 class t_std_string_search = t_std_string> class TStrip {
+	public:
+
+		t_std_string strip( const t_std_string& str, const t_std_string& what )
+		{
+			typename t_std_string::size_type p = str.find_first_not_of(what);
+
+			if( p == std::string::npos )
+			{
+				return t_std_string();
+
+			} else {
+
+				typename t_std_string::size_type q = str.find_last_not_of(what);
+				typename t_std_string::size_type len = q - p + 1;
+
+				return t_std_string(&(*str.begin()) + p, len );
+			}
+		}
+	};
+
+
+	template<class t_std_string, class t_container=std::vector<t_std_string>>
+	void split_and_strip_simple_int( const t_std_string & input_str, const t_std_string & sep , int max, std::function<void(t_std_string)> back_inserter )
+	{
+	  TStrip<t_std_string> tstrip;
+	  t_std_string str = tstrip.strip( input_str, sep );
+
+	  std::string::size_type start = 0, last = 0;
+	  int count = 0;
+
+	  if( str.empty() ) {
+		return;
+	  }
+
+	  while( true )
+	  {
+		if( max > 0 )
+		  count++;
+
+		if( count >= max && max > 0 )
+		{
+		  back_inserter( str.substr( last ) );
+		  break;
+		}
+
+		start = str.find_first_of( sep, last );
+
+		if( start == t_std_string::npos )
+		{
+		  back_inserter( str.substr( last ) );
+		  break;
+		}
+
+		back_inserter( str.substr( last, start - last ) );
+
+		for( typename t_std_string::size_type pos = start + 1;
+		  pos < str.size(); pos++ )
+		{
+		  bool found = false;
+
+		  for( typename t_std_string::size_type i = 0; i < sep.size(); i++ )
+		  {
+			if( str[pos] == sep[i] )
+			{
+			  found = true;
+			  break;
+			}
+		  }
+
+		  if( found == false )
+		  {
+			last = pos;
+			break;
+		  }
+		}
+
+		//      last = start + 1;
+	  }
+	}
+
+} // namespace detail
+
+
+
+#if __cplusplus >= 201703L
+
+template<class t_container, class t_std_string>
+t_container split_and_strip_simple_custom( const t_std_string & str,
+		                                   const t_std_string & sep, int max = -1 )
+{
+	t_container sl;
+	detail::split_and_strip_simple_int<t_std_string,t_container>(str, sep, max, [&sl]( const t_std_string & str ) { sl.push_back( str ); } );
+	return sl;
+}
+
+#endif
+
 inline bool is_bool( const bool &b ) { return true; }
 template<class T> bool is_bool( const T &t ) { return false; }
 
