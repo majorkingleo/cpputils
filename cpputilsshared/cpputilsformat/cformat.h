@@ -81,7 +81,9 @@ namespace Tools {
         width(0),
         precision(-1),
         strlength(0),
+#if __cplusplus >= 201703L
         format(),
+#endif
         numerical_representation(false),
         character_representation(false)
     { }
