@@ -108,20 +108,6 @@ std::wstring strip( const std::wstring& str, const std::wstring& what ) {
 	return tstrip.strip( str, what );
 }
 
-#if __cplusplus >= 201703L
-
-std::string_view strip_view( const std::string_view & str, const std::string_view & what ) {
-  TStrip<std::string_view> tstrip;
-  return tstrip.strip( str, what );
-}
-
-std::wstring_view strip_view( const std::wstring_view & str, const std::wstring_view & what ) {
-  TStrip<std::wstring_view> tstrip;
-  return tstrip.strip( str, what );
-}
-
-#endif
-
 std::string strip_leading( const std::string& str, const std::string& what )
 {
     std::string::size_type p = str.find_first_not_of(what);

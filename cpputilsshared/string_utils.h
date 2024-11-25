@@ -30,42 +30,6 @@
 
 namespace Tools {
 
-std::string toupper( std::string s );
-std::wstring toupper( std::wstring s );
-
-std::string tolower( std::string s );
-std::wstring tolower( std::wstring s );
-
-std::string strip( const std::string& str, const std::string& what = " \t\n\r" );
-std::wstring strip( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
-
-#if __cplusplus >= 201703L
-std::string_view strip_view( const std::string_view & str, const std::string_view & what = " \t\n\r" );
-std::wstring_view strip_view( const std::wstring_view & str, const std::wstring_view & what = L" \t\n\r" );
-#endif
-
-std::string strip_leading( const std::string& str, const std::string& what = " \t\n\r" );
-std::wstring strip_leading( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
-
-std::string strip_trailing( const std::string& str, const std::string& what = " \t\n\r" );
-std::wstring strip_trailing( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
-
-bool is_int( const std::string &s );
-bool is_int( const std::wstring &s );
-
-std::vector<std::string> split_simple( std::string str, std::string seperator = " \t\n", int max = -1 );
-std::vector<std::wstring> split_simple( std::wstring str, std::wstring seperator = L" \t\n", int max = -1 );
-
-std::vector<std::string> split_string( std::string str, std::string seperator, int max = -1 );
-std::vector<std::wstring> split_string( std::wstring str, std::wstring seperator, int max = -1 );
-
-std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep = " \t\n", int max = -1 );
-std::vector<std::wstring> split_and_strip_simple( std::wstring str, const std::wstring & sep = L" \t\n", int max = -1 );
-
-#if __cplusplus >= 201703L
-std::vector<std::string_view> split_and_strip_simple_view( const std::string_view & str, const std::string_view & sep = " \t\n", int max = -1 );
-std::vector<std::wstring_view> split_and_strip_simple_view( const std::wstring_view & str, const std::wstring_view & sep = L" \t\n", int max = -1 );
-#endif
 
 
 namespace detail {
@@ -162,6 +126,52 @@ namespace detail {
 } // namespace detail
 
 
+
+std::string toupper( std::string s );
+std::wstring toupper( std::wstring s );
+
+std::string tolower( std::string s );
+std::wstring tolower( std::wstring s );
+
+std::string strip( const std::string& str, const std::string& what = " \t\n\r" );
+std::wstring strip( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
+
+#if __cplusplus >= 201703L
+
+inline std::string_view strip_view( const std::string_view & str, const std::string_view & what = " \t\n\r" ) {
+  detail::TStrip<std::string_view> tstrip;
+  return tstrip.strip( str, what );
+}
+
+inline std::wstring_view strip_view( const std::wstring_view & str, const std::wstring_view & what = L" \t\n\r" ) {
+  detail::TStrip<std::wstring_view> tstrip;
+  return tstrip.strip( str, what );
+}
+
+#endif
+
+std::string strip_leading( const std::string& str, const std::string& what = " \t\n\r" );
+std::wstring strip_leading( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
+
+std::string strip_trailing( const std::string& str, const std::string& what = " \t\n\r" );
+std::wstring strip_trailing( const std::wstring& str, const std::wstring& what = L" \t\n\r" );
+
+bool is_int( const std::string &s );
+bool is_int( const std::wstring &s );
+
+std::vector<std::string> split_simple( std::string str, std::string seperator = " \t\n", int max = -1 );
+std::vector<std::wstring> split_simple( std::wstring str, std::wstring seperator = L" \t\n", int max = -1 );
+
+std::vector<std::string> split_string( std::string str, std::string seperator, int max = -1 );
+std::vector<std::wstring> split_string( std::wstring str, std::wstring seperator, int max = -1 );
+
+std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep = " \t\n", int max = -1 );
+std::vector<std::wstring> split_and_strip_simple( std::wstring str, const std::wstring & sep = L" \t\n", int max = -1 );
+
+#if __cplusplus >= 201703L
+std::vector<std::string_view> split_and_strip_simple_view( const std::string_view & str, const std::string_view & sep = " \t\n", int max = -1 );
+std::vector<std::wstring_view> split_and_strip_simple_view( const std::wstring_view & str, const std::wstring_view & sep = L" \t\n", int max = -1 );
+#endif
 
 #if __cplusplus >= 201703L
 
