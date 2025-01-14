@@ -19,6 +19,13 @@ ColoredOutput::ColoredOutput()
 : colored_output( false )
 {
 #ifdef _WIN32
+
+	// used from a cygwin terminal, or something else
+	char *pcTerm =  getenv( "TERM");
+	if( pcTerm != nullptr ) {
+		colored_output = true;
+	}
+
 	// https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
 	// Set output mode to handle virtual terminal sequences
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
