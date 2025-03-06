@@ -617,7 +617,7 @@ Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::F
 	Tools::basic_string_adapter<char> str( vbuffer );
 
 	if( out.cf.width > int(s.size()) ) {
-		for( std::size_t i = 0; i < out.cf.width - s.size(); ++i ) {
+		for( int i = 0; i < out.cf.width - int(s.size()); ++i ) {
 			str += ' ';
 		}
 	}
@@ -637,7 +637,7 @@ Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::F
 	int size = strlen(s);
 
 	if( out.cf.width > size ) {
-		for( std::size_t i = 0; i < out.cf.width - size; ++i ) {
+		for( int i = 0; i < out.cf.width - size; ++i ) {
 			str += ' ';
 		}
 	}
