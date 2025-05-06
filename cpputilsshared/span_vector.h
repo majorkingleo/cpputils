@@ -605,7 +605,7 @@ public:
 	}
 
 	void push_back( const T& value ) {
-		if( len + 1 >= max_size() ) {
+		if( len >= max_size() ) {
 			throw std::length_error("capacity exceeded");
 		}
 
@@ -614,7 +614,7 @@ public:
 	}
 
 	void push_back( T&& value ) {
-		if( len + 1 >= max_size() ) {
+		if( len >= max_size() ) {
 			throw std::length_error("capacity exceeded");
 		}
 

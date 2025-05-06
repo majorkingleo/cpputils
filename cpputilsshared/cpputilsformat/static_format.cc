@@ -616,6 +616,12 @@ Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::F
 	Tools::span_vector<char> vbuffer(out.buffer);
 	Tools::basic_string_adapter<char> str( vbuffer );
 
+	if( out.cf.width > int(s.size()) ) {
+		for( int i = 0; i < out.cf.width - int(s.size()); ++i ) {
+			str += ' ';
+		}
+	}
+
 	str += s;
 
 	out.buffer = { str.data(), str.size() };
@@ -627,6 +633,14 @@ Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::F
 {
 	Tools::span_vector<char> vbuffer(out.buffer);
 	Tools::basic_string_adapter<char> str( vbuffer );
+
+	int size = strlen(s);
+
+	if( out.cf.width > size ) {
+		for( int i = 0; i < out.cf.width - size; ++i ) {
+			str += ' ';
+		}
+	}
 
 	str += s;
 
