@@ -191,7 +191,7 @@ Leo::Ini::Line Leo::Ini::read_line()
 
   while( true )
     {
-      std::getline( file, line.str );    
+      std::getline( file, line.str );
       
       line.number = line_number;
       line_number++;
@@ -217,7 +217,7 @@ Leo::Ini::Line Leo::Ini::read_line()
 	  if( find_tag( pos, end_pos, line.str.substr(0,pos) ) )
 	    {
 	      line.tag.pos = pos;
-	      line.tag.str = line.str.substr( pos, end_pos - pos + 1 );
+	      line.tag.str = strip(line.str.substr( pos, end_pos - pos + 1 ));
 	    }
 	  break; // we have a valid line
 	}
@@ -229,19 +229,6 @@ Leo::Ini::Line Leo::Ini::read_line()
   return line;
 }
 
-std::string Leo::Ini::strip( std::string str, std::string what )
-{
-  if( str.empty() ) 
-    return "";
-
-  std::string::size_type start = str.find_first_not_of( what );
-  std::string::size_type end = str.find_last_not_of( what );
-
-  if( start == std::string::npos || end ==  std::string::npos )
-    return "";
-
-  return str.substr( start, end - start +1 );
-}
 
 /// reads the file
 bool Leo::Ini::read()
