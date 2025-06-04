@@ -228,7 +228,6 @@ namespace Leo
 
   private:
     Line read_line(); ///< reads one line
-    std::string strip( std::string str, std::string what = " \t\0\n" ); ///< strips a string
     std::string::size_type find_comment( const std::string& str ); ///< finds a comment within a string
     
     /// finds the tag
