@@ -38,6 +38,14 @@ public:
 		return input_encoding;
 	}
 
+	void setInputEncoding( const std::string & encoding ) {
+		input_encoding = encoding;
+	}
+
+	void setIsUtf8( bool state ) {
+		is_utf8 = state;
+	}
+
 	std::wstring inputString2wString( const std::string & str );
 	std::string wString2output( const std::wstring & str );
 
