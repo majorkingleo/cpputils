@@ -1135,7 +1135,7 @@ public:
 		auto last_element = emplace_at_free_pos( args... );
 		++manipulation_count;
 		index.push_back( last_element );
-		return last_element;
+		return last_element->value();
 	}
 
 	/**
