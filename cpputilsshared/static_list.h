@@ -270,7 +270,7 @@ public:
 		const_iterator( const static_list<T,N> *parent_, typename static_list<T,N>::DATA_INDEX::iterator pos_ )
 		: pos( pos_ ),
 		  parent( parent_ ),
-		  manipulation_count( data->get_manipulation_count() ),
+		  manipulation_count( parent->get_manipulation_count() ),
 		  pointer_to_optional( parent->get_index().cend() == pos ? nullptr : *pos  ),
 		  is_end( parent->get_index().end() == pos )
 		{}
