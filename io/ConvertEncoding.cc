@@ -14,6 +14,7 @@
 
 
 #include <cstring>
+#include <errno.h>
 #include <stderr_exception.h>
 
 using namespace Tools;
@@ -24,7 +25,8 @@ std::string ConvertEncoding::convert( const std::string & s, const std::string &
     std::string error;
 
 	if( !convert( s, from, to, result, error ) ) {
-		throw STDERR_EXCEPTION( format( "cannot convert from '%s' to '%s' error: %s", from, to, error ) );
+		// ambigious call of format function for MSVC
+		throw STDERR_EXCEPTION( format( std::string("cannot convert from '%s' to '%s' error: %s"), from, to, error ) );
 	}
 
 	return result;
