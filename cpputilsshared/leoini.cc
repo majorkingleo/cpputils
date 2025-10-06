@@ -638,8 +638,10 @@ void Leo::Ini::flush()
 
 		if( !first ) {
 			if( !found_comment ) {
-				get_next_line_number( mit.line.number );
-				// CPPDEBUG( Tools::format( "adding one line: %d", mit.line.number ) );
+				if( all.size() > 0 && (all.back().number + 1 >= mit.line.number) ) {
+					get_next_line_number( mit.line.number );
+					// CPPDEBUG( Tools::format( "adding one line: %d", mit.line.number ) );
+				}
 			}
 			get_next_line_number( mit.line.number );
 			// CPPDEBUG( Tools::format( "set next line: %d", mit.line.number ) );
@@ -683,7 +685,7 @@ bool Leo::Ini::write_line( const Line &line, int & last_line )
 
 	last_line = line.number;
 
-	//  CPPDEBUG( Tools::format( "wrote line[%d] %s", line.number, line.str ) );
+	// CPPDEBUG( Tools::format( "wrote line[%d] %s", line.number, line.str ) );
 
 	return true;
 }

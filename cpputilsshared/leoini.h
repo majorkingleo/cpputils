@@ -50,10 +50,16 @@ public:
 
 		TYPE type; ///< the type of the element
 
-		Element(TYPE type_ = TYPE::UNDEF, std::string section_ = "",
-				std::string key_ = "", std::string value_ = "") :
-				section(section_), key(key_), value(value_), elements(), type(
-						type_) {
+		Element(TYPE type_ = TYPE::UNDEF,
+				std::string section_ = "",
+				std::string key_ = "",
+				std::string value_ = "")
+			: section(section_),
+			  key(key_),
+			  value(value_),
+			  elements(),
+			  type(type_)
+		{
 		}
 
 		virtual ~Element() {
@@ -85,9 +91,14 @@ private:
 		String tag;      ///< the stripped key, section,..
 		std::string str; ///< the whole line
 
-		Line() :
-				number(0), comment(), tag(), str() {
+		Line()
+		: number(0),
+		  comment(),
+		  tag(),
+		  str()
+		{
 		}
+
 		void clear()  ///< clears the Line
 		{
 			number = 0;
@@ -111,13 +122,18 @@ public:
 
 		mutable mem_element_list mem_elements; ///< list of subelements
 
-		MemElement() :
-				Element(), line(), mem_elements() {
+		MemElement()
+		: Element(),
+		  line(),
+		  mem_elements()
+		{
 		}
 
 		MemElement(const Element &e)  ///< copy contructor for Elements
-		:
-				Element(), line(), mem_elements() {
+		: Element(),
+		  line(),
+		  mem_elements()
+		{
 			*this = e;
 		}
 
