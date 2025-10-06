@@ -257,7 +257,7 @@ private:
 	bool is_good_element_rec(Element &element); ///< checks all elements
 
 	void clear(); //clears the memory
-	bool write_line(const Line &line, int last_line); ///< write a line to file
+	bool write_line(const Line &line, int & last_line ); ///< write a line to file
 
 	bool is_section_empty(MemElement &element);
 };

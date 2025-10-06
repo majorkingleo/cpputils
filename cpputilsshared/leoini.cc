@@ -5,6 +5,10 @@
 
 #include "leoini.h"
 #include <iostream>
+#include <variant>
+
+//#include <format.h>
+//#include <CpputilsDebug.h>
 
 using namespace Tools;
 
@@ -588,68 +592,98 @@ void Leo::Ini::flush()
 	file.open(file_name.c_str(),
 			static_cast<std::ios_base::openmode>(openmode));
 
-	int last_line = 1;
+	std::list<Line> all;
 
-	Line line;
+	line_list c = comments;
 
-	MemElement::mem_element_list_it mit, bak_mit;
-	mit = bak_mit = elements.begin();
-	line_list_it cit = comments.begin();
+	auto find_comments_before = [&c]( int last_line ) -> line_list {
+		line_list ret;
 
-	while (true) {
-		int next_comment_at = 0;
-
-		if (cit != comments.end())
-			next_comment_at = cit->number;
-		else
-			next_comment_at = -1;
-
-		int next_element_at = 0;
-
-		if (mit != elements.end())
-			next_element_at = mit->line.number;
-		else
-			next_element_at = -1;
-
-		if (next_comment_at == -1 && next_element_at == -1)
-			break;
-
-		if (((next_comment_at < next_element_at) || next_element_at == -1)
-				&& next_comment_at != -1) {
-			line = *cit;
-
-			cit++;
-		} else if (next_element_at != -1) {
-			line = mit->line;
-
-			if (mit->type == Element::TYPE::SECTION) {
-				bak_mit = mit;
-				mit = mit->mem_elements.begin();
-			} else {
-				mit++;
-				if (mit == bak_mit->mem_elements.end()) {
-					mit = bak_mit;
-					mit++;
-				}
+		for( auto it = c.begin(); it != c.end(); it++ ) {
+			if( it->number < last_line ) {
+				ret.push_back( *it );
+				c.erase(it);
+				it = c.begin();
 			}
 		}
 
-		write_line(line, last_line);
+		return ret;
+	};
 
-		last_line = line.number;
+	int last_line = 0;
 
+	auto get_next_line_number = [&last_line,&all]( int & number ) {
+
+		if( all.size() > 0 ) {
+			number = std::max( all.back().number + 1, std::max( last_line + 1, number ) );
+		} else {
+			number = std::max( number, last_line ) + 1;
+		}
+
+		last_line = number;
+
+		return number;
+	};
+
+	bool first = true;;
+
+	for( MemElement & mit : elements ) {
+
+		bool found_comment = false;
+
+		for( auto comment : find_comments_before( mit.line.number ) ) {
+			all.push_back( comment );
+			found_comment = true;
+		}
+
+		if( !first ) {
+			if( !found_comment ) {
+				get_next_line_number( mit.line.number );
+				// CPPDEBUG( Tools::format( "adding one line: %d", mit.line.number ) );
+			}
+			get_next_line_number( mit.line.number );
+			// CPPDEBUG( Tools::format( "set next line: %d", mit.line.number ) );
+		}
+
+		first = false;
+
+		all.push_back( mit.line );
+
+		if( mit.type == Element::TYPE::SECTION ) {
+			for( MemElement & mit2 : mit.mem_elements )
+			{
+				for( auto comment : find_comments_before( mit2.line.number ) ) {
+					all.push_back( comment );
+				}
+
+				get_next_line_number( mit2.line.number );
+				// CPPDEBUG( Tools::format( "line: %d", mit2.line.number ) );
+				all.push_back( mit2.line );
+			}
+		} // if
+	} // for
+
+	last_line = 0;
+
+	for( const auto & line : all ) {
+		//CPPDEBUG( Tools::format( "line[%d] %s", line.number, line.str ) );
+		write_line( line, last_line );
 	}
 
 	changed = false;
 }
 
-bool Leo::Ini::write_line(const Line &line, int last_line)
+bool Leo::Ini::write_line( const Line &line, int & last_line )
 {
 	for (int i = last_line + 1; i < line.number; i++) {
 		file << std::endl;
 	}
 
 	file << line.str << std::endl;
+
+	last_line = line.number;
+
+	//  CPPDEBUG( Tools::format( "wrote line[%d] %s", line.number, line.str ) );
 
 	return true;
 }
