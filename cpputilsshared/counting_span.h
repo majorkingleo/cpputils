@@ -5,13 +5,130 @@
 
 namespace Tools {
 
+namespace internal {
+
+template <class T>
+class span_wrapper
+{
+public:
+  // https://en.cppreference.com/w/cpp/container/span.html
+  // same as defined in std::span
+  using element_type            = T;
+  using value_type              = std::remove_cv_t<T>;
+  using size_type               = std::span<T>::size_type;
+  using difference_type         = std::ptrdiff_t;
+  using pointer                 = T*;
+  using const_pointer           = const T*;
+  using reference               = T&;
+  using const_reference         = const T&;
+  using iterator                = std::span<T>::iterator;
+  using const_iterator          = std::span<T>::const_iterator;
+  using reverse_iterator        = std::span<T>::reverse_iterator;
+  using const_reverse_iterator  = std::span<T>::const_reverse_iterator;
+
+private:
+
+  std::span<T> & m_span;
+
+protected:
+
+  span_wrapper( std::span<T> & span )
+  : m_span( span )
+  {}
+
+public:
+
+  constexpr iterator begin() const noexcept {
+    return m_span.begin();
+  }
+
+  constexpr const_iterator cbegin() const noexcept {
+    return m_span.cbegin();
+  }
+
+  constexpr iterator end() const noexcept {
+    return m_span.end();
+  }
+
+  constexpr reverse_iterator rend() const noexcept {
+    return m_span.rend();
+  }
+
+  constexpr const_iterator cend() const noexcept {
+    return m_span.cend();
+  }
+
+  constexpr const_reverse_iterator crend() const noexcept {
+    return m_span.crend();
+  }
+
+
+  constexpr reverse_iterator rbegin() const noexcept {
+    return m_span.rbegin();
+  }
+
+  constexpr const_reverse_iterator crbegin() const noexcept {
+    return m_span.crbegin();
+  }
+
+  constexpr reference front() const {
+    return m_span.front();
+  }
+
+  constexpr reference back() const {
+    return m_span.back();
+  }
+
+#if __cpp_lib_span >= 202311L
+  constexpr reference at( size_type pos ) const {
+    return m_span.at( pos );
+  }
+#endif
+
+  constexpr pointer data() const noexcept {
+    return m_span.data();
+  }
+
+  constexpr size_type size() const noexcept {
+    return m_span.size();
+  }
+
+  constexpr size_type size_bytes() const noexcept {
+    return m_span.size_bytes();
+  }
+
+  constexpr bool empty() const noexcept {
+    return m_span.empty();
+  }
+
+
+};
+
+} // namespace internal
+
 
 template<class T>
 class counting_span;
 
 template<class T>
-class sub_counting_span
+class sub_counting_span : public internal::span_wrapper<T>
 {
+public:
+  // https://en.cppreference.com/w/cpp/container/span.html
+  // same as defined in std::span
+  using element_type            = T;
+  using value_type              = std::remove_cv_t<T>;
+  using size_type               = std::span<T>::size_type;
+  using difference_type         = std::ptrdiff_t;
+  using pointer                 = T*;
+  using const_pointer           = const T*;
+  using reference               = T&;
+  using const_reference         = const T&;
+  using iterator                = std::span<T>::iterator;
+  using const_iterator          = std::span<T>::const_iterator;
+  using reverse_iterator        = std::span<T>::reverse_iterator;
+  using const_reverse_iterator  = std::span<T>::const_reverse_iterator;
+
 protected:
   std::span<T>              m_subspan {};
   sub_counting_span*        m_next    { nullptr };
@@ -19,10 +136,13 @@ protected:
   counting_span<T>*         m_parent  { nullptr };
 
 public:
-  sub_counting_span() = default;
+  sub_counting_span()
+  : internal::span_wrapper<T>( m_subspan )
+  {}
 
   sub_counting_span( counting_span<T> & parent, sub_counting_span *prev, std::span<T> subspan )
-  : m_subspan( subspan ),
+  : internal::span_wrapper<T>( m_subspan ),
+    m_subspan( subspan ),
     m_prev( prev ),
     m_parent( &parent )
   {}
@@ -46,6 +166,11 @@ public:
     return m_subspan[idx];
   }
 
+  sub_counting_span<T> subspan( std::size_t idx )
+  {
+   return subspan( idx, m_subspan.size() - idx );
+  }
+
   sub_counting_span<T> subspan( std::size_t idx, std::size_t size )
   {
     check();
@@ -53,6 +178,14 @@ public:
     auto diff = &m_subspan[idx] - &m_parent->m_origin[0];
 
     return m_parent->subspan( diff, size );
+  }
+
+  sub_counting_span<T> first( size_type count ) {
+    return subspan( 0, count );
+  }
+
+  sub_counting_span<T> last( size_type count ) {
+    return subspan( m_subspan.size() - count - 1 );
   }
 
   friend class counting_span<T>;
@@ -101,19 +234,38 @@ protected:
 };
 
 template<class T>
-class counting_span
+class counting_span : public internal::span_wrapper<T>
 {
+public:
+  // https://en.cppreference.com/w/cpp/container/span.html
+  // same as defined in std::span
+  using element_type            = T;
+  using value_type              = std::remove_cv_t<T>;
+  using size_type               = std::span<T>::size_type;
+  using difference_type         = std::ptrdiff_t;
+  using pointer                 = T*;
+  using const_pointer           = const T*;
+  using reference               = T&;
+  using const_reference         = const T&;
+  using iterator                = std::span<T>::iterator;
+  using const_iterator          = std::span<T>::const_iterator;
+  using reverse_iterator        = std::span<T>::reverse_iterator;
+  using const_reverse_iterator  = std::span<T>::const_reverse_iterator;
+
+private:
     std::span<T>          m_origin;
     sub_counting_span<T>* m_last_child  { nullptr };
 
 public:
 
     counting_span( std::span<T> & origin )
-    : m_origin( origin )
+    : internal::span_wrapper<T>( m_origin ),
+      m_origin( origin )
     {}
 
     counting_span( T* data, std::size_t size )
-    : m_origin( data, size )
+    : internal::span_wrapper<T>( m_origin ),
+      m_origin( data, size )
     {}
 
     ~counting_span()
@@ -129,6 +281,11 @@ public:
       m_last_child  = nullptr;
     }
 
+    sub_counting_span<T> subspan( std::size_t idx )
+    {
+     return subspan( idx, m_origin.size() - idx );
+    }
+
     sub_counting_span<T> subspan( std::size_t idx, std::size_t size )
     {
       auto sub = sub_counting_span( *this, m_last_child, m_origin.subspan( idx, size ) );
@@ -142,6 +299,13 @@ public:
       return std::move(sub);
     }
 
+    sub_counting_span<T> first( size_type count ) {
+      return subspan( 0, count );
+    }
+
+    sub_counting_span<T> last( size_type count ) {
+      return subspan( m_origin.size() - count - 1 );
+    }
 
     T & operator[]( std::size_t idx ) {
       return m_origin[idx];
@@ -156,7 +320,8 @@ public:
 
 template<class T>
 sub_counting_span<T>::sub_counting_span( sub_counting_span && other )
-: m_subspan( std::move(other.m_subspan) ),
+: internal::span_wrapper<T>( m_subspan ),
+  m_subspan( std::move(other.m_subspan) ),
   m_next( other.m_next ),
   m_prev( other.m_prev ),
   m_parent( other.m_parent )
