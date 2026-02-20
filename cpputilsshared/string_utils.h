@@ -165,6 +165,11 @@ std::vector<std::wstring> split_simple( std::wstring str, std::wstring seperator
 std::vector<std::string> split_string( std::string str, std::string seperator, int max = -1 );
 std::vector<std::wstring> split_string( std::wstring str, std::wstring seperator, int max = -1 );
 
+#if __cplusplus >= 201703L
+std::vector<std::wstring_view> split_string_view( std::wstring_view str, std::wstring_view seperator, int max = -1 );
+std::vector<std::string_view>  split_string_view( std::string_view str,  std::string_view seperator, int max = -1 );
+#endif
+
 std::vector<std::string> split_and_strip_simple( std::string str, const std::string & sep = " \t\n", int max = -1 );
 std::vector<std::wstring> split_and_strip_simple( std::wstring str, const std::wstring & sep = L" \t\n", int max = -1 );
 

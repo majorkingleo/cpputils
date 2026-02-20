@@ -306,6 +306,21 @@ std::vector<std::wstring> split_string( std::wstring str, std::wstring sep, int 
 	TSplitString<std::wstring> tsplit;
 	return tsplit.split_string( str, sep, max );
 }
+
+#if __cplusplus >= 201703L
+std::vector<std::wstring_view> split_string_view( std::wstring_view str, std::wstring_view seperator, int max )
+{
+	TSplitString<std::wstring_view> tsplit;
+	return tsplit.split_string( str, seperator, max );
+}
+
+std::vector<std::string_view> split_string_view( std::string_view str, std::string_view seperator, int max )
+{
+	TSplitString<std::string_view> tsplit;
+	return tsplit.split_string( str, seperator, max );
+}
+#endif
+
 /*
 bool s2x( const std::string &s )
 {
