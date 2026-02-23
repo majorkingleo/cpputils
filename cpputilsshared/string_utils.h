@@ -458,6 +458,10 @@ template <class T> std::string IterableToCommaSeparatedString( const T & list,
 	return IterableToFormattedString<T>( list, eleSep, "", static_cast<unsigned int>(-1), static_cast<unsigned int>(-1), "" );
 }															 
 
+template <class T> std::wstring IterableToCommaSeparatedWString( const T & list, 
+															 const std::wstring &eleSep = L", " ) {
+	return IterableToFormattedWString<T>( list, eleSep, L"", static_cast<unsigned int>(-1), static_cast<unsigned int>(-1), L"" );
+}	
 
 std::string fill_leading( std::string s, const std::string fill_sign, unsigned int len );
 std::wstring fill_leading( std::wstring s, const std::wstring fill_sign, unsigned int len );
