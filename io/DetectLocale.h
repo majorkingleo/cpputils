@@ -52,7 +52,7 @@ public:
 	// converts a w string to output format, for debugging purposes
 	static std::string w2out( const std::wstring & out );
 
-	// converts an ascii, or utf8 string from imput or file io to wstring
+	// converts an ascii, or utf8 string from input or file io to wstring
 	static std::wstring in2w( const std::string & in );
 };
 
