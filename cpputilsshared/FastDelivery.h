@@ -81,6 +81,29 @@ public:
 		node->setRegistry( &nle );
 	}
 
+	void unsubscribe( Node *node ) {
+		for( auto it = nodes.begin(); it != nodes.end(); ++it ) {
+			NodeListEntry & nle = *it;
+
+			if( nle.node == node ) {
+				bool op = nle.operation_in_progress;
+
+				while( op ) {
+					op = nle.operation_in_progress;
+				}
+
+				while(!nle.operation_in_progress.compare_exchange_weak( op, true ));
+
+				void *node_ptr = nle.node;
+
+				while(!nle.node.compare_exchange_weak( node_ptr, nullptr ));
+
+				nodes.erase( it );
+				return;
+			}
+		}
+	}
+
 	void distribute( const DataType & data ) {
 		for( auto & nle : nodes ) {
 			bool op = nle.operation_in_progress;
