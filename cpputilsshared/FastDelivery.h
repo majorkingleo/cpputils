@@ -41,18 +41,14 @@ protected:
 public:
 	~PublisherNode() {
 		if( registry ) {
-			bool op = registry->operation_in_progress;
-
-			while( op ) {
-				op = registry->operation_in_progress;
+			bool expected = false;
+			while(!registry->operation_in_progress.compare_exchange_weak( expected, true )) {
+				expected = false; // reset: we only want to swap false→true
 			}
 
-			while(!registry->operation_in_progress.compare_exchange_weak( op, true ));
+			registry->node.store( nullptr );
 
-			void *node = registry->node;
-
-			while(!registry->node.compare_exchange_weak( node, nullptr ));
-
+			registry->operation_in_progress.store( false );
 			registry = nullptr;
 		}
 	}
@@ -86,17 +82,16 @@ public:
 			NodeListEntry & nle = *it;
 
 			if( nle.node == node ) {
-				bool op = nle.operation_in_progress;
-
-				while( op ) {
-					op = nle.operation_in_progress;
+				bool expected = false;
+				while(!nle.operation_in_progress.compare_exchange_weak( expected, true )) {
+					expected = false; // reset: we only want to swap false→true
 				}
 
-				while(!nle.operation_in_progress.compare_exchange_weak( op, true ));
+				nle.node.store( nullptr );
 
-				void *node_ptr = nle.node;
-
-				while(!nle.node.compare_exchange_weak( node_ptr, nullptr ));
+				// Clear the node's back-pointer so ~PublisherNode()
+				// won't try to access this (soon-to-be-freed) entry.
+				node->setRegistry( nullptr );
 
 				nodes.erase( it );
 				return;
@@ -106,13 +101,10 @@ public:
 
 	void distribute( const DataType & data ) {
 		for( auto & nle : nodes ) {
-			bool op = nle.operation_in_progress;
-
-			if( op ) {
-				continue;
+			bool expected = false;
+			if( !nle.operation_in_progress.compare_exchange_weak( expected, true ) ) {
+				continue; // someone else holds it — skip this node
 			}
-
-			while(!nle.operation_in_progress.compare_exchange_weak( op, true ));
 
 			void *node = nle.node;
 
@@ -121,7 +113,7 @@ public:
 				n->deliver( data );
 			}
 
-			while(!nle.operation_in_progress.compare_exchange_weak( op, false ));
+			nle.operation_in_progress.store( false );
 		}
 	}
 };
