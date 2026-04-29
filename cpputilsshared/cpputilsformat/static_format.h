@@ -16,7 +16,8 @@
 
 #include <string>
 #include <cctype>
-#include <variant>
+#include <tuple>
+#include <utility>
 #include <static_string.h>
 #include <span_vector.h>
 #include <string_adapter.h>
@@ -256,21 +257,6 @@ namespace Tools {
 
 #undef INT_REAL_ARG_CAST
 
-    template<typename variant, typename Arg> void add_argsx(  std::byte *data, Arg & arg )
-    {
-      new (data) variant( RealArg<Arg>(arg) );
-    }
-
-    template<typename variant>
-    inline void add_args( std::byte *data ) {}
-
-
-    template<typename variant, typename A, typename... Arg> void add_args( std::byte *data, A & a, Arg&... arg )
-    {
-      add_argsx<variant>( data, a );
-      add_args<variant>( data + sizeof(variant), arg... );
-    }
-
     class FormatBase
 	{
     	const std::string_view & format;
@@ -299,22 +285,15 @@ namespace Tools {
         							 std::string::size_type start = 0 ) const;
 	};
 
-    template<std::size_t N_ARGS,std::size_t N_SIZE,typename VECTOR_LIKE>
+    template<std::size_t N_SIZE>
     class Format : public FormatBase
     {
     public:
     	using string_t = Tools::static_basic_string<N_SIZE,char,static_string_out_of_range_cut,vector_like<N_SIZE>>;
 
     private:
-      struct Arg
-      {
-        bool is_int;
-        bool is_string;
-      };
-
-      VECTOR_LIKE & args;
-
-      static constexpr unsigned int num_of_args = N_ARGS;
+      BaseArg** args;
+      unsigned int num_of_args;
 
       string_t s;
       string_t use_arg_buffer;
@@ -325,9 +304,10 @@ namespace Tools {
       Format & operator=(const Format & f) = delete;
 
     public:
-      Format( const std::string_view &format_, VECTOR_LIKE & args_ )
+      Format( const std::string_view &format_, BaseArg** args_, unsigned int num_of_args_ )
       : FormatBase( format_ ),
 		args(args_),
+		num_of_args(num_of_args_),
         s()
       {
          parse();
@@ -355,55 +335,10 @@ namespace Tools {
 
       std::string_view use_arg( unsigned int i, const Tools::Format::CFormat &cf ) override;
 
-      template<class T> int get_int( const T &t ) { return 0; }
-      int get_int( int n ) { return (int)n; }
-      int get_int( unsigned int n ) { return (int)n; }
-      int get_int( short n ) { return (int)n; }
-      int get_int( unsigned short n ) { return (int)n; }
-      int get_int( long long n ) { return (int)n; }
-      int get_int( unsigned long long n  ) { return (int)n; }
-      int get_int( long n ) { return (int)n; }
-      int get_int( unsigned long n ) { return (int)n; }
-
       bool is_string_arg( int num_arg ) const override {
-    	  bool is_str = false;
-		   std::visit( [&is_str]( auto & real_arg ) {
-			  if( real_arg.isString() ) {
-				  is_str = true;
-			  }
-		   },  args[num_arg] );
-
-    	  return is_str;
+    	  return args[num_arg]->isString();
       }
     }; // class Format
-
-
-
-    namespace pack_real_args_impl {
-		// https://stackoverflow.com/a/62089731/20079418
-
-		// end of recursive call: tuple is forwared using `type`
-		template <typename T, typename... Ts>
-		struct unique_impl {using type = std::remove_reference<T>::type;};
-
-		// recursive call: 1. Consumes the first type of the variadic arguments,
-		//                    if not repeated add it to the tuple.
-		//                 2. Call this again with the rest of arguments
-		template <template<class...> class Tuple, typename... Ts, typename U, typename... Us>
-		struct unique_impl<Tuple<Ts...>,  U, Us...>
-			: std::conditional_t<(std::is_same_v<RealArg<U>, Ts> || ...) // but pack the type in RealArg class
-							   , unique_impl<Tuple<Ts...>, Us...>
-							   , unique_impl<Tuple<Ts..., RealArg<U>>, Us...>> {}; // but pack the type in RealArg class
-
-		// forward definition
-		template <class Tuple>
-		struct unique_tuple;
-
-		// class specialization so that tuple arguments can be extracted from type
-		template <template<class...>class Tuple, typename... Ts>
-		struct unique_tuple<Tuple<Ts...>> : public unique_impl<Tuple<>, Ts...> {};
-
-    } // namespace pack_real_args_impl
 
   } // namespace StaticFormat
 } // /namespace Tools
@@ -415,23 +350,15 @@ namespace Tools {
 	using namespace StaticFormat;
 
 	constexpr auto N_ARGS = sizeof...(Args);
-	using variant = pack_real_args_impl::unique_tuple<std::variant<Args...>>::type;
 
-	alignas(variant) std::array<std::byte,sizeof(variant)*N_ARGS> data;
-	variant* v_data = reinterpret_cast<variant*>(data.data());
+	std::tuple<RealArg<Args>...> real_args{ RealArg<Args>(args)... };
+	std::array<BaseArg*, N_ARGS> arg_ptrs;
 
-    StaticFormat::add_args<variant>( data.data(), args... );
+	[&]<std::size_t... Is>(std::index_sequence<Is...>) {
+		((arg_ptrs[Is] = &std::get<Is>(real_args)), ...);
+	}(std::index_sequence_for<Args...>{});
 
-
-    std::span<variant> s_args(v_data,N_ARGS);
-    span_vector<variant> v_args( s_args, N_ARGS );
-
-    StaticFormat::Format<N_ARGS,N_SIZE,span_vector<variant>> f2( format, v_args );
-
-	// delete allocated objects
-	for( unsigned i = 0; i < N_ARGS; ++i ) {
-		v_data[i].~variant();
-	}
+    StaticFormat::Format<N_SIZE> f2( format, arg_ptrs.data(), N_ARGS );
 
     return f2.get_string();
   }
@@ -440,8 +367,8 @@ namespace Tools {
 
 namespace Tools::StaticFormat {
 
-template<std::size_t N_ARGS,std::size_t N_SIZE,typename VECTOR_LIKE>
-int Format<N_ARGS,N_SIZE,VECTOR_LIKE>::get_int_arg( int num )
+template<std::size_t N_SIZE>
+int Format<N_SIZE>::get_int_arg( int num )
 {
     if( static_cast<unsigned int>(num) > num_of_args - 1 ) {
 #if __cpp_exceptions > 0
@@ -459,21 +386,9 @@ int Format<N_ARGS,N_SIZE,VECTOR_LIKE>::get_int_arg( int num )
 #endif
     }
 
-    bool is_int = false;
-    std::visit( [&is_int]( auto & real_arg ) {
-  	  if( real_arg.isInt() ) {
-  		  is_int = true;
-  	  }
-    }, args[num] );
-
-    if( is_int )
+    if( args[num]->isInt() )
       {
-        int value = 0;
-        std::visit( [&value]( auto & real_arg ) {
-      	  value = real_arg.get_int();
-        }, args[num] );
-
-        return value;
+        return args[num]->get_int();
       }
     else {
 #if __cpp_exceptions > 0
@@ -486,8 +401,8 @@ int Format<N_ARGS,N_SIZE,VECTOR_LIKE>::get_int_arg( int num )
     return 0; // should never be reached
 }
 
-template<std::size_t N_ARGS,std::size_t N_SIZE,typename VECTOR_LIKE>
-std::string_view Format<N_ARGS,N_SIZE,VECTOR_LIKE>::use_arg( unsigned int i, const Tools::Format::CFormat &cf )
+template<std::size_t N_SIZE>
+std::string_view Format<N_SIZE>::use_arg( unsigned int i, const Tools::Format::CFormat &cf )
 {
   if( i > num_of_args ) {
 #if __cpp_exceptions > 0
@@ -497,17 +412,13 @@ std::string_view Format<N_ARGS,N_SIZE,VECTOR_LIKE>::use_arg( unsigned int i, con
 #endif
   }
 
-  std::visit( [this,&cf]( auto & real_arg ){
+  // enlarge size to full size
+  use_arg_buffer.resize(use_arg_buffer.capacity());
 
-	  // enlarge size to full size
-	  use_arg_buffer.resize(use_arg_buffer.capacity());
+  auto span_out = args[i]->doFormat( use_arg_buffer, cf);
 
-	  auto span_out = real_arg.doFormat( use_arg_buffer, cf);
-
-	  // reduce it
-	  use_arg_buffer.resize(span_out.size());
-
-  }, args[i] );
+  // reduce it
+  use_arg_buffer.resize(span_out.size());
 
   return use_arg_buffer;
 }
