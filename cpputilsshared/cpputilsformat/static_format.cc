@@ -545,43 +545,6 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 
 namespace Tools::StaticFormat {
 
-std::span<char> RealArg<char>::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
-{
-	if( cf.numerical_representation ) {
-
-		FormatingAdapter<char> fa { formating_buffer, cf };
-		format_int( fa, static_cast<int>(arg) );
-
-		return fa.buffer;
-	}
-
-	Tools::span_vector<char> vbuffer(formating_buffer);
-	Tools::basic_string_adapter<char> s( vbuffer );
-
-	s += arg;
-
-	return { s.data(), s.size() };
-}
-
-std::span<char> RealArg<unsigned char>::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
-{
-	if( cf.numerical_representation ) {
-
-		FormatingAdapter<char> fa { formating_buffer, cf };
-
-		format_int( fa, static_cast<unsigned int>(arg) );
-
-		return fa.buffer;
-	}
-
-	Tools::span_vector<char> vbuffer(formating_buffer);
-	Tools::basic_string_adapter<char> s( vbuffer );
-
-	s += arg;
-
-	return { s.data(), s.size() };
-}
-
 std::span<char> FormatArg::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
 {
   FormatingAdapter<char> fa { formating_buffer, cf };
