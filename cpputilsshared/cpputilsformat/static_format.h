@@ -343,25 +343,77 @@ namespace Tools {
   } // namespace StaticFormat
 } // /namespace Tools
 
+namespace Tools::StaticFormat {
+
+  /// Type-erased formatting argument.
+  /// Collapses all concrete argument types into a single class so that
+  /// `static_format<N>` only needs ONE template instantiation regardless
+  /// of the argument type combination.
+  class FormatArg : public BaseArg
+  {
+  public:
+    enum class Tag : uint8_t { Int64, Uint64, Double, StringView };
+
+    FormatArg(int v)                : BaseArg(true, false),  m_tag(Tag::Int64),      m_i(v)  {}
+    FormatArg(unsigned int v)       : BaseArg(true, false),  m_tag(Tag::Uint64),     m_u(v)  {}
+    FormatArg(short v)              : BaseArg(true, false),  m_tag(Tag::Int64),      m_i(v)  {}
+    FormatArg(unsigned short v)     : BaseArg(true, false),  m_tag(Tag::Uint64),     m_u(v)  {}
+    FormatArg(long v)               : BaseArg(true, false),  m_tag(Tag::Int64),      m_i(v)  {}
+    FormatArg(unsigned long v)      : BaseArg(true, false),  m_tag(Tag::Uint64),     m_u(v)  {}
+    FormatArg(long long v)          : BaseArg(true, false),  m_tag(Tag::Int64),      m_i(v)  {}
+    FormatArg(unsigned long long v) : BaseArg(true, false),  m_tag(Tag::Uint64),     m_u(v)  {}
+    FormatArg(float v)              : BaseArg(false, false), m_tag(Tag::Double),     m_d(v)  {}
+    FormatArg(double v)             : BaseArg(false, false), m_tag(Tag::Double),     m_d(v)  {}
+    FormatArg(const char* v)        : BaseArg(false, true),  m_tag(Tag::StringView), m_sv(v ? v : "") {}
+    FormatArg(std::string_view v)   : BaseArg(false, true),  m_tag(Tag::StringView), m_sv(v) {}
+
+    std::span<char> doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf ) override;
+    int get_int() override;
+
+  private:
+    Tag              m_tag;
+    union {
+      int64_t          m_i;
+      uint64_t         m_u;
+      double           m_d;
+      std::string_view m_sv;
+    };
+  };
+
+} // namespace Tools::StaticFormat
+
 namespace Tools {
+
+  /// Non-template core: only instantiated once per N_SIZE.
+  template <std::size_t N_SIZE>
+  auto static_format_impl( const std::string_view & format,
+                           StaticFormat::FormatArg* args, unsigned num_args )
+  {
+    std::array<StaticFormat::BaseArg*, 16> arg_ptrs{};
+    for (unsigned i = 0; i < num_args && i < arg_ptrs.size(); ++i)
+      arg_ptrs[i] = &args[i];
+
+    StaticFormat::Format<N_SIZE> f2( format, arg_ptrs.data(), num_args );
+    return f2.get_string();
+  }
+
   template <std::size_t N_SIZE, typename... Args>
   auto static_format( const std::string_view & format, Args... args )
   {
-	using namespace StaticFormat;
-
-	constexpr auto N_ARGS = sizeof...(Args);
-
-	std::tuple<RealArg<Args>...> real_args{ RealArg<Args>(args)... };
-	std::array<BaseArg*, N_ARGS> arg_ptrs;
-
-	[&]<std::size_t... Is>(std::index_sequence<Is...>) {
-		((arg_ptrs[Is] = &std::get<Is>(real_args)), ...);
-	}(std::index_sequence_for<Args...>{});
-
-    StaticFormat::Format<N_SIZE> f2( format, arg_ptrs.data(), N_ARGS );
-
-    return f2.get_string();
+    // Convert every argument to FormatArg (implicit conversions).
+    // The thin wrapper code per instantiation is minimal; the heavy
+    // formatting logic in static_format_impl<N_SIZE> is shared.
+    StaticFormat::FormatArg erased[] = { StaticFormat::FormatArg(args)... };
+    return static_format_impl<N_SIZE>( format, erased, sizeof...(Args) );
   }
+
+  /// Zero-argument overload (no formatting args).
+  template <std::size_t N_SIZE>
+  auto static_format( const std::string_view & format )
+  {
+    return static_format_impl<N_SIZE>( format, nullptr, 0 );
+  }
+
 } // /namespace Tools
 #endif
 

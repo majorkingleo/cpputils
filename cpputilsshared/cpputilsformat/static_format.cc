@@ -600,6 +600,48 @@ std::span<char> RealArg<unsigned char>::doFormat( const std::span<char> & format
 	return { s.data(), s.size() };
 }
 
+std::span<char> FormatArg::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
+{
+  FormatingAdapter<char> fa { formating_buffer, cf };
+  switch (m_tag) {
+    case Tag::Int64:
+      if (cf.character_representation) {
+        Tools::span_vector<char> vbuffer(formating_buffer);
+        Tools::basic_string_adapter<char> s( vbuffer );
+        s += static_cast<char>(m_i);
+        return { s.data(), s.size() };
+      }
+      ::operator<<(fa, m_i);
+      return fa.buffer;
+    case Tag::Uint64:
+      if (cf.character_representation) {
+        Tools::span_vector<char> vbuffer(formating_buffer);
+        Tools::basic_string_adapter<char> s( vbuffer );
+        s += static_cast<char>(m_u);
+        return { s.data(), s.size() };
+      }
+      ::operator<<(fa, m_u);
+      return fa.buffer;
+    case Tag::Double:
+      ::operator<<(fa, m_d);
+      return fa.buffer;
+    case Tag::StringView:
+      ::operator<<(fa, m_sv);
+      return fa.buffer;
+  }
+  return {};
+}
+
+int FormatArg::get_int()
+{
+  BaseArg::get_int();
+  switch (m_tag) {
+    case Tag::Int64:  return static_cast<int>(m_i);
+    case Tag::Uint64: return static_cast<int>(m_u);
+    default:          return 0;
+  }
+}
+
 } // namespace Tools::StaticFormat
 
 
