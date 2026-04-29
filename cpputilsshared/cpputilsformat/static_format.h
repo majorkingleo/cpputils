@@ -211,52 +211,6 @@ namespace Tools {
       std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override;
     };
 
-    template <class BaseArgType, class CastTo>
-    class RealArgCastFromInt : public BaseArg
-        {
-          const BaseArgType arg;
-        public:
-          RealArgCastFromInt( const BaseArgType & arg_ )
-        : BaseArg( true, false ),
-          arg(arg_)
-        {}
-
-          std::span<char> doFormat( const std::span<char> & formating_buffer, const Format::CFormat & cf ) override;
-
-          int get_int() override {
-            BaseArg::get_int();
-            return arg;
-          }
-        };
-
-    template<>
-    class RealArg<int> : public RealArgCastFromInt<int,char>
-    {
-    public:
-      RealArg( const int & arg_ )
-        : RealArgCastFromInt<int,char>( arg_ )
-       {}
-    };
-
-
-#define INT_REAL_ARG_CAST( type ) \
-	template<> \
-    class RealArg<type> : public RealArgCastFromInt<type,char>\
-    {\
-    public:\
-      RealArg( const type & arg_ )\
-        : RealArgCastFromInt<type,char>( arg_ )\
-       {}\
-    }
-
-    INT_REAL_ARG_CAST( unsigned int );
-    INT_REAL_ARG_CAST( short );
-    INT_REAL_ARG_CAST( unsigned short );
-    INT_REAL_ARG_CAST( long );
-    INT_REAL_ARG_CAST( unsigned long );
-
-#undef INT_REAL_ARG_CAST
-
     class FormatBase
 	{
     	const std::string_view & format;

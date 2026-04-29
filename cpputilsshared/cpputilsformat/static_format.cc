@@ -545,24 +545,6 @@ void format_int( Tools::StaticFormat::FormatingAdapter<char> & out, const T & va
 
 namespace Tools::StaticFormat {
 
-template <class BaseArgType, class CastTo>
-std::span<char> RealArgCastFromInt<BaseArgType,CastTo>::doFormat( const std::span<char> & formating_buffer,
-																  const Tools::Format::CFormat & cf )
-{
-	Tools::span_vector<char> vbuffer(formating_buffer);
-	Tools::basic_string_adapter<char> s( vbuffer );
-
-	if( cf.character_representation ) {
-		s += static_cast<CastTo>(arg);
-		return { s.data(), s.size() };
-	}
-
-	FormatingAdapter<char> fa { formating_buffer, cf };
-	format_int( fa, arg );
-
-	return fa.buffer;
-}
-
 std::span<char> RealArg<char>::doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf )
 {
 	if( cf.numerical_representation ) {
@@ -643,15 +625,6 @@ int FormatArg::get_int()
 }
 
 } // namespace Tools::StaticFormat
-
-
-static Tools::StaticFormat::RealArgCastFromInt<int,char>            dummy1(0);
-static Tools::StaticFormat::RealArgCastFromInt<unsigned int,char>   dummy2(0);
-static Tools::StaticFormat::RealArgCastFromInt<short,char>          dummy3(0);
-static Tools::StaticFormat::RealArgCastFromInt<unsigned short,char> dummy4(0);
-static Tools::StaticFormat::RealArgCastFromInt<long,char>           dummy5(0);
-static Tools::StaticFormat::RealArgCastFromInt<unsigned long,char>  dummy6(0);
-
 
 Tools::StaticFormat::FormatingAdapter<char> & operator<<( Tools::StaticFormat::FormatingAdapter<char> & out, const std::string_view & s )
 {
