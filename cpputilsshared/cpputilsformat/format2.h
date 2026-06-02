@@ -18,6 +18,7 @@
 #include <string>
 #include <iomanip>
 #include <ostream>
+#include <type_traits>
 
 #include <sstream>
 #include <cctype>
@@ -301,7 +302,22 @@ namespace Tools {
 } // /namespace Tools
 
 namespace Tools {
-  template <typename... Args> std::string format( const std::string & format, Args... args )
+
+  /// Concept that checks whether a type can be used as a format argument.
+  /// Supported types: integers, floating point, char*, const char*, std::string,
+  /// std::string_view, pointers, and types streamable via operator<<.
+  template <typename T>
+  concept Formattable = std::is_arithmetic_v<std::remove_cvref_t<T>>
+                     || std::is_pointer_v<std::remove_cvref_t<T>>
+                     || std::is_same_v<std::remove_cvref_t<T>, std::string>
+                     || std::is_same_v<std::remove_cvref_t<T>, std::string_view>
+                     || std::is_convertible_v<T, const char*>
+                     || requires(T t) { { t.c_str() } -> std::convertible_to<const char*>; }
+                     || requires(T t, std::ostream& os) { os << t; };
+
+  template <typename... Args>
+    requires (Formattable<Args> && ...)
+  std::string format( const std::string & format, Args... args )
   {
     std::vector<Format2::BaseArg*> v_args;
 

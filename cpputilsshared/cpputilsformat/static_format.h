@@ -229,6 +229,8 @@ namespace Tools::StaticFormat {
     FormatArg(double v)             : BaseArg(false, false), m_tag(Tag::Double),     m_d(v)  {}
     FormatArg(const char* v)        : BaseArg(false, true),  m_tag(Tag::StringView), m_sv(v ? v : "") {}
     FormatArg(std::string_view v)   : BaseArg(false, true),  m_tag(Tag::StringView), m_sv(v) {}
+    FormatArg(void* v)              : BaseArg(false, false), m_tag(Tag::Uint64),     m_u(reinterpret_cast<uintptr_t>(v)) {}
+    FormatArg(const void* v)        : BaseArg(false, false), m_tag(Tag::Uint64),     m_u(reinterpret_cast<uintptr_t>(v)) {}
 
     std::span<char> doFormat( const std::span<char> & formating_buffer, const Tools::Format::CFormat & cf ) override;
     int get_int() override;
@@ -260,7 +262,17 @@ namespace Tools {
     return f2.get_string();
   }
 
+  /// Concept that checks whether a type can be used as a static_format argument.
+  /// Supported types: integers, floating point, char*, const char*,
+  /// std::string_view, and pointers.
+  template <typename T>
+  concept StaticFormattable = std::is_arithmetic_v<std::remove_cvref_t<T>>
+                           || std::is_pointer_v<std::remove_cvref_t<T>>
+                           || std::is_same_v<std::remove_cvref_t<T>, std::string_view>
+                           || std::is_convertible_v<T, const char*>;
+
   template <std::size_t N_SIZE, typename... Args>
+    requires (StaticFormattable<Args> && ...)
   auto static_format( const std::string_view & format, Args... args )
   {
     // Convert every argument to FormatArg (implicit conversions).
