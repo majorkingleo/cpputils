@@ -17,7 +17,7 @@ StaticDebugException::StaticDebugException( const char* e, const std::string_vie
 StaticDebugException::StaticDebugException( const std::string_view & e, const std::string_view & source_file_, unsigned source_line_ )
   : std::exception(),
     err( e ),
-	combined_error( (std::string_view)Tools::static_format<100>( "%s:%d %s", get_file_name(source_file_), source_line_, err )),
+	combined_error( (std::string_view)Tools::static_format<100>( "%s:%d %s", get_file_name(source_file_), source_line_, (std::string_view)err )),
 	source_file(source_file_),
 	source_line(source_line_)
 {
