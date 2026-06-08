@@ -268,7 +268,7 @@ namespace Tools {
   template <typename T>
   concept StaticFormattable = std::is_arithmetic_v<std::remove_cvref_t<T>>
                            || std::is_pointer_v<std::remove_cvref_t<T>>
-                           || std::is_same_v<std::remove_cvref_t<T>, std::string_view>
+                           || std::is_convertible_v<T, std::string_view>
                            || std::is_convertible_v<T, const char*>;
 
   template <std::size_t N_SIZE, typename... Args>

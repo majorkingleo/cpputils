@@ -310,7 +310,7 @@ namespace Tools {
   concept Formattable = std::is_arithmetic_v<std::remove_cvref_t<T>>
                      || std::is_pointer_v<std::remove_cvref_t<T>>
                      || std::is_same_v<std::remove_cvref_t<T>, std::string>
-                     || std::is_same_v<std::remove_cvref_t<T>, std::string_view>
+                     || std::is_convertible_v<std::remove_cvref_t<T>, std::string_view>
                      || std::is_convertible_v<T, const char*>
                      || requires(T t) { { t.c_str() } -> std::convertible_to<const char*>; }
                      || requires(T t, std::ostream& os) { os << t; };
